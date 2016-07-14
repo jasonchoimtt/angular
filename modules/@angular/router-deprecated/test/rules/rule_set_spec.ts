@@ -6,7 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {describe, it, iit, ddescribe, expect, inject, beforeEach,} from '@angular/core/testing/testing_internal';
+import {describe, it, iit, ddescribe, inject, beforeEach,} from '@angular/core/testing/testing_internal';
+import {expect} from '@angular/platform-browser/testing/matchers';
 import {AsyncTestCompleter} from '@angular/core/testing/testing_internal';
 import {RouteMatch, PathMatch, RedirectMatch} from '../../src/rules/rules';
 import {RuleSet} from '../../src/rules/rule_set';

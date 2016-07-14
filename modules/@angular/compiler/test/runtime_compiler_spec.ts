@@ -1,4 +1,5 @@
-import {beforeEach, ddescribe, xdescribe, describe, expect, iit, inject, beforeEachProviders, it, xit,} from '@angular/core/testing/testing_internal';
+import {beforeEach, ddescribe, xdescribe, describe, iit, inject, beforeEachProviders, it, xit,} from '@angular/core/testing/testing_internal';
+import {expect} from '@angular/platform-browser/testing/matchers';
 import {Injectable, Component, Input, ViewMetadata, Compiler, ComponentFactory, Injector, AppModule, AppModuleMetadata, AppModuleFactory} from '@angular/core';
 import {ConcreteType, stringify} from '../src/facade/lang';
 import {fakeAsync, tick, TestComponentBuilder, ComponentFixture, configureCompiler} from '@angular/core/testing';

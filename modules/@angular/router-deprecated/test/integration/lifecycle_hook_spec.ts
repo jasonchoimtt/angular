@@ -8,8 +8,9 @@
 
 import {Component, Inject, Injector, provide} from '@angular/core';
 import {ComponentFixture, TestComponentBuilder} from '@angular/core/testing';
-import {beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
+import {beforeEach, beforeEachProviders, ddescribe, describe, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 import {AsyncTestCompleter} from '@angular/core/testing/testing_internal';
+import {expect} from '@angular/platform-browser/testing/matchers';
 import {RouteParams, Router, RouterLink, RouterOutlet} from '@angular/router-deprecated';
 
 import {EventEmitter, ObservableWrapper, PromiseCompleter, PromiseWrapper} from '../../src/facade/async';

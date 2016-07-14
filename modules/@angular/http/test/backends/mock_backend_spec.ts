@@ -6,7 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit,} from '@angular/core/testing/testing_internal';
+import {afterEach, beforeEach, ddescribe, describe, iit, inject, it, xit,} from '@angular/core/testing/testing_internal';
+import {expect} from '@angular/platform-browser/testing/matchers';
 import {AsyncTestCompleter} from '@angular/core/testing/testing_internal';
 import {ObservableWrapper} from '../../src/facade/async';
 import {BrowserXhr} from '../../src/backends/browser_xhr';
