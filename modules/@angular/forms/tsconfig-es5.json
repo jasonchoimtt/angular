@@ -8,7 +8,7 @@
     "moduleResolution": "node",
     "outDir": "../../../dist/packages-dist/forms/",
     "paths": {
-      "@angular/core": ["../../../dist/packages-dist/core/"],
+      "@angular/core": ["../../../dist/packages-dist/core"],
       "@angular/core/testing": ["../../../dist/packages-dist/core/testing"],
       "@angular/common": ["../../../dist/packages-dist/common"],
       "@angular/common/testing": ["../../../dist/packages-dist/common/testing"],

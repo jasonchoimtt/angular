@@ -18,11 +18,9 @@
     "sourceMap": true,
     "inlineSources": true,
     "lib": ["es6", "dom"],
-    "target": "es5"
+    "target": "es6"
   },
   "files": [
     "index.ts"
   ]
 }
-
-

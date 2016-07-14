@@ -18,6 +18,8 @@
   "files": [
     "index.ts",
     "testing.ts",
-    "../../../node_modules/zone.js/dist/zone.js.d.ts"
+    "../../../node_modules/zone.js/dist/zone.js.d.ts",
+    "../../../node_modules/@types/jasmine/index.d.ts",
+    "testing/testing_internal.ts"
   ]
 }

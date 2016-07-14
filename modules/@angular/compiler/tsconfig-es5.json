@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "declaration": true,
     "stripInternal": true,
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "module": "commonjs",
     "moduleResolution": "node",
@@ -20,6 +21,7 @@
   "files": [
     "index.ts",
     "testing.ts",
-    "../../../node_modules/zone.js/dist/zone.js.d.ts"
+    "../../../node_modules/zone.js/dist/zone.js.d.ts",
+    "testing/test_bindings.ts"
   ]
 }

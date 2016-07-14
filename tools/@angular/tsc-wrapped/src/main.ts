@@ -10,7 +10,8 @@ import {MetadataWriterHost, TsickleHost} from './compiler_host';
 export type CodegenExtension = (ngOptions: NgOptions, program: ts.Program, host: ts.CompilerHost) =>
     Promise<void>;
 
-export function main(project: string, basePath?: string, codegen?: CodegenExtension): Promise<any> {
+export function main(
+    project: string, basePath?: string, codegen?: CodegenExtension, args: any = {}): Promise<any> {
   try {
     let projectDir = project;
     if (fs.lstatSync(project).isFile()) {
@@ -21,7 +22,27 @@ export function main(project: string, basePath?: string, codegen?: CodegenExtens
 
     // read the configuration options from wherever you store them
     const {parsed, ngOptions} = tsc.readConfiguration(project, basePath);
+
+    // we need these switches to work with bazel
+    parsed.options.outDir = args.outDir || parsed.options.outDir;
+    parsed.options.rootDir = args.rootDir || parsed.options.rootDir;
+    // stripInternal is private for some reason
+    parsed.options['stripInternal'] = false; // For now
+    // "paths" is not a standard TS command line option, but we need it for
+    // bazel
+    if (args.paths) {
+      parsed.options.paths = {};
+      [].concat(args.paths || []).forEach(path => {
+        let [key, value] = path.replace(/%%%%%/g, '@').split(':');
+        parsed.options.paths[key] = parsed.options.paths[key] || [];
+        parsed.options.paths[key].push(value);
+      });
+    }
     ngOptions.basePath = basePath;
+    // Unlike skipMetadataEmit, this only controls .metadata.json
+    ngOptions['writeMetadata'] = args.writeMetadata;
+
+    console.log(JSON.stringify(parsed, null, 2));
 
     const host = ts.createCompilerHost(parsed.options, true);
     const program = ts.createProgram(parsed.fileNames, parsed.options, host);
@@ -46,7 +67,7 @@ export function main(project: string, basePath?: string, codegen?: CodegenExtens
         // decorators which we want to read or document.
         // Do this emit second since TypeScript will create missing directories for us
         // in the standard emit.
-        const metadataWriter = new MetadataWriterHost(host, newProgram);
+        const metadataWriter = new MetadataWriterHost(host, newProgram, ngOptions);
         tsc.emit(metadataWriter, newProgram);
       }
     });
@@ -58,7 +79,7 @@ export function main(project: string, basePath?: string, codegen?: CodegenExtens
 // CLI entry point
 if (require.main === module) {
   const args = require('minimist')(process.argv.slice(2));
-  main(args.p || args.project || '.', args.basePath)
+  main(args.p || args.project || '.', args.basePath, null, args)
       .then(exitCode => process.exit(exitCode))
       .catch(e => {
         console.error(e.stack);

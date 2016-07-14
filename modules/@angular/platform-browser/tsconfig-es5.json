@@ -9,7 +9,7 @@
     "outDir": "../../../dist/packages-dist/platform-browser/",
     "paths": {
       "@angular/core": ["../../../dist/packages-dist/core"],
-      "@angular/core/testing": ["../../../dist/packages-dist/core/testing"],
+      "@angular/core/*": ["../../../dist/packages-dist/core/*"],
       "@angular/common": ["../../../dist/packages-dist/common"],
       "@angular/common/testing": ["../../../dist/packages-dist/common/testing"],
 
@@ -29,6 +29,8 @@
     "../../../node_modules/@types/hammerjs/index.d.ts",
     "../../../node_modules/@types/jasmine/index.d.ts",
     "../../../node_modules/@types/protractor/index.d.ts",
-    "../../../node_modules/zone.js/dist/zone.js.d.ts"
+    "../../../node_modules/zone.js/dist/zone.js.d.ts",
+    "testing/mock_animation_driver.ts",
+    "testing/matchers.ts"
   ]
 }
