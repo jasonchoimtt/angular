@@ -10,13 +10,13 @@ import {CompileDirectiveMetadata, CompileStylesheetMetadata, CompileTemplateMeta
 import {CompilerConfig} from '@angular/compiler/src/config';
 import {DirectiveNormalizer} from '@angular/compiler/src/directive_normalizer';
 import {XHR} from '@angular/compiler/src/xhr';
+import {TEST_COMPILER_PROVIDERS} from '@angular/compiler/testing/test_bindings';
 import {MockXHR} from '@angular/compiler/testing/xhr_mock';
 import {ViewEncapsulation} from '@angular/core/src/metadata/view';
 import {TestBed} from '@angular/core/testing';
 import {AsyncTestCompleter, beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
 
 import {SpyXHR} from './spies';
-import {TEST_COMPILER_PROVIDERS} from './test_bindings';
 
 export function main() {
   describe('DirectiveNormalizer', () => {
