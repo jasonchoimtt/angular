@@ -446,9 +446,9 @@ describe('CssParser', () => {
   it('should raise an error when a semi colon is missing from a CSS style/pair that isn\'t the last entry',
      () => {
        var styles = `.class {
-      color: red
-      background: blue
-    }`;
+         color: red
+         background: blue
+       }`;
 
        var output = parse(styles);
        var errors = output.errors;
@@ -456,7 +456,7 @@ describe('CssParser', () => {
        expect(errors.length).toEqual(1);
 
        expect(errors[0].msg)
-           .toMatch(/The CSS key\/value definition did not end with a semicolon at column 1:15/g);
+           .toMatch(/The CSS key\/value definition did not end with a semicolon at column 1:16/g);
      });
 
   it('should parse the inner value of a :not() pseudo-selector as a CSS selector', () => {
@@ -521,16 +521,16 @@ describe('CssParser', () => {
 
     expect(errors[0].msg)
         .toMatch(
-            /Identifier does not match expected Character value \("color" should match ":"\) at column 1:19/g);
+            /Identifier does not match expected Character value \("color" should match ":"\) at column 1:17/g);
 
     expect(errors[1].msg)
-        .toMatch(/The CSS key\/value definition did not end with a semicolon at column 2:15/g);
+        .toMatch(/The CSS key\/value definition did not end with a semicolon at column 2:13/g);
 
     expect(errors[2].msg)
-        .toMatch(/The CSS property was not paired with a style value at column 3:8/g);
+        .toMatch(/The CSS property was not paired with a style value at column 3:6/g);
 
     expect(errors[3].msg)
-        .toMatch(/The CSS property was not paired with a style value at column 4:8/g);
+        .toMatch(/The CSS property was not paired with a style value at column 4:6/g);
   });
 
   it('should recover from CSS key/value parse errors', () => {

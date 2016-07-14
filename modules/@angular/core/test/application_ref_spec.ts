@@ -11,12 +11,11 @@ import {AsyncTestCompleter} from '@angular/core/testing/testing_internal';
 import {Type} from '@angular/core';
 import {SpyChangeDetectorRef} from './spies';
 import {ApplicationRef_, ApplicationRef, PLATFORM_CORE_PROVIDERS, APPLICATION_CORE_PROVIDERS} from '@angular/core/src/application_ref';
-import {Injector, APP_INITIALIZER, Component, ReflectiveInjector, coreLoadAndBootstrap, PlatformRef, createPlatform, disposePlatform, ComponentResolver, ComponentFactoryResolver, ChangeDetectorRef} from '@angular/core';
+import {Injector, APP_INITIALIZER, Component, ExceptionHandler, ReflectiveInjector, coreLoadAndBootstrap, PlatformRef, createPlatform, disposePlatform, ComponentResolver, ComponentFactoryResolver, ChangeDetectorRef} from '@angular/core';
 import {Console} from '@angular/core/src/console';
 import {BaseException} from '../src/facade/exceptions';
 import {PromiseWrapper, PromiseCompleter, TimerWrapper} from '../src/facade/async';
 import {ComponentFactory, ComponentRef_, ComponentRef} from '@angular/core/src/linker/component_factory';
-import {ExceptionHandler} from '../src/facade/exception_handler';
 
 describe('bootstrap', () => {
   var platform: PlatformRef;
@@ -65,15 +64,14 @@ describe('bootstrap', () => {
       });
 
       it('should return a promise with rejected errors even if the exceptionHandler is not rethrowing',
-         inject(
-             [AsyncTestCompleter, Injector], (async: AsyncTestCompleter, injector: Injector) => {
-               var ref = createApplication([]);
-               var promise = ref.run(() => PromiseWrapper.reject('Test', null));
-               PromiseWrapper.catchError(promise, (e) => {
-                 expect(e).toEqual('Test');
-                 async.done();
-               });
-             }));
+         inject([AsyncTestCompleter, Injector], (async: AsyncTestCompleter, injector: Injector) => {
+           var ref = createApplication([]);
+           var promise = ref.run(() => PromiseWrapper.reject('Test', null));
+           PromiseWrapper.catchError(promise, (e) => {
+             expect(e).toEqual('Test');
+             async.done();
+           });
+         }));
     });
   });
 

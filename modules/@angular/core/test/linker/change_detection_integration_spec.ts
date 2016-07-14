@@ -73,6 +73,388 @@ function _bindAndCheckSimpleValue(
   return renderLog.log;
 }
 
+const ALL_DIRECTIVES = /*@ts2dart_const*/[
+  forwardRef(() => TestDirective),
+  forwardRef(() => TestComponent),
+  forwardRef(() => AnotherComponent),
+  forwardRef(() => TestLocals),
+  forwardRef(() => CompWithRef),
+  forwardRef(() => EmitterDirective),
+  forwardRef(() => PushComp),
+  forwardRef(() => OrderCheckDirective2),
+  forwardRef(() => OrderCheckDirective0),
+  forwardRef(() => OrderCheckDirective1),
+  forwardRef(() => Gh9882),
+  NgFor,
+];
+
+const ALL_PIPES = /*@ts2dart_const*/[
+  forwardRef(() => CountingPipe),
+  forwardRef(() => CountingImpurePipe),
+  forwardRef(() => MultiArgPipe),
+  forwardRef(() => PipeWithOnDestroy),
+  forwardRef(() => IdentityPipe),
+  forwardRef(() => WrappedPipe),
+  AsyncPipe,
+];
+
+@Injectable()
+class RenderLog {
+  log: string[] = [];
+  loggedValues: any[] = [];
+
+  setElementProperty(el: any, propName: string, propValue: any) {
+    this.log.push(`${propName}=${propValue}`);
+    this.loggedValues.push(propValue);
+  }
+
+  setText(node: any, value: string) {
+    this.log.push(`{{${value}}}`);
+    this.loggedValues.push(value);
+  }
+
+  clear() {
+    this.log = [];
+    this.loggedValues = [];
+  }
+}
+
+@Injectable()
+class LoggingRootRenderer implements RootRenderer {
+  constructor(private _delegate: DomRootRenderer, private _log: RenderLog) {}
+
+  renderComponent(componentProto: RenderComponentType): Renderer {
+    return new LoggingRenderer(this._delegate.renderComponent(componentProto), this._log);
+  }
+}
+
+class LoggingRenderer extends DebugDomRenderer {
+  constructor(delegate: Renderer, private _log: RenderLog) { super(delegate); }
+
+  setElementProperty(renderElement: any, propertyName: string, propertyValue: any) {
+    this._log.setElementProperty(renderElement, propertyName, propertyValue);
+    super.setElementProperty(renderElement, propertyName, propertyValue);
+  }
+
+  setText(renderNode: any, value: string) { this._log.setText(renderNode, value); }
+}
+
+class DirectiveLogEntry {
+  constructor(public directiveName: string, public method: string) {}
+}
+
+@Injectable()
+class DirectiveLog {
+  entries: DirectiveLogEntry[] = [];
+
+  add(directiveName: string, method: string) {
+    this.entries.push(new DirectiveLogEntry(directiveName, method));
+  }
+
+  clear() { this.entries = []; }
+
+  filter(methods: string[]): string[] {
+    return this.entries.filter((entry) => methods.indexOf(entry.method) !== -1)
+        .map(entry => `${entry.directiveName}.${entry.method}`);
+  }
+}
+
+
+@Pipe({name: 'countingPipe'})
+class CountingPipe implements PipeTransform {
+  state: number = 0;
+  transform(value: any) { return `${value} state:${this.state ++}`; }
+}
+
+@Pipe({name: 'countingImpurePipe', pure: false})
+class CountingImpurePipe implements PipeTransform {
+  state: number = 0;
+  transform(value: any) { return `${value} state:${this.state ++}`; }
+}
+
+@Pipe({name: 'pipeWithOnDestroy'})
+class PipeWithOnDestroy implements PipeTransform, OnDestroy {
+  constructor(private directiveLog: DirectiveLog) {}
+
+  ngOnDestroy() { this.directiveLog.add('pipeWithOnDestroy', 'ngOnDestroy'); }
+
+  transform(value: any): any { return null; }
+}
+
+@Pipe({name: 'identityPipe'})
+class IdentityPipe implements PipeTransform {
+  transform(value: any) { return value; }
+}
+
+@Pipe({name: 'wrappedPipe'})
+class WrappedPipe implements PipeTransform {
+  transform(value: any) { return WrappedValue.wrap(value); }
+}
+
+@Pipe({name: 'multiArgPipe'})
+class MultiArgPipe implements PipeTransform {
+  transform(value: any, arg1: any, arg2: any, arg3 = 'default') {
+    return `${value} ${arg1} ${arg2} ${arg3}`;
+  }
+}
+
+@Component({selector: 'test-cmp', template: '', directives: ALL_DIRECTIVES, pipes: ALL_PIPES})
+class TestComponent {
+  value: any;
+  a: any;
+  b: any;
+}
+
+@Component({selector: 'other-cmp', directives: ALL_DIRECTIVES, pipes: ALL_PIPES, template: ''})
+class AnotherComponent {
+}
+
+@Component({
+  selector: 'comp-with-ref',
+  template: '<div (event)="noop()" emitterDirective></div>{{value}}',
+  host: {'event': 'noop()'},
+  directives: ALL_DIRECTIVES,
+  pipes: ALL_PIPES
+})
+class CompWithRef {
+  @Input() public value: any;
+
+  constructor(public changeDetectorRef: ChangeDetectorRef) {}
+
+  noop() {}
+}
+
+@Component({
+  selector: 'push-cmp',
+  template: '<div (event)="noop()" emitterDirective></div>{{value}}{{renderIncrement}}',
+  host: {'(event)': 'noop()'},
+  directives: ALL_DIRECTIVES,
+  pipes: ALL_PIPES,
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+class PushComp {
+  @Input() public value: any;
+  public renderCount: any = 0;
+
+  get renderIncrement() {
+    this.renderCount++;
+    return '';
+  }
+
+  constructor(public changeDetectorRef: ChangeDetectorRef) {}
+
+  noop() {}
+}
+
+@Directive({selector: '[emitterDirective]'})
+class EmitterDirective {
+  @Output('event') emitter = new EventEmitter<string>();
+}
+
+@Directive({selector: '[gh9882]'})
+class Gh9882 implements AfterContentInit {
+  constructor(private _viewContainer: ViewContainerRef, private _templateRef: TemplateRef<Object>) {
+  }
+
+  ngAfterContentInit(): any { this._viewContainer.createEmbeddedView(this._templateRef); }
+}
+
+@Directive({selector: '[testDirective]', exportAs: 'testDirective'})
+class TestDirective implements OnInit, DoCheck, OnChanges, AfterContentInit, AfterContentChecked,
+    AfterViewInit, AfterViewChecked, OnDestroy {
+  @Input() a: any;
+  @Input() b: any;
+  changes: any;
+  event: any;
+  eventEmitter: EventEmitter<string> = new EventEmitter<string>();
+
+  @Input('testDirective') name: string;
+
+  @Input() throwOn: string;
+
+  constructor(public log: DirectiveLog) {}
+
+  onEvent(event: any) { this.event = event; }
+
+  ngDoCheck() { this.log.add(this.name, 'ngDoCheck'); }
+
+  ngOnInit() {
+    this.log.add(this.name, 'ngOnInit');
+    if (this.throwOn == 'ngOnInit') {
+      throw new BaseException('Boom!');
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.log.add(this.name, 'ngOnChanges');
+    const r: {[k: string]: string} = {};
+    StringMapWrapper.forEach(changes, (c: SimpleChange, key: string) => r[key] = c.currentValue);
+    this.changes = r;
+    if (this.throwOn == 'ngOnChanges') {
+      throw new BaseException('Boom!');
+    }
+  }
+
+  ngAfterContentInit() {
+    this.log.add(this.name, 'ngAfterContentInit');
+    if (this.throwOn == 'ngAfterContentInit') {
+      throw new BaseException('Boom!');
+    }
+  }
+
+  ngAfterContentChecked() {
+    this.log.add(this.name, 'ngAfterContentChecked');
+    if (this.throwOn == 'ngAfterContentChecked') {
+      throw new BaseException('Boom!');
+    }
+  }
+
+  ngAfterViewInit() {
+    this.log.add(this.name, 'ngAfterViewInit');
+    if (this.throwOn == 'ngAfterViewInit') {
+      throw new BaseException('Boom!');
+    }
+  }
+
+  ngAfterViewChecked() {
+    this.log.add(this.name, 'ngAfterViewChecked');
+    if (this.throwOn == 'ngAfterViewChecked') {
+      throw new BaseException('Boom!');
+    }
+  }
+
+  ngOnDestroy() {
+    this.log.add(this.name, 'ngOnDestroy');
+    if (this.throwOn == 'ngOnDestroy') {
+      throw new BaseException('Boom!');
+    }
+  }
+}
+
+@Directive({selector: '[orderCheck0]'})
+class OrderCheckDirective0 {
+  private _name: string;
+
+  @Input('orderCheck0')
+  set name(value: string) {
+    this._name = value;
+    this.log.add(this._name, 'set');
+  }
+
+  constructor(public log: DirectiveLog) {}
+}
+
+@Directive({selector: '[orderCheck1]'})
+class OrderCheckDirective1 {
+  private _name: string;
+
+  @Input('orderCheck1')
+  set name(value: string) {
+    this._name = value;
+    this.log.add(this._name, 'set');
+  }
+
+  constructor(public log: DirectiveLog, _check0: OrderCheckDirective0) {}
+}
+
+@Directive({selector: '[orderCheck2]'})
+class OrderCheckDirective2 {
+  private _name: string;
+
+  @Input('orderCheck2')
+  set name(value: string) {
+    this._name = value;
+    this.log.add(this._name, 'set');
+  }
+
+  constructor(public log: DirectiveLog, _check1: OrderCheckDirective1) {}
+}
+
+class TestLocalsContext {
+  constructor(public someLocal: string) {}
+}
+
+@Directive({selector: '[testLocals]'})
+class TestLocals {
+  constructor(templateRef: TemplateRef<TestLocalsContext>, vcRef: ViewContainerRef) {
+    vcRef.createEmbeddedView(templateRef, new TestLocalsContext('someLocalValue'));
+  }
+}
+
+@Component({selector: 'root'})
+class Person {
+  age: number;
+  name: string;
+  address: Address = null;
+
+  init(name: string, address: Address = null) {
+    this.name = name;
+    this.address = address;
+  }
+
+  sayHi(m: any): string { return `Hi, ${m}`; }
+
+  passThrough(val: any): any { return val; }
+
+  toString(): string {
+    var address = this.address == null ? '' : ' address=' + this.address.toString();
+
+    return 'name=' + this.name + address;
+  }
+}
+
+class Address {
+  cityGetterCalls: number = 0;
+  zipCodeGetterCalls: number = 0;
+
+  constructor(public _city: string, public _zipcode: any = null) {}
+
+  get city() {
+    this.cityGetterCalls++;
+    return this._city;
+  }
+
+  get zipcode() {
+    this.zipCodeGetterCalls++;
+    return this._zipcode;
+  }
+
+  set city(v) { this._city = v; }
+
+  set zipcode(v) { this._zipcode = v; }
+
+  toString(): string { return isBlank(this.city) ? '-' : this.city }
+}
+
+@Component({selector: 'root'})
+class Uninitialized {
+  value: any = null;
+}
+
+@Component({selector: 'root'})
+class TestData {
+  public a: any;
+}
+
+@Component({selector: 'root'})
+class TestDataWithGetter {
+  public fn: Function;
+
+  get a() { return this.fn(); }
+}
+
+class Holder<T> {
+  value: T;
+}
+
+@Component({selector: 'root'})
+class PersonHolder extends Holder<Person> {
+}
+
+@Component({selector: 'root'})
+class PersonHolderHolder extends Holder<Holder<Person>> {
+}
+
 describe(`ChangeDetection`, () => {
   // On CJS fakeAsync is not supported...
   if (!getDOM().supportsDOMEvents()) return;
@@ -1126,385 +1508,3 @@ describe(`ChangeDetection`, () => {
        }));
   });
 });
-
-const ALL_DIRECTIVES = /*@ts2dart_const*/[
-  forwardRef(() => TestDirective),
-  forwardRef(() => TestComponent),
-  forwardRef(() => AnotherComponent),
-  forwardRef(() => TestLocals),
-  forwardRef(() => CompWithRef),
-  forwardRef(() => EmitterDirective),
-  forwardRef(() => PushComp),
-  forwardRef(() => OrderCheckDirective2),
-  forwardRef(() => OrderCheckDirective0),
-  forwardRef(() => OrderCheckDirective1),
-  forwardRef(() => Gh9882),
-  NgFor,
-];
-
-const ALL_PIPES = /*@ts2dart_const*/[
-  forwardRef(() => CountingPipe),
-  forwardRef(() => CountingImpurePipe),
-  forwardRef(() => MultiArgPipe),
-  forwardRef(() => PipeWithOnDestroy),
-  forwardRef(() => IdentityPipe),
-  forwardRef(() => WrappedPipe),
-  AsyncPipe,
-];
-
-@Injectable()
-class RenderLog {
-  log: string[] = [];
-  loggedValues: any[] = [];
-
-  setElementProperty(el: any, propName: string, propValue: any) {
-    this.log.push(`${propName}=${propValue}`);
-    this.loggedValues.push(propValue);
-  }
-
-  setText(node: any, value: string) {
-    this.log.push(`{{${value}}}`);
-    this.loggedValues.push(value);
-  }
-
-  clear() {
-    this.log = [];
-    this.loggedValues = [];
-  }
-}
-
-@Injectable()
-class LoggingRootRenderer implements RootRenderer {
-  constructor(private _delegate: DomRootRenderer, private _log: RenderLog) {}
-
-  renderComponent(componentProto: RenderComponentType): Renderer {
-    return new LoggingRenderer(this._delegate.renderComponent(componentProto), this._log);
-  }
-}
-
-class LoggingRenderer extends DebugDomRenderer {
-  constructor(delegate: Renderer, private _log: RenderLog) { super(delegate); }
-
-  setElementProperty(renderElement: any, propertyName: string, propertyValue: any) {
-    this._log.setElementProperty(renderElement, propertyName, propertyValue);
-    super.setElementProperty(renderElement, propertyName, propertyValue);
-  }
-
-  setText(renderNode: any, value: string) { this._log.setText(renderNode, value); }
-}
-
-class DirectiveLogEntry {
-  constructor(public directiveName: string, public method: string) {}
-}
-
-@Injectable()
-class DirectiveLog {
-  entries: DirectiveLogEntry[] = [];
-
-  add(directiveName: string, method: string) {
-    this.entries.push(new DirectiveLogEntry(directiveName, method));
-  }
-
-  clear() { this.entries = []; }
-
-  filter(methods: string[]): string[] {
-    return this.entries.filter((entry) => methods.indexOf(entry.method) !== -1)
-        .map(entry => `${entry.directiveName}.${entry.method}`);
-  }
-}
-
-
-@Pipe({name: 'countingPipe'})
-class CountingPipe implements PipeTransform {
-  state: number = 0;
-  transform(value: any) { return `${value} state:${this.state ++}`; }
-}
-
-@Pipe({name: 'countingImpurePipe', pure: false})
-class CountingImpurePipe implements PipeTransform {
-  state: number = 0;
-  transform(value: any) { return `${value} state:${this.state ++}`; }
-}
-
-@Pipe({name: 'pipeWithOnDestroy'})
-class PipeWithOnDestroy implements PipeTransform, OnDestroy {
-  constructor(private directiveLog: DirectiveLog) {}
-
-  ngOnDestroy() { this.directiveLog.add('pipeWithOnDestroy', 'ngOnDestroy'); }
-
-  transform(value: any): any { return null; }
-}
-
-@Pipe({name: 'identityPipe'})
-class IdentityPipe implements PipeTransform {
-  transform(value: any) { return value; }
-}
-
-@Pipe({name: 'wrappedPipe'})
-class WrappedPipe implements PipeTransform {
-  transform(value: any) { return WrappedValue.wrap(value); }
-}
-
-@Pipe({name: 'multiArgPipe'})
-class MultiArgPipe implements PipeTransform {
-  transform(value: any, arg1: any, arg2: any, arg3 = 'default') {
-    return `${value} ${arg1} ${arg2} ${arg3}`;
-  }
-}
-
-@Component({selector: 'test-cmp', template: '', directives: ALL_DIRECTIVES, pipes: ALL_PIPES})
-class TestComponent {
-  value: any;
-  a: any;
-  b: any;
-}
-
-@Component({selector: 'other-cmp', directives: ALL_DIRECTIVES, pipes: ALL_PIPES, template: ''})
-class AnotherComponent {
-}
-
-@Component({
-  selector: 'comp-with-ref',
-  template: '<div (event)="noop()" emitterDirective></div>{{value}}',
-  host: {'event': 'noop()'},
-  directives: ALL_DIRECTIVES,
-  pipes: ALL_PIPES
-})
-class CompWithRef {
-  @Input() public value: any;
-
-  constructor(public changeDetectorRef: ChangeDetectorRef) {}
-
-  noop() {}
-}
-
-@Component({
-  selector: 'push-cmp',
-  template: '<div (event)="noop()" emitterDirective></div>{{value}}{{renderIncrement}}',
-  host: {'(event)': 'noop()'},
-  directives: ALL_DIRECTIVES,
-  pipes: ALL_PIPES,
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-class PushComp {
-  @Input() public value: any;
-  public renderCount: any = 0;
-
-  get renderIncrement() {
-    this.renderCount++;
-    return '';
-  }
-
-  constructor(public changeDetectorRef: ChangeDetectorRef) {}
-
-  noop() {}
-}
-
-@Directive({selector: '[emitterDirective]'})
-class EmitterDirective {
-  @Output('event') emitter = new EventEmitter<string>();
-}
-
-@Directive({selector: '[gh9882]'})
-class Gh9882 implements AfterContentInit {
-  constructor(private _viewContainer: ViewContainerRef, private _templateRef: TemplateRef<Object>) {
-  }
-
-  ngAfterContentInit(): any { this._viewContainer.createEmbeddedView(this._templateRef); }
-}
-
-@Directive({selector: '[testDirective]', exportAs: 'testDirective'})
-class TestDirective implements OnInit, DoCheck, OnChanges, AfterContentInit, AfterContentChecked,
-    AfterViewInit, AfterViewChecked, OnDestroy {
-  @Input() a: any;
-  @Input() b: any;
-  changes: any;
-  event: any;
-  eventEmitter: EventEmitter<string> = new EventEmitter<string>();
-
-  @Input('testDirective') name: string;
-
-  @Input() throwOn: string;
-
-  constructor(public log: DirectiveLog) {}
-
-  onEvent(event: any) { this.event = event; }
-
-  ngDoCheck() { this.log.add(this.name, 'ngDoCheck'); }
-
-  ngOnInit() {
-    this.log.add(this.name, 'ngOnInit');
-    if (this.throwOn == 'ngOnInit') {
-      throw new BaseException('Boom!');
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    this.log.add(this.name, 'ngOnChanges');
-    const r: {[k: string]: string} = {};
-    StringMapWrapper.forEach(changes, (c: SimpleChange, key: string) => r[key] = c.currentValue);
-    this.changes = r;
-    if (this.throwOn == 'ngOnChanges') {
-      throw new BaseException('Boom!');
-    }
-  }
-
-  ngAfterContentInit() {
-    this.log.add(this.name, 'ngAfterContentInit');
-    if (this.throwOn == 'ngAfterContentInit') {
-      throw new BaseException('Boom!');
-    }
-  }
-
-  ngAfterContentChecked() {
-    this.log.add(this.name, 'ngAfterContentChecked');
-    if (this.throwOn == 'ngAfterContentChecked') {
-      throw new BaseException('Boom!');
-    }
-  }
-
-  ngAfterViewInit() {
-    this.log.add(this.name, 'ngAfterViewInit');
-    if (this.throwOn == 'ngAfterViewInit') {
-      throw new BaseException('Boom!');
-    }
-  }
-
-  ngAfterViewChecked() {
-    this.log.add(this.name, 'ngAfterViewChecked');
-    if (this.throwOn == 'ngAfterViewChecked') {
-      throw new BaseException('Boom!');
-    }
-  }
-
-  ngOnDestroy() {
-    this.log.add(this.name, 'ngOnDestroy');
-    if (this.throwOn == 'ngOnDestroy') {
-      throw new BaseException('Boom!');
-    }
-  }
-}
-
-@Directive({selector: '[orderCheck0]'})
-class OrderCheckDirective0 {
-  private _name: string;
-
-  @Input('orderCheck0')
-  set name(value: string) {
-    this._name = value;
-    this.log.add(this._name, 'set');
-  }
-
-  constructor(public log: DirectiveLog) {}
-}
-
-@Directive({selector: '[orderCheck1]'})
-class OrderCheckDirective1 {
-  private _name: string;
-
-  @Input('orderCheck1')
-  set name(value: string) {
-    this._name = value;
-    this.log.add(this._name, 'set');
-  }
-
-  constructor(public log: DirectiveLog, _check0: OrderCheckDirective0) {}
-}
-
-@Directive({selector: '[orderCheck2]'})
-class OrderCheckDirective2 {
-  private _name: string;
-
-  @Input('orderCheck2')
-  set name(value: string) {
-    this._name = value;
-    this.log.add(this._name, 'set');
-  }
-
-  constructor(public log: DirectiveLog, _check1: OrderCheckDirective1) {}
-}
-
-class TestLocalsContext {
-  constructor(public someLocal: string) {}
-}
-
-@Directive({selector: '[testLocals]'})
-class TestLocals {
-  constructor(templateRef: TemplateRef<TestLocalsContext>, vcRef: ViewContainerRef) {
-    vcRef.createEmbeddedView(templateRef, new TestLocalsContext('someLocalValue'));
-  }
-}
-
-@Component({selector: 'root'})
-class Person {
-  age: number;
-  name: string;
-  address: Address = null;
-
-  init(name: string, address: Address = null) {
-    this.name = name;
-    this.address = address;
-  }
-
-  sayHi(m: any): string { return `Hi, ${m}`; }
-
-  passThrough(val: any): any { return val; }
-
-  toString(): string {
-    var address = this.address == null ? '' : ' address=' + this.address.toString();
-
-    return 'name=' + this.name + address;
-  }
-}
-
-class Address {
-  cityGetterCalls: number = 0;
-  zipCodeGetterCalls: number = 0;
-
-  constructor(public _city: string, public _zipcode: any = null) {}
-
-  get city() {
-    this.cityGetterCalls++;
-    return this._city;
-  }
-
-  get zipcode() {
-    this.zipCodeGetterCalls++;
-    return this._zipcode;
-  }
-
-  set city(v) { this._city = v; }
-
-  set zipcode(v) { this._zipcode = v; }
-
-  toString(): string { return isBlank(this.city) ? '-' : this.city }
-}
-
-@Component({selector: 'root'})
-class Uninitialized {
-  value: any = null;
-}
-
-@Component({selector: 'root'})
-class TestData {
-  public a: any;
-}
-
-@Component({selector: 'root'})
-class TestDataWithGetter {
-  public fn: Function;
-
-  get a() { return this.fn(); }
-}
-
-class Holder<T> {
-  value: T;
-}
-
-@Component({selector: 'root'})
-class PersonHolder extends Holder<Person> {
-}
-
-@Component({selector: 'root'})
-class PersonHolderHolder extends Holder<Holder<Person>> {
-}

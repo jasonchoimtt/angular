@@ -9,8 +9,8 @@
 import {StaticReflector, StaticReflectorHost, StaticSymbol} from '@angular/compiler-cli/src/static_reflector';
 import {animate, group, keyframes, sequence, state, style, transition, trigger} from '@angular/core';
 import {beforeEach, ddescribe, describe, expect, iit, it} from '@angular/core/testing/testing_internal';
-import {ListWrapper} from '@angular/facade/src/collection';
-import {isBlank} from '@angular/facade/src/lang';
+import {ListWrapper} from '../src/facade/collection';
+import {isBlank} from '../src/facade/lang';
 import {MetadataCollector} from '@angular/tsc-wrapped';
 import * as ts from 'typescript';
 

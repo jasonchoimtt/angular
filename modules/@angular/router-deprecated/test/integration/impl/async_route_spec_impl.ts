@@ -18,7 +18,7 @@ import {specs, compile, TEST_ROUTER_PROVIDERS, clickOnElement, getHref} from '..
 import {Router, AsyncRoute, Route} from '@angular/router-deprecated';
 
 import {HelloCmp, helloCmpLoader, UserCmp, userCmpLoader, TeamCmp, asyncTeamLoader, ParentCmp, parentCmpLoader, asyncParentCmpLoader, asyncDefaultParentCmpLoader, ParentWithDefaultCmp, parentWithDefaultCmpLoader, asyncRouteDataCmp} from './fixture_components';
-import {By} from '../../../../platform-browser/src/dom/debug/by';
+import {By} from '@angular/platform-browser/src/dom/debug/by';
 
 function getLinkElement(rtc: ComponentFixture<any>) {
   return rtc.debugElement.query(By.css('a')).nativeElement;

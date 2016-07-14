@@ -21,20 +21,20 @@ function writeBody(html: string): any {
   return body;
 }
 
-if (getDOM().supportsDOMEvents()) return;  // NODE only
+if (!getDOM().supportsDOMEvents()) {  // NODE only
+  describe('platform-server integration', () => {
 
-describe('platform-server integration', () => {
+    beforeEach(() => disposePlatform());
+    afterEach(() => disposePlatform());
 
-  beforeEach(() => disposePlatform());
-  afterEach(() => disposePlatform());
-
-  it('should bootstrap', async(() => {
-       var body = writeBody('<app></app>');
-       serverBootstrap(MyServerApp, [
-         BROWSER_APP_PROVIDERS, BROWSER_APP_COMPILER_PROVIDERS
-       ]).then(() => { expect(getDOM().getText(body)).toEqual('Works!'); });
-     }));
-});
+    it('should bootstrap', async(() => {
+         var body = writeBody('<app></app>');
+         serverBootstrap(MyServerApp, [
+           BROWSER_APP_PROVIDERS, BROWSER_APP_COMPILER_PROVIDERS
+         ]).then(() => { expect(getDOM().getText(body)).toEqual('Works!'); });
+       }));
+  });
+}
 
 @Component({selector: 'app', template: `Works!`})
 class MyServerApp {

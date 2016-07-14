@@ -15,10 +15,10 @@ import {Message, id} from '@angular/compiler/src/i18n/message';
 import {deserializeXmb} from '@angular/compiler/src/i18n/xmb_serializer';
 import {InterpolationConfig} from '@angular/compiler/src/interpolation_config';
 import {ParseError} from '@angular/compiler/src/parse_util';
-import {humanizeDom} from '@angular/compiler/test/html_ast_spec_utils';
 import {ddescribe, describe, expect, iit, it} from '@angular/core/testing/testing_internal';
 
 import {StringMapWrapper} from '../../src/facade/collection';
+import {humanizeDom} from '../html_ast_spec_utils';
 
 describe('I18nHtmlParser', () => {
   function parse(
@@ -49,9 +49,8 @@ describe('I18nHtmlParser', () => {
     let translations: {[key: string]: string} = {};
     translations[id(new Message('some message', 'meaning', null))] = 'another message';
 
-    expect(
-        humanizeDom(parse(
-            '<div value=\'some message\' i18n-value=\'meaning|comment\'></div>', translations)))
+    expect(humanizeDom(parse(
+               '<div value=\'some message\' i18n-value=\'meaning|comment\'></div>', translations)))
         .toEqual([[HtmlElementAst, 'div', 0], [HtmlAttrAst, 'value', 'another message']]);
   });
 
@@ -66,8 +65,8 @@ describe('I18nHtmlParser', () => {
 
   it('should handle interpolation', () => {
     let translations: {[key: string]: string} = {};
-    translations[id(new Message(
-        '<ph name="INTERPOLATION_0"/> and <ph name="INTERPOLATION_1"/>', null, null))] =
+    translations[id(
+        new Message('<ph name="INTERPOLATION_0"/> and <ph name="INTERPOLATION_1"/>', null, null))] =
         '<ph name="INTERPOLATION_1"/> or <ph name="INTERPOLATION_0"/>';
 
     expect(humanizeDom(parse('<div value=\'{{a}} and {{b}}\' i18n-value></div>', translations)))
@@ -76,8 +75,8 @@ describe('I18nHtmlParser', () => {
 
   it('should handle interpolation with config', () => {
     let translations: {[key: string]: string} = {};
-    translations[id(new Message(
-        '<ph name="INTERPOLATION_0"/> and <ph name="INTERPOLATION_1"/>', null, null))] =
+    translations[id(
+        new Message('<ph name="INTERPOLATION_0"/> and <ph name="INTERPOLATION_1"/>', null, null))] =
         '<ph name="INTERPOLATION_1"/> or <ph name="INTERPOLATION_0"/>';
 
     expect(humanizeDom(parse(
@@ -192,8 +191,7 @@ describe('I18nHtmlParser', () => {
     translations[id(new Message('<ph name="e0">a</ph><ph name="e2">b</ph>', null, null))] =
         '<ph name="e2">B</ph><ph name="e0">A</ph>';
 
-    let res =
-        (<any>parse('<div i18n><a>a</a><b>b</b></div>', translations).rootNodes[0]).children;
+    let res = (<any>parse('<div i18n><a>a</a><b>b</b></div>', translations).rootNodes[0]).children;
 
     expect(res[0].sourceSpan.start.offset).toEqual(18);
     expect(res[1].sourceSpan.start.offset).toEqual(10);
@@ -201,9 +199,7 @@ describe('I18nHtmlParser', () => {
 
   describe('errors', () => {
     it('should error when giving an invalid template', () => {
-      expect(humanizeErrors(parse('<a>a</b>', {}).errors)).toEqual([
-        'Unexpected closing tag "b"'
-      ]);
+      expect(humanizeErrors(parse('<a>a</b>', {}).errors)).toEqual(['Unexpected closing tag "b"']);
     });
 
     it('should error when no matching message (attr)', () => {
@@ -272,8 +268,9 @@ describe('I18nHtmlParser', () => {
       let translations: {[key: string]: string} = {};
       translations[id(new Message('message', null, null))] = 'another message';
 
-      expect(humanizeDom(parse('<i18n-el>message</i18n-el>', translations, ['i18n-el'])))
-          .toEqual([[HtmlElementAst, 'i18n-el', 0], [HtmlTextAst, 'another message', 1]]);
+      expect(humanizeDom(parse('<i18n-el>message</i18n-el>', translations, ['i18n-el']))).toEqual([
+        [HtmlElementAst, 'i18n-el', 0], [HtmlTextAst, 'another message', 1]
+      ]);
     });
 
     it('should support elements with meaning and description', () => {

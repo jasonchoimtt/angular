@@ -12,8 +12,8 @@ import {AppModule, Component, ComponentFactoryResolver, Directive, Injectable, I
 import {TestComponentBuilder, addProviders, async, configureCompiler, configureModule, fakeAsync, inject, tick, withModule, withProviders} from '@angular/core/testing';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {stringify} from '@angular/http/src/facade/lang';
-import {PromiseWrapper} from '@angular/http/src/facade/promise';
+import {stringify} from '../src/facade/lang';
+import {PromiseWrapper} from '../src/facade/promise';
 
 // Services, and components for the tests.
 
