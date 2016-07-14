@@ -1,5 +1,5 @@
-import {PRIMARY_OUTLET} from '../src/shared';
-import {DefaultUrlSerializer, UrlSegment, serializePath} from '../src/url_tree';
+import {PRIMARY_OUTLET} from '@angular/router/src/shared';
+import {DefaultUrlSerializer, UrlSegment, serializePath} from '@angular/router/src/url_tree';
 
 describe('url serializer', () => {
   const url = new DefaultUrlSerializer();

@@ -1,8 +1,8 @@
-import {Routes} from '../src/config';
-import {recognize} from '../src/recognize';
-import {resolve} from '../src/resolve';
-import {RouterStateSnapshot} from '../src/router_state';
-import {DefaultUrlSerializer, UrlSegment, UrlTree} from '../src/url_tree';
+import {Routes} from '@angular/router/src/config';
+import {recognize} from '@angular/router/src/recognize';
+import {resolve} from '@angular/router/src/resolve';
+import {RouterStateSnapshot} from '@angular/router/src/router_state';
+import {DefaultUrlSerializer, UrlSegment, UrlTree} from '@angular/router/src/url_tree';
 
 describe('resolve', () => {
   it('should resolve components', () => {

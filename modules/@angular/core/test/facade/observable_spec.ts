@@ -11,55 +11,53 @@ import {AsyncTestCompleter} from '@angular/core/testing/testing_internal';
 
 import {EventEmitter, Observable, PromiseWrapper, Subject} from '../../src/facade/async';
 
-export function main() {
-  describe('Observable', () => {
-    describe('#core', () => {
+describe('Observable', () => {
+  describe('#core', () => {
 
-      it('should call next with values',
-         inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+    it('should call next with values',
+       inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
 
-           let o = new Observable((sink: any /** TODO #9100 */) => { sink.next(1); });
+         let o = new Observable((sink: any /** TODO #9100 */) => { sink.next(1); });
 
-           o.subscribe(v => {
-             expect(v).toEqual(1);
-             async.done();
-           });
+         o.subscribe(v => {
+           expect(v).toEqual(1);
+           async.done();
+         });
 
-         }));
+       }));
 
-      it('should call next and then complete',
-         inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+    it('should call next and then complete',
+       inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
 
-           let o = new Observable((sink: any /** TODO #9100 */) => {
-             sink.next(1);
-             sink.complete();
-           });
-           let nexted = false;
+         let o = new Observable((sink: any /** TODO #9100 */) => {
+           sink.next(1);
+           sink.complete();
+         });
+         let nexted = false;
 
-           o.subscribe(
-               v => { nexted = true; }, null,
-               () => {
-                 expect(nexted).toBe(true);
-                 async.done();
-               });
+         o.subscribe(
+             v => { nexted = true; }, null,
+             () => {
+               expect(nexted).toBe(true);
+               async.done();
+             });
 
-         }));
+       }));
 
-      it('should call error with errors',
-         inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+    it('should call error with errors',
+       inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
 
-           let o = new Observable((sink: any /** TODO #9100 */) => { sink.error('oh noes!'); });
+         let o = new Observable((sink: any /** TODO #9100 */) => { sink.error('oh noes!'); });
 
-           o.subscribe(
-               v => {
+         o.subscribe(
+             v => {
 
-               },
-               (err) => {
-                 expect(err).toEqual('oh noes!');
-                 async.done();
-               });
+             },
+             (err) => {
+               expect(err).toEqual('oh noes!');
+               async.done();
+             });
 
-         }));
-    });
+       }));
   });
-}
+});

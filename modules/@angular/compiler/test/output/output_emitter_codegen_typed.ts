@@ -14,7 +14,7 @@ import {TypeScriptEmitter} from '@angular/compiler/src/output/ts_emitter';
 
 import {unimplemented} from '../../src/facade/exceptions';
 import {IS_DART, print} from '../../src/facade/lang';
-import {assetUrl} from '../../src/util';
+import {assetUrl} from '@angular/compiler/src/util';
 
 import {SimpleJsImportGenerator, codegenExportsVars, codegenStmts} from './output_emitter_util';
 

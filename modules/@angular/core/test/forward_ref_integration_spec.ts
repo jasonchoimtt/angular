@@ -14,20 +14,18 @@ import {beforeEach, ddescribe, describe, iit, inject, it, xit} from '@angular/co
 import {AsyncTestCompleter} from '@angular/core/testing/testing_internal';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-export function main() {
-  describe('forwardRef integration', function() {
-    it('should instantiate components which are declared using forwardRef',
-       inject(
-           [TestComponentBuilder, AsyncTestCompleter],
-           (tcb: TestComponentBuilder, async: AsyncTestCompleter) => {
-             tcb.createAsync(App).then((tc) => {
-               tc.detectChanges();
-               expect(asNativeElements(tc.debugElement.children)).toHaveText('frame(lock)');
-               async.done();
-             });
-           }));
-  });
-}
+describe('forwardRef integration', function() {
+  it('should instantiate components which are declared using forwardRef',
+     inject(
+         [TestComponentBuilder, AsyncTestCompleter],
+         (tcb: TestComponentBuilder, async: AsyncTestCompleter) => {
+           tcb.createAsync(App).then((tc) => {
+             tc.detectChanges();
+             expect(asNativeElements(tc.debugElement.children)).toHaveText('frame(lock)');
+             async.done();
+           });
+         }));
+});
 
 @Component({
   selector: 'app',

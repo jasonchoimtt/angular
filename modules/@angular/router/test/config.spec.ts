@@ -1,4 +1,4 @@
-import {validateConfig} from '../src/config';
+import {validateConfig} from '@angular/router/src/config';
 
 describe('config', () => {
   describe('validateConfig', () => {

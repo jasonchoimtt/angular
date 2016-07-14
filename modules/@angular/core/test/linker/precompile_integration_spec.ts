@@ -13,10 +13,8 @@ import {getDOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {Component, ViewChild, ViewContainerRef, ComponentFactoryResolver, NoComponentFactoryError, ComponentRef, forwardRef, ANALYZE_FOR_PRECOMPILE} from '@angular/core';
 import {CompilerConfig} from '@angular/compiler';
 
-export function main() {
-  describe('jit', () => { declareTests({useJit: true}); });
-  describe('no jit', () => { declareTests({useJit: false}); });
-}
+describe('jit', () => { declareTests({useJit: true}); });
+describe('no jit', () => { declareTests({useJit: false}); });
 
 function declareTests({useJit}: {useJit: boolean}) {
   describe('@Component.precompile', function() {

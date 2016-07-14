@@ -29,31 +29,29 @@ class ComponentWithoutView {
 
 class SimpleClass {}
 
-export function main() {
-  describe('ViewResolver', () => {
-    var resolver: ViewResolver;
+describe('ViewResolver', () => {
+  var resolver: ViewResolver;
 
-    beforeEach(() => { resolver = new ViewResolver(); });
+  beforeEach(() => { resolver = new ViewResolver(); });
 
-    it('should read out the View metadata from the Component metadata', () => {
-      var viewMetadata = resolver.resolve(ComponentWithTemplate);
-      expect(viewMetadata).toEqual(new ViewMetadata({
-        template: 'some template',
-        directives: [SomeDir],
-        pipes: [SomePipe],
-        styles: ['some styles']
-      }));
-    });
-
-    it('should throw when Component has neither template nor templateUrl set', () => {
-      expect(() => resolver.resolve(ComponentWithoutView))
-          .toThrowError(
-              /Component 'ComponentWithoutView' must have either 'template' or 'templateUrl' set/);
-    });
-
-    it('should throw when simple class has no component decorator', () => {
-      expect(() => resolver.resolve(SimpleClass))
-          .toThrowError('Could not compile \'SimpleClass\' because it is not a component.');
-    });
+  it('should read out the View metadata from the Component metadata', () => {
+    var viewMetadata = resolver.resolve(ComponentWithTemplate);
+    expect(viewMetadata).toEqual(new ViewMetadata({
+      template: 'some template',
+      directives: [SomeDir],
+      pipes: [SomePipe],
+      styles: ['some styles']
+    }));
   });
-}
+
+  it('should throw when Component has neither template nor templateUrl set', () => {
+    expect(() => resolver.resolve(ComponentWithoutView))
+        .toThrowError(
+            /Component 'ComponentWithoutView' must have either 'template' or 'templateUrl' set/);
+  });
+
+  it('should throw when simple class has no component decorator', () => {
+    expect(() => resolver.resolve(SimpleClass))
+        .toThrowError('Could not compile \'SimpleClass\' because it is not a component.');
+  });
+});

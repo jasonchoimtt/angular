@@ -11,25 +11,23 @@ import {beforeEachProviders, ddescribe, describe} from '@angular/core/testing/te
 import {registerSpecs} from './impl/sync_route_spec_impl';
 import {TEST_ROUTER_PROVIDERS, ddescribeRouter, describeRouter, describeWith, describeWithAndWithout, describeWithout, itShouldRoute} from './util';
 
-export function main() {
-  describe('sync route spec', () => {
+describe('sync route spec', () => {
 
-    beforeEachProviders(() => TEST_ROUTER_PROVIDERS);
+  beforeEachProviders(() => TEST_ROUTER_PROVIDERS);
 
-    registerSpecs();
+  registerSpecs();
 
-    describeRouter('sync routes', () => {
-      describeWithout('children', () => { describeWithAndWithout('params', itShouldRoute); });
+  describeRouter('sync routes', () => {
+    describeWithout('children', () => { describeWithAndWithout('params', itShouldRoute); });
 
-      describeWith('sync children', () => {
-        describeWithout(
-            'default routes', () => { describeWithAndWithout('params', itShouldRoute); });
-        describeWith('default routes', () => { describeWithout('params', itShouldRoute); });
+    describeWith('sync children', () => {
+      describeWithout(
+          'default routes', () => { describeWithAndWithout('params', itShouldRoute); });
+      describeWith('default routes', () => { describeWithout('params', itShouldRoute); });
 
-      });
-
-      describeWith('dynamic components', itShouldRoute);
     });
 
+    describeWith('dynamic components', itShouldRoute);
   });
-}
+
+});

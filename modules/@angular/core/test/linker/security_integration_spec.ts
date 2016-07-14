@@ -17,15 +17,12 @@ import {IS_DART} from '../../src/facade/lang';
 import {el} from '@angular/platform-browser/testing/browser_util';
 import {DomSanitizationService} from '@angular/platform-browser/src/security/dom_sanitization_service';
 
+if (IS_DART) {
+  declareTests({useJit: false});
+} else {
+  describe('jit', () => { declareTests({useJit: true}); });
 
-export function main() {
-  if (IS_DART) {
-    declareTests({useJit: false});
-  } else {
-    describe('jit', () => { declareTests({useJit: true}); });
-
-    describe('no jit', () => { declareTests({useJit: false}); });
-  }
+  describe('no jit', () => { declareTests({useJit: false}); });
 }
 
 @Component({selector: 'my-comp', template: '', directives: []})

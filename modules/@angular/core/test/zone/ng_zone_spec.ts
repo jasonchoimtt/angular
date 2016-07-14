@@ -59,113 +59,111 @@ function runNgZoneNoLog(fn: () => any) {
   }
 }
 
-export function main() {
-  describe('NgZone', () => {
+describe('NgZone', () => {
 
-    function createZone(enableLongStackTrace: boolean) {
-      return new NgZone({enableLongStackTrace: enableLongStackTrace});
-    }
+  function createZone(enableLongStackTrace: boolean) {
+    return new NgZone({enableLongStackTrace: enableLongStackTrace});
+  }
 
+  beforeEach(() => {
+    _log = new Log();
+    _errors = [];
+    _traces = [];
+  });
+
+  describe('long stack trace', () => {
     beforeEach(() => {
-      _log = new Log();
-      _errors = [];
-      _traces = [];
+      _zone = createZone(true);
+      logOnUnstable();
+      logOnMicrotaskEmpty();
+      logOnStable();
+      logOnError();
     });
 
-    describe('long stack trace', () => {
-      beforeEach(() => {
-        _zone = createZone(true);
-        logOnUnstable();
-        logOnMicrotaskEmpty();
-        logOnStable();
-        logOnError();
-      });
+    commonTests();
 
-      commonTests();
+    it('should produce long stack traces',
+       inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+         macroTask(() => {
+           var c: PromiseCompleter<any> = PromiseWrapper.completer();
 
-      it('should produce long stack traces',
-         inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
-           macroTask(() => {
-             var c: PromiseCompleter<any> = PromiseWrapper.completer();
-
-             _zone.run(() => {
+           _zone.run(() => {
+             TimerWrapper.setTimeout(() => {
                TimerWrapper.setTimeout(() => {
-                 TimerWrapper.setTimeout(() => {
-                   c.resolve(null);
-                   throw new BaseException('ccc');
-                 }, 0);
+                 c.resolve(null);
+                 throw new BaseException('ccc');
                }, 0);
-             });
-
-             c.promise.then((_) => {
-               expect(_traces.length).toBe(1);
-               expect(_traces[0].length).toBeGreaterThan(1);
-               async.done();
-             });
+             }, 0);
            });
-         }), testTimeout);
 
-      it('should produce long stack traces (when using microtasks)',
-         inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
-           macroTask(() => {
-             var c: PromiseCompleter<any> = PromiseWrapper.completer();
+           c.promise.then((_) => {
+             expect(_traces.length).toBe(1);
+             expect(_traces[0].length).toBeGreaterThan(1);
+             async.done();
+           });
+         });
+       }), testTimeout);
 
-             _zone.run(() => {
+    it('should produce long stack traces (when using microtasks)',
+       inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+         macroTask(() => {
+           var c: PromiseCompleter<any> = PromiseWrapper.completer();
+
+           _zone.run(() => {
+             scheduleMicroTask(() => {
                scheduleMicroTask(() => {
-                 scheduleMicroTask(() => {
-                   c.resolve(null);
-                   throw new BaseException('ddd');
-                 });
+                 c.resolve(null);
+                 throw new BaseException('ddd');
                });
              });
-
-             c.promise.then((_) => {
-               expect(_traces.length).toBe(1);
-               expect(_traces[0].length).toBeGreaterThan(1);
-               async.done();
-             });
            });
-         }), testTimeout);
-    });
 
-    describe('short stack trace', () => {
-      beforeEach(() => {
-        _zone = createZone(false);
-        logOnUnstable();
-        logOnMicrotaskEmpty();
-        logOnStable();
-        logOnError();
-      });
-
-      commonTests();
-
-      it('should disable long stack traces',
-         inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
-           macroTask(() => {
-             var c: PromiseCompleter<any> = PromiseWrapper.completer();
-
-             _zone.run(() => {
-               TimerWrapper.setTimeout(() => {
-                 TimerWrapper.setTimeout(() => {
-                   c.resolve(null);
-                   throw new BaseException('ccc');
-                 }, 0);
-               }, 0);
-             });
-
-             c.promise.then((_) => {
-               expect(_traces.length).toBe(1);
-               if (isPresent(_traces[0])) {
-                 // some browsers don't have stack traces.
-                 expect(_traces[0].indexOf('---')).toEqual(-1);
-               }
-               async.done();
-             });
+           c.promise.then((_) => {
+             expect(_traces.length).toBe(1);
+             expect(_traces[0].length).toBeGreaterThan(1);
+             async.done();
            });
-         }), testTimeout);
-    });
+         });
+       }), testTimeout);
   });
-}
+
+  describe('short stack trace', () => {
+    beforeEach(() => {
+      _zone = createZone(false);
+      logOnUnstable();
+      logOnMicrotaskEmpty();
+      logOnStable();
+      logOnError();
+    });
+
+    commonTests();
+
+    it('should disable long stack traces',
+       inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+         macroTask(() => {
+           var c: PromiseCompleter<any> = PromiseWrapper.completer();
+
+           _zone.run(() => {
+             TimerWrapper.setTimeout(() => {
+               TimerWrapper.setTimeout(() => {
+                 c.resolve(null);
+                 throw new BaseException('ccc');
+               }, 0);
+             }, 0);
+           });
+
+           c.promise.then((_) => {
+             expect(_traces.length).toBe(1);
+             if (isPresent(_traces[0])) {
+               // some browsers don't have stack traces.
+               expect(_traces[0].indexOf('---')).toEqual(-1);
+             }
+             async.done();
+           });
+         });
+       }), testTimeout);
+  });
+});
 
 function commonTests() {
   describe('hasPendingMicrotasks', () => {

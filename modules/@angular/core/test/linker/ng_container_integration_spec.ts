@@ -16,10 +16,8 @@ import {NgIf} from '@angular/common';
 import {CompilerConfig} from '@angular/compiler';
 import {el} from '@angular/platform-browser/testing/browser_util';
 
-export function main() {
-  describe('jit', () => { declareTests({useJit: true}); });
-  describe('no jit', () => { declareTests({useJit: false}); });
-}
+describe('jit', () => { declareTests({useJit: true}); });
+describe('no jit', () => { declareTests({useJit: false}); });
 
 function declareTests({useJit}: {useJit: boolean}) {
   describe('<ng-container>', function() {

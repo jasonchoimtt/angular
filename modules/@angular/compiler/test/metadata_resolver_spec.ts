@@ -14,125 +14,123 @@ import {configureCompiler} from '@angular/core/testing';
 import {afterEach, beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 
 import {IS_DART, stringify} from '../src/facade/lang';
-import {CompileMetadataResolver} from '../src/metadata_resolver';
+import {CompileMetadataResolver} from '@angular/compiler/src/metadata_resolver';
 
 import {MalformedStylesComponent} from './metadata_resolver_fixture';
 
-export function main() {
-  describe('CompileMetadataResolver', () => {
-    beforeEach(() => { configureCompiler({providers: TEST_COMPILER_PROVIDERS}); });
+describe('CompileMetadataResolver', () => {
+  beforeEach(() => { configureCompiler({providers: TEST_COMPILER_PROVIDERS}); });
 
-    describe('getMetadata', () => {
-      it('should read metadata',
+  describe('getMetadata', () => {
+    it('should read metadata',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         var meta = resolver.getDirectiveMetadata(ComponentWithEverything);
+         expect(meta.selector).toEqual('someSelector');
+         expect(meta.exportAs).toEqual('someExportAs');
+         expect(meta.isComponent).toBe(true);
+         expect(meta.type.runtime).toBe(ComponentWithEverything);
+         expect(meta.type.name).toEqual(stringify(ComponentWithEverything));
+         expect(meta.lifecycleHooks).toEqual(LIFECYCLE_HOOKS_VALUES);
+         expect(meta.changeDetection).toBe(ChangeDetectionStrategy.Default);
+         expect(meta.inputs).toEqual({'someProp': 'someProp'});
+         expect(meta.outputs).toEqual({'someEvent': 'someEvent'});
+         expect(meta.hostListeners).toEqual({'someHostListener': 'someHostListenerExpr'});
+         expect(meta.hostProperties).toEqual({'someHostProp': 'someHostPropExpr'});
+         expect(meta.hostAttributes).toEqual({'someHostAttr': 'someHostAttrValue'});
+         expect(meta.template.encapsulation).toBe(ViewEncapsulation.Emulated);
+         expect(meta.template.styles).toEqual(['someStyle']);
+         expect(meta.template.styleUrls).toEqual(['someStyleUrl']);
+         expect(meta.template.template).toEqual('someTemplate');
+         expect(meta.template.templateUrl).toEqual('someTemplateUrl');
+         expect(meta.template.interpolation).toEqual(['{{', '}}']);
+       }));
+
+    it('should use the moduleUrl from the reflector if none is given',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         var value: string =
+             resolver.getDirectiveMetadata(ComponentWithoutModuleId).type.moduleUrl;
+         var expectedEndValue =
+             IS_DART ? 'test/compiler/metadata_resolver_spec.dart' : './ComponentWithoutModuleId';
+         expect(value.endsWith(expectedEndValue)).toBe(true);
+       }));
+
+    it('should throw when metadata is incorrectly typed',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         expect(() => resolver.getDirectiveMetadata(MalformedStylesComponent))
+             .toThrowError(`Expected 'styles' to be an array of strings.`);
+       }));
+
+    it('should throw with descriptive error message when provider token can not be resolved',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         expect(() => resolver.getDirectiveMetadata(MyBrokenComp1))
+             .toThrowError(`Can't resolve all parameters for MyBrokenComp1: (?).`);
+       }));
+
+    it('should throw with descriptive error message when a param token of a dependency is undefined',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         expect(() => resolver.getDirectiveMetadata(MyBrokenComp2))
+             .toThrowError(`Can't resolve all parameters for NonAnnotatedService: (?).`);
+       }));
+
+    it('should throw with descriptive error message when one of providers is not present',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         expect(() => resolver.getDirectiveMetadata(MyBrokenComp3))
+             .toThrowError(
+                 `One or more of providers for "MyBrokenComp3" were not defined: [?, SimpleService, ?].`);
+       }));
+
+    it('should throw with descriptive error message when one of viewProviders is not present',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         expect(() => resolver.getDirectiveMetadata(MyBrokenComp4))
+             .toThrowError(
+                 `One or more of viewProviders for "MyBrokenComp4" were not defined: [?, SimpleService, ?].`);
+       }));
+
+    it('should throw an error when the interpolation config has invalid symbols',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation1))
+             .toThrowError(`[' ', ' '] contains unusable interpolation symbol.`);
+         expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation2))
+             .toThrowError(`['{', '}'] contains unusable interpolation symbol.`);
+         expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation3))
+             .toThrowError(`['<%', '%>'] contains unusable interpolation symbol.`);
+         expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation4))
+             .toThrowError(`['&#', '}}'] contains unusable interpolation symbol.`);
+         expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation5))
+             .toThrowError(`['&lbrace;', '}}'] contains unusable interpolation symbol.`);
+       }));
+  });
+
+  describe('getViewDirectivesMetadata', () => {
+
+    it('should return the directive metadatas',
+       inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+         expect(resolver.getViewDirectivesMetadata(ComponentWithEverything))
+             .toContain(resolver.getDirectiveMetadata(SomeDirective));
+       }));
+
+    describe('platform directives', () => {
+      beforeEach(() => {
+        configureCompiler({
+          providers: [{
+            provide: CompilerConfig,
+            useValue: new CompilerConfig(
+                {genDebugInfo: true, deprecatedPlatformDirectives: [ADirective]})
+          }]
+        });
+      });
+
+      it('should include platform directives when available',
          inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-           var meta = resolver.getDirectiveMetadata(ComponentWithEverything);
-           expect(meta.selector).toEqual('someSelector');
-           expect(meta.exportAs).toEqual('someExportAs');
-           expect(meta.isComponent).toBe(true);
-           expect(meta.type.runtime).toBe(ComponentWithEverything);
-           expect(meta.type.name).toEqual(stringify(ComponentWithEverything));
-           expect(meta.lifecycleHooks).toEqual(LIFECYCLE_HOOKS_VALUES);
-           expect(meta.changeDetection).toBe(ChangeDetectionStrategy.Default);
-           expect(meta.inputs).toEqual({'someProp': 'someProp'});
-           expect(meta.outputs).toEqual({'someEvent': 'someEvent'});
-           expect(meta.hostListeners).toEqual({'someHostListener': 'someHostListenerExpr'});
-           expect(meta.hostProperties).toEqual({'someHostProp': 'someHostPropExpr'});
-           expect(meta.hostAttributes).toEqual({'someHostAttr': 'someHostAttrValue'});
-           expect(meta.template.encapsulation).toBe(ViewEncapsulation.Emulated);
-           expect(meta.template.styles).toEqual(['someStyle']);
-           expect(meta.template.styleUrls).toEqual(['someStyleUrl']);
-           expect(meta.template.template).toEqual('someTemplate');
-           expect(meta.template.templateUrl).toEqual('someTemplateUrl');
-           expect(meta.template.interpolation).toEqual(['{{', '}}']);
-         }));
-
-      it('should use the moduleUrl from the reflector if none is given',
-         inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-           var value: string =
-               resolver.getDirectiveMetadata(ComponentWithoutModuleId).type.moduleUrl;
-           var expectedEndValue =
-               IS_DART ? 'test/compiler/metadata_resolver_spec.dart' : './ComponentWithoutModuleId';
-           expect(value.endsWith(expectedEndValue)).toBe(true);
-         }));
-
-      it('should throw when metadata is incorrectly typed',
-         inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-           expect(() => resolver.getDirectiveMetadata(MalformedStylesComponent))
-               .toThrowError(`Expected 'styles' to be an array of strings.`);
-         }));
-
-      it('should throw with descriptive error message when provider token can not be resolved',
-         inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-           expect(() => resolver.getDirectiveMetadata(MyBrokenComp1))
-               .toThrowError(`Can't resolve all parameters for MyBrokenComp1: (?).`);
-         }));
-
-      it('should throw with descriptive error message when a param token of a dependency is undefined',
-         inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-           expect(() => resolver.getDirectiveMetadata(MyBrokenComp2))
-               .toThrowError(`Can't resolve all parameters for NonAnnotatedService: (?).`);
-         }));
-
-      it('should throw with descriptive error message when one of providers is not present',
-         inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-           expect(() => resolver.getDirectiveMetadata(MyBrokenComp3))
-               .toThrowError(
-                   `One or more of providers for "MyBrokenComp3" were not defined: [?, SimpleService, ?].`);
-         }));
-
-      it('should throw with descriptive error message when one of viewProviders is not present',
-         inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-           expect(() => resolver.getDirectiveMetadata(MyBrokenComp4))
-               .toThrowError(
-                   `One or more of viewProviders for "MyBrokenComp4" were not defined: [?, SimpleService, ?].`);
-         }));
-
-      it('should throw an error when the interpolation config has invalid symbols',
-         inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-           expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation1))
-               .toThrowError(`[' ', ' '] contains unusable interpolation symbol.`);
-           expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation2))
-               .toThrowError(`['{', '}'] contains unusable interpolation symbol.`);
-           expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation3))
-               .toThrowError(`['<%', '%>'] contains unusable interpolation symbol.`);
-           expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation4))
-               .toThrowError(`['&#', '}}'] contains unusable interpolation symbol.`);
-           expect(() => resolver.getDirectiveMetadata(ComponentWithInvalidInterpolation5))
-               .toThrowError(`['&lbrace;', '}}'] contains unusable interpolation symbol.`);
-         }));
-    });
-
-    describe('getViewDirectivesMetadata', () => {
-
-      it('should return the directive metadatas',
-         inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
+           expect(resolver.getViewDirectivesMetadata(ComponentWithEverything))
+               .toContain(resolver.getDirectiveMetadata(ADirective));
            expect(resolver.getViewDirectivesMetadata(ComponentWithEverything))
                .toContain(resolver.getDirectiveMetadata(SomeDirective));
          }));
-
-      describe('platform directives', () => {
-        beforeEach(() => {
-          configureCompiler({
-            providers: [{
-              provide: CompilerConfig,
-              useValue: new CompilerConfig(
-                  {genDebugInfo: true, deprecatedPlatformDirectives: [ADirective]})
-            }]
-          });
-        });
-
-        it('should include platform directives when available',
-           inject([CompileMetadataResolver], (resolver: CompileMetadataResolver) => {
-             expect(resolver.getViewDirectivesMetadata(ComponentWithEverything))
-                 .toContain(resolver.getDirectiveMetadata(ADirective));
-             expect(resolver.getViewDirectivesMetadata(ComponentWithEverything))
-                 .toContain(resolver.getDirectiveMetadata(SomeDirective));
-           }));
-      });
     });
-
   });
-}
+
+});
 
 @Directive({selector: 'a-directive'})
 class ADirective {

@@ -8,7 +8,7 @@
 
 import * as ts from 'typescript';
 
-import {ReflectorHost, ReflectorHostContext} from '../src/reflector_host';
+import {ReflectorHost, ReflectorHostContext} from '@angular/compiler-cli/src/reflector_host';
 
 export type Entry = string | Directory;
 

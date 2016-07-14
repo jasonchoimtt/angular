@@ -40,14 +40,12 @@ import {el, dispatchEvent} from '@angular/platform-browser/testing/browser_util'
 
 const ANCHOR_ELEMENT = /*@ts2dart_const*/ new OpaqueToken('AnchorElement');
 
-export function main() {
-  if (IS_DART) {
-    declareTests({useJit: false});
-  } else {
-    describe('jit', () => { declareTests({useJit: true}); });
+if (IS_DART) {
+  declareTests({useJit: false});
+} else {
+  describe('jit', () => { declareTests({useJit: true}); });
 
-    describe('no jit', () => { declareTests({useJit: false}); });
-  }
+  describe('no jit', () => { declareTests({useJit: false}); });
 }
 
 function declareTests({useJit}: {useJit: boolean}) {

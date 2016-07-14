@@ -120,14 +120,12 @@ class ParentCompUsingModuleDirectiveAndPipe {
 class ModuleWithDirectivesAndPipes {
 }
 
-export function main() {
-  if (IS_DART) {
-    declareTests({useJit: false});
-  } else {
-    describe('jit', () => { declareTests({useJit: true}); });
+if (IS_DART) {
+  declareTests({useJit: false});
+} else {
+  describe('jit', () => { declareTests({useJit: true}); });
 
-    describe('no jit', () => { declareTests({useJit: false}); });
-  }
+  describe('no jit', () => { declareTests({useJit: false}); });
 }
 
 function declareTests({useJit}: {useJit: boolean}) {

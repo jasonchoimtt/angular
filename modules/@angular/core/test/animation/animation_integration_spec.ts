@@ -13,26 +13,24 @@ import {AnimationDriver} from '@angular/platform-browser/src/dom/animation_drive
 import {getDOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {MockAnimationDriver} from '@angular/platform-browser/testing/mock_animation_driver';
 
-import {BaseException} from '../../../compiler/src/facade/exceptions';
-import {Component} from '../../index';
-import {DEFAULT_STATE} from '../../src/animation/animation_constants';
-import {AnimationKeyframe} from '../../src/animation/animation_keyframe';
-import {AnimationPlayer} from '../../src/animation/animation_player';
-import {AnimationStyles} from '../../src/animation/animation_styles';
-import {AnimationEntryMetadata, animate, group, keyframes, sequence, state, style, transition, trigger} from '../../src/animation/metadata';
-import {AUTO_STYLE} from '../../src/animation/metadata';
+import {BaseException} from '@angular/compiler/src/facade/exceptions';
+import {Component} from '@angular/core/index';
+import {DEFAULT_STATE} from '@angular/core/src/animation/animation_constants';
+import {AnimationKeyframe} from '@angular/core/src/animation/animation_keyframe';
+import {AnimationPlayer} from '@angular/core/src/animation/animation_player';
+import {AnimationStyles} from '@angular/core/src/animation/animation_styles';
+import {AnimationEntryMetadata, animate, group, keyframes, sequence, state, style, transition, trigger} from '@angular/core/src/animation/metadata';
+import {AUTO_STYLE} from '@angular/core/src/animation/metadata';
 import {IS_DART, isArray, isPresent} from '../../src/facade/lang';
-import {configureCompiler, configureModule, fakeAsync, flushMicrotasks, tick} from '../../testing';
-import {MockAnimationPlayer} from '../../testing/mock_animation_player';
-import {AsyncTestCompleter, beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '../../testing/testing_internal';
+import {configureCompiler, configureModule, fakeAsync, flushMicrotasks, tick} from '@angular/core/testing';
+import {MockAnimationPlayer} from '@angular/core/testing/mock_animation_player';
+import {AsyncTestCompleter, beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 
-export function main() {
-  if (IS_DART) {
-    declareTests({useJit: false});
-  } else {
-    describe('jit', () => { declareTests({useJit: true}); });
-    describe('no jit', () => { declareTests({useJit: false}); });
-  }
+if (IS_DART) {
+  declareTests({useJit: false});
+} else {
+  describe('jit', () => { declareTests({useJit: true}); });
+  describe('no jit', () => { declareTests({useJit: false}); });
 }
 
 function declareTests({useJit}: {useJit: boolean}) {

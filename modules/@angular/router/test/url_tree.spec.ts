@@ -1,4 +1,4 @@
-import {DefaultUrlSerializer, UrlTree, containsTree} from '../src/url_tree';
+import {DefaultUrlSerializer, UrlTree, containsTree} from '@angular/router/src/url_tree';
 
 describe('UrlTree', () => {
   const serializer = new DefaultUrlSerializer();

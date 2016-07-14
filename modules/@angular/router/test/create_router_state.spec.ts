@@ -1,10 +1,10 @@
-import {Routes} from '../src/config';
-import {createRouterState} from '../src/create_router_state';
-import {recognize} from '../src/recognize';
-import {ActivatedRoute, RouterState, RouterStateSnapshot, advanceActivatedRoute, createEmptyState} from '../src/router_state';
-import {PRIMARY_OUTLET, Params} from '../src/shared';
-import {DefaultUrlSerializer, UrlSegment, UrlTree} from '../src/url_tree';
-import {TreeNode} from '../src/utils/tree';
+import {Routes} from '@angular/router/src/config';
+import {createRouterState} from '@angular/router/src/create_router_state';
+import {recognize} from '@angular/router/src/recognize';
+import {ActivatedRoute, RouterState, RouterStateSnapshot, advanceActivatedRoute, createEmptyState} from '@angular/router/src/router_state';
+import {PRIMARY_OUTLET, Params} from '@angular/router/src/shared';
+import {DefaultUrlSerializer, UrlSegment, UrlTree} from '@angular/router/src/url_tree';
+import {TreeNode} from '@angular/router/src/utils/tree';
 
 describe('create router state', () => {
   const emptyState = () =>

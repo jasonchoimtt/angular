@@ -1,4 +1,4 @@
-import {Tree, TreeNode} from '../../src/utils/tree';
+import {Tree, TreeNode} from '@angular/router/src/utils/tree';
 
 describe('tree', () => {
   it('should return the root of the tree', () => {

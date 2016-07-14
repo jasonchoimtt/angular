@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {afterEach, beforeEach, ddescribe, describe, expect, iit, it, xit} from '../../core/testing/testing_internal';
-import {CssAst, CssAstVisitor, CssAtRulePredicateAst, CssBlockAst, CssBlockDefinitionRuleAst, CssBlockRuleAst, CssDefinitionAst, CssInlineRuleAst, CssKeyframeDefinitionAst, CssKeyframeRuleAst, CssMediaQueryRuleAst, CssPseudoSelectorAst, CssRuleAst, CssSelectorAst, CssSelectorRuleAst, CssSimpleSelectorAst, CssStyleSheetAst, CssStyleValueAst, CssStylesBlockAst, CssUnknownRuleAst, CssUnknownTokenListAst} from '../src/css_ast';
-import {BlockType, CssParseError, CssParser, CssToken} from '../src/css_parser';
+import {afterEach, beforeEach, ddescribe, describe, expect, iit, it, xit} from '@angular/core/testing/testing_internal';
+import {CssAst, CssAstVisitor, CssAtRulePredicateAst, CssBlockAst, CssBlockDefinitionRuleAst, CssBlockRuleAst, CssDefinitionAst, CssInlineRuleAst, CssKeyframeDefinitionAst, CssKeyframeRuleAst, CssMediaQueryRuleAst, CssPseudoSelectorAst, CssRuleAst, CssSelectorAst, CssSelectorRuleAst, CssSimpleSelectorAst, CssStyleSheetAst, CssStyleValueAst, CssStylesBlockAst, CssUnknownRuleAst, CssUnknownTokenListAst} from '@angular/compiler/src/css_ast';
+import {BlockType, CssParseError, CssParser, CssToken} from '@angular/compiler/src/css_parser';
 import {BaseException} from '../src/facade/exceptions';
 import {isPresent} from '../src/facade/lang';
 
@@ -113,207 +113,205 @@ function _getCaptureAst(capture: any[], index = 0): CssAst {
   return <CssAst>capture[index][0];
 }
 
-export function main() {
-  function parse(cssCode: string, ignoreErrors: boolean = false) {
-    var output = new CssParser().parse(cssCode, 'some-fake-css-file.css');
-    var errors = output.errors;
-    if (errors.length > 0 && !ignoreErrors) {
-      throw new BaseException(errors.map((error: CssParseError) => error.msg).join(', '));
-    }
-    return output.ast;
+function parse(cssCode: string, ignoreErrors: boolean = false) {
+  var output = new CssParser().parse(cssCode, 'some-fake-css-file.css');
+  var errors = output.errors;
+  if (errors.length > 0 && !ignoreErrors) {
+    throw new BaseException(errors.map((error: CssParseError) => error.msg).join(', '));
   }
-
-  describe('CSS parsing and visiting', () => {
-    var ast: CssStyleSheetAst;
-    var context = {};
-
-    beforeEach(() => {
-      var cssCode = `
-        .rule1 { prop1: value1 }
-        .rule2 { prop2: value2 }
-
-        @media all (max-width: 100px) {
-          #id { prop3 :value3; }
-        }
-
-        @import url(file.css);
-
-        @keyframes rotate {
-          from {
-            prop4: value4;
-          }
-          50%, 100% {
-            prop5: value5;
-          }
-        }
-      `;
-      ast = parse(cssCode);
-    });
-
-    it('should parse and visit a stylesheet', () => {
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssStyleSheet'];
-
-      expect(captures.length).toEqual(1);
-
-      var capture = captures[0];
-      expect(capture[0]).toEqual(ast);
-      expect(capture[1]).toEqual(context);
-    });
-
-    it('should parse and visit each of the stylesheet selectors', () => {
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssSelectorRule'];
-
-      expect(captures.length).toEqual(3);
-
-      var rule1 = <CssSelectorRuleAst>_getCaptureAst(captures, 0);
-      expect(rule1).toEqual(ast.rules[0]);
-
-      var firstSelector = rule1.selectors[0];
-      var firstSimpleSelector = firstSelector.selectorParts[0];
-      _assertTokens(firstSimpleSelector.tokens, ['.', 'rule1']);
-
-      var rule2 = <CssSelectorRuleAst>_getCaptureAst(captures, 1);
-      expect(rule2).toEqual(ast.rules[1]);
-
-      var secondSelector = rule2.selectors[0];
-      var secondSimpleSelector = secondSelector.selectorParts[0];
-      _assertTokens(secondSimpleSelector.tokens, ['.', 'rule2']);
-
-      var rule3 = <CssSelectorRuleAst>_getCaptureAst(captures, 2);
-      expect(rule3).toEqual((<CssMediaQueryRuleAst>ast.rules[2]).block.entries[0]);
-
-      var thirdSelector = rule3.selectors[0];
-      var thirdSimpleSelector = thirdSelector.selectorParts[0];
-      _assertTokens(thirdSimpleSelector.tokens, ['#', 'rule3']);
-    });
-
-    it('should parse and visit each of the stylesheet style key/value definitions', () => {
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssDefinition'];
-
-      expect(captures.length).toEqual(5);
-
-      var def1 = <CssDefinitionAst>_getCaptureAst(captures, 0);
-      expect(def1.property.strValue).toEqual('prop1');
-      expect(def1.value.tokens[0].strValue).toEqual('value1');
-
-      var def2 = <CssDefinitionAst>_getCaptureAst(captures, 1);
-      expect(def2.property.strValue).toEqual('prop2');
-      expect(def2.value.tokens[0].strValue).toEqual('value2');
-
-      var def3 = <CssDefinitionAst>_getCaptureAst(captures, 2);
-      expect(def3.property.strValue).toEqual('prop3');
-      expect(def3.value.tokens[0].strValue).toEqual('value3');
-
-      var def4 = <CssDefinitionAst>_getCaptureAst(captures, 3);
-      expect(def4.property.strValue).toEqual('prop4');
-      expect(def4.value.tokens[0].strValue).toEqual('value4');
-
-      var def5 = <CssDefinitionAst>_getCaptureAst(captures, 4);
-      expect(def5.property.strValue).toEqual('prop5');
-      expect(def5.value.tokens[0].strValue).toEqual('value5');
-    });
-
-    it('should parse and visit the associated media query values', () => {
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssMediaQueryRule'];
-
-      expect(captures.length).toEqual(1);
-
-      var query1 = <CssMediaQueryRuleAst>_getCaptureAst(captures, 0);
-      _assertTokens(query1.query.tokens, ['all', 'and', '(', 'max-width', '100', 'px', ')']);
-      expect(query1.block.entries.length).toEqual(1);
-    });
-
-    it('should capture the media query predicate', () => {
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssAtRulePredicate'];
-
-      expect(captures.length).toEqual(1);
-
-      var predicate = <CssAtRulePredicateAst>_getCaptureAst(captures, 0);
-      expect(predicate.strValue).toEqual('@media all (max-width: 100px)');
-    });
-
-    it('should parse and visit the associated "@inline" rule values', () => {
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssInlineRule'];
-
-      expect(captures.length).toEqual(1);
-
-      var inline1 = <CssInlineRuleAst>_getCaptureAst(captures, 0);
-      expect(inline1.type).toEqual(BlockType.Import);
-      _assertTokens(inline1.value.tokens, ['url', '(', 'file.css', ')']);
-    });
-
-    it('should parse and visit the keyframe blocks', () => {
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssKeyframeRule'];
-
-      expect(captures.length).toEqual(1);
-
-      var keyframe1 = <CssKeyframeRuleAst>_getCaptureAst(captures, 0);
-      expect(keyframe1.name.strValue).toEqual('rotate');
-      expect(keyframe1.block.entries.length).toEqual(2);
-    });
-
-    it('should parse and visit the associated keyframe rules', () => {
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssKeyframeDefinition'];
-
-      expect(captures.length).toEqual(2);
-
-      var def1 = <CssKeyframeDefinitionAst>_getCaptureAst(captures, 0);
-      _assertTokens(def1.steps, ['from']);
-      expect(def1.block.entries.length).toEqual(1);
-
-      var def2 = <CssKeyframeDefinitionAst>_getCaptureAst(captures, 1);
-      _assertTokens(def2.steps, ['50%', '100%']);
-      expect(def2.block.entries.length).toEqual(1);
-    });
-
-    it('should visit an unknown `@` rule', () => {
-      var cssCode = `
-        @someUnknownRule param {
-          one two three
-        }
-      `;
-      ast = parse(cssCode, true);
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssUnknownRule'];
-
-      expect(captures.length).toEqual(1);
-
-      var rule = <CssUnknownRuleAst>_getCaptureAst(captures, 0);
-      expect(rule.ruleName).toEqual('@someUnknownRule');
-
-      _assertTokens(rule.tokens, ['param', '{', 'one', 'two', 'three', '}']);
-    });
-
-    it('should collect an invalid list of tokens before a valid selector', () => {
-      var cssCode = 'one two three four five; selector { }';
-      ast = parse(cssCode, true);
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssUnknownTokenList'];
-
-      expect(captures.length).toEqual(1);
-
-      var rule = <CssUnknownTokenListAst>_getCaptureAst(captures, 0);
-      _assertTokens(rule.tokens, ['one', 'two', 'three', 'four', 'five']);
-    });
-
-    it('should collect an invalid list of tokens after a valid selector', () => {
-      var cssCode = 'selector { } six seven eight';
-      ast = parse(cssCode, true);
-      var visitor = new MyVisitor(ast, context);
-      var captures = visitor.captures['visitCssUnknownTokenList'];
-
-      expect(captures.length).toEqual(1);
-
-      var rule = <CssUnknownTokenListAst>_getCaptureAst(captures, 0);
-      _assertTokens(rule.tokens, ['six', 'seven', 'eight']);
-    });
-  });
+  return output.ast;
 }
+
+describe('CSS parsing and visiting', () => {
+  var ast: CssStyleSheetAst;
+  var context = {};
+
+  beforeEach(() => {
+    var cssCode = `
+      .rule1 { prop1: value1 }
+      .rule2 { prop2: value2 }
+
+      @media all (max-width: 100px) {
+        #id { prop3 :value3; }
+      }
+
+      @import url(file.css);
+
+      @keyframes rotate {
+        from {
+          prop4: value4;
+        }
+        50%, 100% {
+          prop5: value5;
+        }
+      }
+    `;
+    ast = parse(cssCode);
+  });
+
+  it('should parse and visit a stylesheet', () => {
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssStyleSheet'];
+
+    expect(captures.length).toEqual(1);
+
+    var capture = captures[0];
+    expect(capture[0]).toEqual(ast);
+    expect(capture[1]).toEqual(context);
+  });
+
+  it('should parse and visit each of the stylesheet selectors', () => {
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssSelectorRule'];
+
+    expect(captures.length).toEqual(3);
+
+    var rule1 = <CssSelectorRuleAst>_getCaptureAst(captures, 0);
+    expect(rule1).toEqual(ast.rules[0]);
+
+    var firstSelector = rule1.selectors[0];
+    var firstSimpleSelector = firstSelector.selectorParts[0];
+    _assertTokens(firstSimpleSelector.tokens, ['.', 'rule1']);
+
+    var rule2 = <CssSelectorRuleAst>_getCaptureAst(captures, 1);
+    expect(rule2).toEqual(ast.rules[1]);
+
+    var secondSelector = rule2.selectors[0];
+    var secondSimpleSelector = secondSelector.selectorParts[0];
+    _assertTokens(secondSimpleSelector.tokens, ['.', 'rule2']);
+
+    var rule3 = <CssSelectorRuleAst>_getCaptureAst(captures, 2);
+    expect(rule3).toEqual((<CssMediaQueryRuleAst>ast.rules[2]).block.entries[0]);
+
+    var thirdSelector = rule3.selectors[0];
+    var thirdSimpleSelector = thirdSelector.selectorParts[0];
+    _assertTokens(thirdSimpleSelector.tokens, ['#', 'rule3']);
+  });
+
+  it('should parse and visit each of the stylesheet style key/value definitions', () => {
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssDefinition'];
+
+    expect(captures.length).toEqual(5);
+
+    var def1 = <CssDefinitionAst>_getCaptureAst(captures, 0);
+    expect(def1.property.strValue).toEqual('prop1');
+    expect(def1.value.tokens[0].strValue).toEqual('value1');
+
+    var def2 = <CssDefinitionAst>_getCaptureAst(captures, 1);
+    expect(def2.property.strValue).toEqual('prop2');
+    expect(def2.value.tokens[0].strValue).toEqual('value2');
+
+    var def3 = <CssDefinitionAst>_getCaptureAst(captures, 2);
+    expect(def3.property.strValue).toEqual('prop3');
+    expect(def3.value.tokens[0].strValue).toEqual('value3');
+
+    var def4 = <CssDefinitionAst>_getCaptureAst(captures, 3);
+    expect(def4.property.strValue).toEqual('prop4');
+    expect(def4.value.tokens[0].strValue).toEqual('value4');
+
+    var def5 = <CssDefinitionAst>_getCaptureAst(captures, 4);
+    expect(def5.property.strValue).toEqual('prop5');
+    expect(def5.value.tokens[0].strValue).toEqual('value5');
+  });
+
+  it('should parse and visit the associated media query values', () => {
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssMediaQueryRule'];
+
+    expect(captures.length).toEqual(1);
+
+    var query1 = <CssMediaQueryRuleAst>_getCaptureAst(captures, 0);
+    _assertTokens(query1.query.tokens, ['all', 'and', '(', 'max-width', '100', 'px', ')']);
+    expect(query1.block.entries.length).toEqual(1);
+  });
+
+  it('should capture the media query predicate', () => {
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssAtRulePredicate'];
+
+    expect(captures.length).toEqual(1);
+
+    var predicate = <CssAtRulePredicateAst>_getCaptureAst(captures, 0);
+    expect(predicate.strValue).toEqual('@media all (max-width: 100px)');
+  });
+
+  it('should parse and visit the associated "@inline" rule values', () => {
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssInlineRule'];
+
+    expect(captures.length).toEqual(1);
+
+    var inline1 = <CssInlineRuleAst>_getCaptureAst(captures, 0);
+    expect(inline1.type).toEqual(BlockType.Import);
+    _assertTokens(inline1.value.tokens, ['url', '(', 'file.css', ')']);
+  });
+
+  it('should parse and visit the keyframe blocks', () => {
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssKeyframeRule'];
+
+    expect(captures.length).toEqual(1);
+
+    var keyframe1 = <CssKeyframeRuleAst>_getCaptureAst(captures, 0);
+    expect(keyframe1.name.strValue).toEqual('rotate');
+    expect(keyframe1.block.entries.length).toEqual(2);
+  });
+
+  it('should parse and visit the associated keyframe rules', () => {
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssKeyframeDefinition'];
+
+    expect(captures.length).toEqual(2);
+
+    var def1 = <CssKeyframeDefinitionAst>_getCaptureAst(captures, 0);
+    _assertTokens(def1.steps, ['from']);
+    expect(def1.block.entries.length).toEqual(1);
+
+    var def2 = <CssKeyframeDefinitionAst>_getCaptureAst(captures, 1);
+    _assertTokens(def2.steps, ['50%', '100%']);
+    expect(def2.block.entries.length).toEqual(1);
+  });
+
+  it('should visit an unknown `@` rule', () => {
+    var cssCode = `
+      @someUnknownRule param {
+        one two three
+      }
+    `;
+    ast = parse(cssCode, true);
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssUnknownRule'];
+
+    expect(captures.length).toEqual(1);
+
+    var rule = <CssUnknownRuleAst>_getCaptureAst(captures, 0);
+    expect(rule.ruleName).toEqual('@someUnknownRule');
+
+    _assertTokens(rule.tokens, ['param', '{', 'one', 'two', 'three', '}']);
+  });
+
+  it('should collect an invalid list of tokens before a valid selector', () => {
+    var cssCode = 'one two three four five; selector { }';
+    ast = parse(cssCode, true);
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssUnknownTokenList'];
+
+    expect(captures.length).toEqual(1);
+
+    var rule = <CssUnknownTokenListAst>_getCaptureAst(captures, 0);
+    _assertTokens(rule.tokens, ['one', 'two', 'three', 'four', 'five']);
+  });
+
+  it('should collect an invalid list of tokens after a valid selector', () => {
+    var cssCode = 'selector { } six seven eight';
+    ast = parse(cssCode, true);
+    var visitor = new MyVisitor(ast, context);
+    var captures = visitor.captures['visitCssUnknownTokenList'];
+
+    expect(captures.length).toEqual(1);
+
+    var rule = <CssUnknownTokenListAst>_getCaptureAst(captures, 0);
+    _assertTokens(rule.tokens, ['six', 'seven', 'eight']);
+  });
+});
