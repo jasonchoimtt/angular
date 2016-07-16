@@ -90,7 +90,7 @@ if (platform == 'node') {
     error: 'error',
     complete: 'Compilation complete. Watching for file changes.',
     onChangeCmds: [[
-      'node', 'dist/tools/cjs-jasmine/index-tools', '--', '@angular/tsc-wrapped/**/*{_,.}spec.js'
+      'node', 'dist/tools/cjs-jasmine/index-tools', '--', '**/*{_,.}spec.js'
     ]]
   });
 }
