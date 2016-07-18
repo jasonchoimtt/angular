@@ -5,7 +5,7 @@ import * as path from 'path';
 
 const BAZEL_BINARY = path.join(__dirname, 'index.js');
 
-fdescribe('e2e test', () => {
+describe('e2e test', () => {
   let workspace: string;
 
   function write(fileName: string, contents: string) {
@@ -42,7 +42,7 @@ fdescribe('e2e test', () => {
         .then(done, done.fail);
   }, 10000);
 
-  fit('recognizes changing dependency graph', done => {
+  it('recognizes changing dependency graph', done => {
     write('BUILD', 'genrule(name="concat", srcs=["a"], outs=["c"], cmd="cat $< > $@")');
     write('a', 'hello');
 

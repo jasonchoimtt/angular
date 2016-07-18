@@ -1,18 +1,4 @@
 /**
- * Checks if a given string satisfies the syntax of a target.
- */
-export function looksLikeFullTarget(str: string): boolean {
-  if (str === 'build' || str === 'test' || str === 'run') {
-    return false;
-  }
-  return FULL_TARGET_PATTERNS.some(pattern => pattern.test(str));
-}
-
-export function isMainWorkspace(target: string): boolean {
-  return MAIN_WORKSPACE_PATTERN.test(target);
-}
-
-/**
  * Converts a given target to a path relative to cwd.
  */
 export function targetToPath(target: string): string {
@@ -27,15 +13,9 @@ export function targetToPath(target: string): string {
   return target.replace(':', '/');
 }
 
-// Note that //foo/... and :* are not supported yet.
-const PACKAGE_PATTERN = /^((@[a-z][a-z0-9_]*)?\/\/)?([a-z][a-z0-9_]*\/)*[a-z][a-z0-9_]*/;
-const TARGET_PATTERN = /:([a-zA-Z0-9_\/.+=,@~-]+|)$/;
-
-const FULL_TARGET_PATTERNS = [
-  new RegExp(PACKAGE_PATTERN.source + '$'),
-  new RegExp('^' + TARGET_PATTERN.source),
-  new RegExp(PACKAGE_PATTERN.source + TARGET_PATTERN.source),
-];
+export function isMainWorkspace(target: string): boolean {
+  return MAIN_WORKSPACE_PATTERN.test(target);
+}
 
 const MAIN_WORKSPACE_PATTERN = /^\/\//;
 

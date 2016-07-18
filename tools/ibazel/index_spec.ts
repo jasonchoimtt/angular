@@ -1,11 +1,12 @@
 import {FileWatcher, IBazelEnvironment} from './environment';
+import {createMockIBazelEnvironment} from './environment_mock';
 import {IBazel} from './index';
 
-fdescribe('IBazel', () => {
+describe('IBazel', () => {
   beforeEach(() => { jasmine.clock().install(); });
   afterEach(() => { jasmine.clock().uninstall(); });
 
-  it('watches build files', () => {
+  it('should watch build files', () => {
     const env = createMockIBazelEnvironment(
         {queryBuildFiles: () => ['//build_defs:build_defs.bzl', '//:BUILD']});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
@@ -16,7 +17,7 @@ fdescribe('IBazel', () => {
     ]));
   });
 
-  it('watches source files', () => {
+  it('should watch source files', () => {
     const env = createMockIBazelEnvironment(
         {querySourceFiles: () => ['//:index.ts', '//subdir:included.ts']});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
@@ -27,7 +28,7 @@ fdescribe('IBazel', () => {
     ]));
   });
 
-  it('does not watch external workspaces', () => {
+  it('should not watch external workspaces', () => {
     const env = createMockIBazelEnvironment(
         {queryBuildFiles: () => ['@nodejs//:node', '@bazel_tools//genrule:genrule-setup.sh']});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
@@ -36,7 +37,7 @@ fdescribe('IBazel', () => {
     expect(ibazel.buildWatcher.add).toHaveBeenCalledWith([]);
   });
 
-  it('triggers initial run', () => {
+  it('should trigger initial run', () => {
     const env = createMockIBazelEnvironment();
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start(['--verbose_failures', 'build', ':it']);
@@ -45,7 +46,7 @@ fdescribe('IBazel', () => {
         .toHaveBeenCalledWith(['--verbose_failures', 'build', ':it'], jasmine.any(Object));
   });
 
-  it('retriggers when source files are changed', () => {
+  it('should retrigger when source files are changed', () => {
     const env = createMockIBazelEnvironment({queryBuildFiles: () => ['//:BUILD']});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
@@ -57,7 +58,7 @@ fdescribe('IBazel', () => {
     expect(env.execute).toHaveBeenCalledTimes(2);
   });
 
-  it('debounces multiple source file changes', () => {
+  it('should debounce multiple source file changes', () => {
     const env = createMockIBazelEnvironment({queryBuildFiles: () => ['//:BUILD']});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
@@ -72,7 +73,7 @@ fdescribe('IBazel', () => {
     expect(env.execute).toHaveBeenCalledTimes(2);
   });
 
-  it('reconfigures when build files are changed with build file list change', () => {
+  it('should reconfigure when build files are changed with build file list change', () => {
     const env = createMockIBazelEnvironment({queryBuildFiles: () => ['//:BUILD']});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
@@ -90,7 +91,7 @@ fdescribe('IBazel', () => {
     expect(env.execute).toHaveBeenCalledTimes(2);
   });
 
-  it('reconfigures when build files are changed with source file list change', () => {
+  it('should reconfigure when build files are changed with source file list change', () => {
     const env = createMockIBazelEnvironment({querySourceFiles: () => ['//:index.ts']});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
@@ -108,7 +109,7 @@ fdescribe('IBazel', () => {
     expect(env.execute).toHaveBeenCalledTimes(2);
   });
 
-  it('debounces multiple build file changes', () => {
+  it('should debounce multiple build file changes', () => {
     const env = createMockIBazelEnvironment({queryBuildFiles: () => ['//:BUILD']});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
@@ -153,20 +154,3 @@ type IBazelWithPrivates = IBazel & {
   buildWatcher: any;
   sourceWatcher: any;
 };
-
-function createMockIBazelEnvironment(mixin: any = {}): IBazelEnvironment {
-  return Object.assign(
-      <IBazelEnvironment>{
-        execute: jasmine.createSpy('execute'),
-        info: () => ({workspace: '/workspace'}),
-        queryBuildFiles: () => <string[]>[],
-        querySourceFiles: () => <string[]>[],
-        cwd: () => '/workspace',
-        createWatcher: (cb: Function) => {
-          const ret = jasmine.createSpyObj('watcher', ['add', 'unwatch', 'close']);
-          ret.trigger = cb;
-          return ret;
-        }
-      },
-      mixin);
-}

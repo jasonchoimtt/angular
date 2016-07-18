@@ -1,42 +1,8 @@
 require('source-map-support').install();
 
-import {difference, isMainWorkspace, looksLikeFullTarget, targetToPath} from './utils';
+import {difference, isMainWorkspace, targetToPath} from './utils';
 
-fdescribe('looksLikeFullTarget', () => {
-  it('identifies cwd targets', () => {
-    expect(looksLikeFullTarget(':target')).toBe(true);
-    expect(looksLikeFullTarget(':a1234')).toBe(true);
-    expect(looksLikeFullTarget(':@angular')).toBe(true);
-    expect(looksLikeFullTarget(':12345')).toBe(true);
-    expect(looksLikeFullTarget(':-----')).toBe(true);
-    expect(looksLikeFullTarget(':target/42')).toBe(true);
-
-    expect(looksLikeFullTarget(':target$!')).toBe(false);
-    expect(looksLikeFullTarget(':target*')).toBe(false);
-  });
-
-  it('identifies package default targets', () => {
-    expect(looksLikeFullTarget('angular/core')).toBe(true);
-    expect(looksLikeFullTarget('ng2/core')).toBe(true);
-    expect(looksLikeFullTarget('@correct//angular/core')).toBe(true);
-
-    expect(looksLikeFullTarget('/angular/core')).toBe(false);
-    expect(looksLikeFullTarget('Angular/core')).toBe(false);
-    expect(looksLikeFullTarget('angular/core...')).toBe(false);
-    expect(looksLikeFullTarget('angular/core/')).toBe(false);
-    expect(looksLikeFullTarget('wrong//angular/core')).toBe(false);
-    expect(looksLikeFullTarget('@angular/core')).toBe(false);
-  });
-
-  it('identifiers absolute targets', () => {
-    expect(looksLikeFullTarget('//angular/core:core')).toBe(true);
-    expect(looksLikeFullTarget('@ws//angular/core:42')).toBe(true);
-
-    expect(looksLikeFullTarget('//angular/core:core$')).toBe(false);
-  });
-});
-
-fdescribe('isMainWorkspace', () => {
+describe('isMainWorkspace', () => {
   it('identifies main workspace', () => {
     expect(isMainWorkspace('//hello')).toBe(true);
 
@@ -45,14 +11,14 @@ fdescribe('isMainWorkspace', () => {
   });
 });
 
-fdescribe(
+describe(
     'targetToPath',
     () => {it('converts target to path', () => {
       expect(targetToPath('//:angular/core/index.ts')).toEqual('angular/core/index.ts');
       expect(targetToPath('//angular/core:index.ts')).toEqual('angular/core/index.ts');
     })});
 
-fdescribe('difference', () => {
+describe('difference', () => {
   it('diffs two empty arrays',
      () => { expect(difference([], [])).toEqual({removed: [], added: []}); });
 

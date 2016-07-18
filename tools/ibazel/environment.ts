@@ -34,6 +34,12 @@ export interface IBazelEnvironment {
    */
   querySourceFiles(targets: string[]): string[];
   /**
+   * Gets a map of command-line flag to boolean indicating whether it is a
+   * boolean flag.
+   * e.g.{'--foo': true} means --foo does not take any argument
+   */
+  getFlags(): {[option: string]: boolean};
+  /**
    * Gets the current working directory of the process.
    */
   cwd(): string;
@@ -95,12 +101,37 @@ export class ProcessIBazelEnvironment implements IBazelEnvironment {
     return result.stdout.split('\n').slice(0, -1).sort();
   }
 
+  getFlags(): {[option: string]: boolean} {
+    const result = this.execute(['help', 'completion']);
+    assert(
+        !result.status,
+        `${IBAZEL}: "${BAZEL} help completion" exited with status ${result.status}`);
+
+    const ret: {[option: string]: boolean} = {};
+
+    const flags = result.stdout.split('\n').slice(0, -1).filter(line => line[0] === '-');
+
+    for (const flag of flags) {
+      const [, key, hasArg] = /^(-[^=]+)(=?)/.exec(flag);
+      ret[key] = !hasArg;
+    }
+
+    // These single-character flags can be found in "bazel help build"
+    ret['-c'] = false;
+    ret['-j'] = false;
+    ret['-k'] = true;
+    ret['-t'] = true;
+    ret['-s'] = true;
+
+    return ret;
+  }
+
   cwd(): string { return process.cwd(); }
 
   createWatcher(callback: Function, options: any = {}): FileWatcher {
-    const chokidorOptions =
+    const chokidorFlags =
         Object.assign({}, options, {events: ['change', 'unlink'], ignoreInitial: true});
-    const watcher = chokidar.watch([], chokidorOptions);
+    const watcher = chokidar.watch([], chokidorFlags);
 
     watcher.on('all', callback);
 

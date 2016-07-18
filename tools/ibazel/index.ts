@@ -7,7 +7,8 @@
 import * as path from 'path';
 
 import {BazelInfo, BAZEL, FileWatcher, IBazelEnvironment, ProcessIBazelEnvironment} from './environment';
-import {debounce, difference, isMainWorkspace, looksLikeFullTarget, targetToPath} from './utils';
+import {parse} from './parser';
+import {debounce, difference, isMainWorkspace, targetToPath} from './utils';
 
 export class IBazel {
   private env: IBazelEnvironment;
@@ -15,7 +16,7 @@ export class IBazel {
   private info: BazelInfo;
   /** Current directory relative to the workspace. */
   private cwd: string;
-  private argv: string[];
+  private command: string[];
   private targets: string[];
 
   private buildWatcher: FileWatcher;
@@ -29,12 +30,10 @@ export class IBazel {
     this.info = this.env.info();
 
     this.cwd = path.relative(this.info.workspace, this.env.cwd());
-    this.argv = argv;
 
-    // For simplicity, we assume that any argument that *looks* like a target is
-    // indeed a target
-    // TODO: implement correct bazel argument parsing
-    this.targets = argv.filter(looksLikeFullTarget);
+    const parseResult = parse(this.env, argv);
+    this.command = parseResult.command;
+    this.targets = parseResult.targets;
 
     const watcherOptions = {cwd: this.info.workspace};
     this.buildWatcher = this.env.createWatcher(() => this.triggerReconfigure(), watcherOptions);
@@ -75,7 +74,7 @@ export class IBazel {
   }
 
   /** @internal */
-  private run() { this.env.execute(this.argv, {inheritStdio: true}); }
+  private run() { this.env.execute(this.command, {inheritStdio: true}); }
 
   /** @internal */
   private triggerReconfigure() {
