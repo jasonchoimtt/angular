@@ -23,26 +23,7 @@ export function main(
     // read the configuration options from wherever you store them
     const {parsed, ngOptions} = tsc.readConfiguration(project, basePath);
 
-    // we need these switches to work with bazel
-    parsed.options.outDir = args.outDir || parsed.options.outDir;
-    parsed.options.rootDir = args.rootDir || parsed.options.rootDir;
-    // stripInternal is private for some reason
-    parsed.options['stripInternal'] = false; // For now
-    // "paths" is not a standard TS command line option, but we need it for
-    // bazel
-    if (args.paths) {
-      parsed.options.paths = {};
-      [].concat(args.paths || []).forEach(path => {
-        let [key, value] = path.replace(/%%%%%/g, '@').split(':');
-        parsed.options.paths[key] = parsed.options.paths[key] || [];
-        parsed.options.paths[key].push(value);
-      });
-    }
     ngOptions.basePath = basePath;
-    // Unlike skipMetadataEmit, this only controls .metadata.json
-    ngOptions['writeMetadata'] = args.writeMetadata;
-
-    console.log(JSON.stringify(parsed, null, 2));
 
     const host = ts.createCompilerHost(parsed.options, true);
     const program = ts.createProgram(parsed.fileNames, parsed.options, host);

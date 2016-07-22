@@ -29,10 +29,10 @@ def _compile_ts(ctx):
   generated_metadata = []
   has_sources = False
 
-  tsconfig = ctx.file.tsconfig
+  tsconfig_input = ctx.file.tsconfig
 
-  root_dir = ctx.attr.root_dir or tsconfig.dirname
-  out_dir = ctx.attr.out_dir or tsconfig.dirname
+  root_dir = ctx.attr.root_dir or tsconfig_input.dirname
+  out_dir = ctx.attr.out_dir or tsconfig_input.dirname
 
   # Compile the sources, if any.
   for src in ctx.attr.srcs:
@@ -53,33 +53,46 @@ def _compile_ts(ctx):
 
   input_declarations = _get_transitive_ts_decls(ctx)
 
-  paths = []
+  tsconfig = ctx.new_file(ctx.label.name + "_tsconfig.json")
+  tsconfig_to_workspace = "/".join([".." for x in tsconfig.dirname.split("/") if x])
+
+  paths = {}
   for dep in ctx.attr.deps:
     if dep.typescript.module_name and dep.typescript.root_dir:
-      # @ is a special character for worker spawning, so we have to escape that.
-      # Unfortunately, escaping with @@ doesn't seem to work on OS X, so we have
-      # to use this hack and revert this in tsc-wrapped.
-      module_name = dep.typescript.module_name.replace("@", "%%%%%")
+      module_name = dep.typescript.module_name
       mapped_dir = join_paths(
-          "/".join([".." for x in tsconfig.dirname.split("/") if x]),
+          tsconfig_to_workspace,
           ctx.configuration.bin_dir.path,
           dep.typescript.root_dir
       )
-      paths += ["--paths", module_name + ":" + mapped_dir]
-      paths += ["--paths", module_name + "/*:" + mapped_dir + "/*"]
+      paths[module_name] = [mapped_dir]
+      paths[module_name + "/*"] = [mapped_dir + "/*"]
+
+  _write_tsconfig(ctx, tsconfig, tsconfig_input, {
+      "compilerOptions": {
+          "rootDir": join_paths(tsconfig_to_workspace, root_dir),
+          "outDir": join_paths(tsconfig_to_workspace, ctx.configuration.bin_dir.path, out_dir),
+          "paths": paths,
+          "skipLibCheck": True,
+          "stripInternal": False,
+      },
+      "angularCompilerOptions": {
+          "writeMetadata": ctx.attr.write_metadata,
+      },
+      # Filter out metadata.json
+      "files": [join_paths(tsconfig_to_workspace, src.path) for src in srcs + input_declarations if src.path.endswith(".ts")],
+  })
 
   if has_sources:
+    has_worker = "tsc-wrapped" in ctx.files.compiler[0].path
     ctx.action(
       progress_message = "Compiling TypeScript %s" % ctx,
       mnemonic = "TypeScriptCompile",
       inputs = srcs + input_declarations + [tsconfig],
       outputs = transpiled + generated_declarations + generated_metadata,
       executable = ctx.executable.compiler,
-      arguments = [
-          "--project", tsconfig.path,
-          "--rootDir", root_dir,
-          "--outDir", join_paths(ctx.configuration.bin_dir.path, out_dir)
-      ] + (["--writeMetadata"] if ctx.attr.write_metadata else []) + paths)
+      arguments = ["@@" + tsconfig.path] if has_worker else ["--project", tsconfig.path],
+      execution_requirements = {"supports-workers": "1"})
 
   transitive_decls = input_declarations + generated_declarations
 
@@ -97,6 +110,29 @@ def _compile_ts(ctx):
       root_dir = out_dir, # Downstream only cares about the artifact
     ),
   )
+
+def _write_tsconfig(ctx, out, *contents):
+  inputs = []
+  arguments = ["--out", out.path]
+
+  for content in contents:
+    if type(content) == str:
+      arguments += [content]
+    elif hasattr(content, 'update'):  # type(content) == dict
+      arguments += [str(content).replace('True', 'true').replace('False', 'false')]
+    else:
+      inputs += [content]
+      arguments += ["--file", content.path]
+
+  ctx.action(
+      progress_message = "Generating tsconfig.json for %s" % ctx,
+      inputs = inputs,
+      outputs = [out],
+      executable = ctx.executable._merge_json,
+      arguments = arguments,
+  )
+
+  return out
 
 # ************ #
 # ts_library   #
@@ -147,6 +183,11 @@ ts_library = rule(
         "root_dir": attr.string(default=""),
         "out_dir": attr.string(default=""),
         "write_metadata": attr.bool(default=False),
+        "_merge_json": attr.label(
+            default = Label("//:merge_json"),
+            cfg = DATA_CFG,
+            executable = True,
+        ),
     },
 )
 

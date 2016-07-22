@@ -11,11 +11,7 @@
       "@angular/core": ["../../../dist/packages-dist/core"],
       "@angular/core/*": ["../../../dist/packages-dist/core/*"],
       "@angular/common": ["../../../dist/packages-dist/common"],
-      "@angular/common/testing": ["../../../dist/packages-dist/common/testing"],
-
-      // workaround for https://github.com/Microsoft/TypeScript/issues/8723
-      // we can get rid of this once we update to typescript 1.9.0-dev.20160525-1.0 or newer
-      "selenium-webdriver": ["../../../node_modules/@types/selenium-webdriver/index.d.ts"]
+      "@angular/common/testing": ["../../../dist/packages-dist/common/testing"]
     },
     "rootDir": ".",
     "sourceMap": true,

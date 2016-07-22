@@ -23,7 +23,7 @@ nodejs_binary(
 
 ts_ext_declaration(
     name = "types-node",
-    srcs = glob(["node_modules/@types/node/**/*.d.ts"]),
+    srcs = ["node_modules/@types/node/index.d.ts"],
 )
 
 ts_ext_declaration(
@@ -57,12 +57,21 @@ ts_ext_declaration(
 ###############################################################################
 # Tools
 ###############################################################################
+nodejs_binary(
+    name = "merge_json",
+    srcs = ["tools/@angular/tsc-wrapped/merge_json.js"],
+    entry_point = "tools/@angular/tsc-wrapped/merge_json.js",
+)
+
 ts_library(
     name = "tsc-wrapped",
     srcs = glob(["tools/@angular/tsc-wrapped/src/**/*.ts"]),
     deps = [
         "//:types-node",
         "//:types-jasmine",
+    ],
+    data = [
+        "tools/@angular/tsc-wrapped/worker_protocol.proto",
     ],
     tsconfig = "tools/@angular/tsc-wrapped/tsconfig.json",
     compiler = "//:tsc_release",
@@ -72,7 +81,7 @@ ts_library(
 nodejs_binary(
     name = "tsc-wrapped_release",
     srcs = [":tsc-wrapped"],
-    entry_point = "tools/@angular/tsc-wrapped/src/main.js",
+    entry_point = "tools/@angular/tsc-wrapped/src/worker.js",
 )
 
 ###############################################################################
