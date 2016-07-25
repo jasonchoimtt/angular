@@ -1,25 +1,17 @@
-_JASMINE_ATTRS = {
-    "srcs": attr.label_list(allow_files=True, cfg = DATA_CFG),
-    "deps": attr.label_list(cfg = DATA_CFG),
-    "helpers": attr.string_list(default=[]),
-
-    "name_": attr.string(), # Used for name mangling of jasmine.json
-    "_jasmine": attr.label(default=Label("//:jasmine"), single_file=True),
-    "_config_template": attr.label(
-        allow_files=True,
-        single_file=True,
-        default=Label("//build_defs:jasmine_config_template")
-    ),
-    "_launcher_template": attr.label(
-        allow_files=True,
-        single_file=True,
-        default=Label("//build_defs:jasmine_launcher_template")
-    ),
-}
-
 def _jasmine_node_test_impl(ctx):
-  # TODO: name mangling
-  config_file = ctx.new_file("%s-jasmine.json" % ctx.attr.name_)
+  """
+  Rule for running Jasmine tests on NodeJS.
+
+  Args:
+    srcs: The targets containing the spec files.
+    deps: JavaScript targets which the tests depend on.
+    data: Data files which the tests depend on.
+    helpers: List of paths to helper files to be loaded, relative to the package.
+  """
+  # This rule works by creating a Jasmine config file with a list of helper and
+  # spec files, then creating a launcher shell script that runs Jasmine CLI with
+  # the said config file.
+  config_file = ctx.new_file("%s_jasmine.json" % ctx.label.name)
 
   ctx.template_action(
       template = ctx.file._config_template,
@@ -34,8 +26,8 @@ def _jasmine_node_test_impl(ctx):
       template = ctx.file._launcher_template,
       output = ctx.outputs.executable,
       substitutions = {
-          "TEMPLATED_jasmine": ctx.file._jasmine.short_path,
-          "TEMPLATED_config": config_file.short_path,
+          "{{jasmine}}": ctx.executable._jasmine.short_path,
+          "{{config}}": config_file.short_path,
       },
       executable = True,
   )
@@ -54,5 +46,22 @@ jasmine_node_test = rule(
     implementation = _jasmine_node_test_impl,
     executable = True,
     test = True,
-    attrs = _JASMINE_ATTRS,
+    attrs = {
+        "srcs": attr.label_list(allow_files=True),
+        "deps": attr.label_list(),
+        "data": attr.label_list(allow_files=True, cfg=DATA_CFG),
+        "helpers": attr.string_list(default=[]),
+
+        "_jasmine": attr.label(default=Label("//:jasmine"), executable=True),
+        "_config_template": attr.label(
+            default = Label("//build_defs:jasmine_config_template"),
+            allow_files = True,
+            single_file = True,
+        ),
+        "_launcher_template": attr.label(
+            default = Label("//build_defs:jasmine_launcher_template"),
+            allow_files = True,
+            single_file = True,
+        ),
+    },
 )

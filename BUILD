@@ -65,7 +65,12 @@ nodejs_binary(
 
 ts_library(
     name = "tsc-wrapped",
-    srcs = glob(["tools/@angular/tsc-wrapped/src/**/*.ts"]),
+    srcs = glob(
+        [
+          "tools/@angular/tsc-wrapped/index.ts",
+          "tools/@angular/tsc-wrapped/src/**/*.ts",
+        ],
+    ),
     deps = [
         "//:types-node",
         "//:types-jasmine",
@@ -106,7 +111,7 @@ ts_library(
             "modules/@angular/common/src/facade/browser.ts",
             "modules/@angular/common/src/facade/math.ts",
             "modules/@angular/common/test/**/*.ts",
-            "modules/@angular/common/testing/mock_location_strategy.ts",
+            # "modules/@angular/common/testing/mock_location_strategy.ts",
         ]),
     deps = [
         "//:zone.js",
@@ -132,7 +137,7 @@ ts_library(
             "modules/@angular/common/src/facade/intl.ts",
             "modules/@angular/common/src/facade/math.ts",
             # Not supported on cjs-jasmine
-            "modules/@angular/common/test/forms-deprecated/**",
+            "modules/@angular/common/test/forms-deprecated/**/*.ts",
         ]),
     deps = [
         "//:types-node",
@@ -142,6 +147,7 @@ ts_library(
         "//:common",
         "//:compiler",
         "//:platform-browser",
+        "//:platform-browser-dynamic",
         "//:platform-server",
     ],
     tsconfig = "modules/@angular/common/test/tsconfig.json",
@@ -183,18 +189,52 @@ ts_library(
 )
 
 ts_library(
+    name = "compiler-cli_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/compiler-cli/test/**/*.ts",
+            "modules/@angular/compiler-cli/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:platform-browser",
+        "//:platform-browser-dynamic",
+        "//:platform-server",
+        "//:compiler-cli",
+        "//:tsc-wrapped",
+    ],
+    tsconfig = "modules/@angular/compiler-cli/test/tsconfig.json",
+    root_dir = "modules/@angular/compiler-cli",
+    out_dir = "modules/@angular/compiler-cli/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "compiler-cli_test",
+    srcs = [":compiler-cli_test_module"],
+    helpers = [
+        "modules/@angular/compiler-cli/test_out/test/jasmine_helper.js",
+    ],
+)
+
+ts_library(
     name = "compiler",
     srcs = glob(
         ["modules/@angular/compiler/**/*.ts"],
         exclude=[
-            "modules/@angular/compiler/src/css_lexer.ts",
-            "modules/@angular/compiler/src/css_parser.ts",
-            "modules/@angular/compiler/src/css_ast.ts",
-            "modules/@angular/compiler/src/output/dart_imports.ts",
-            "modules/@angular/compiler/src/output/js_emitter.ts",
+            # "modules/@angular/compiler/src/css_lexer.ts",
+            # "modules/@angular/compiler/src/css_parser.ts",
+            # "modules/@angular/compiler/src/css_ast.ts",
+            # "modules/@angular/compiler/src/output/dart_imports.ts",
+            # "modules/@angular/compiler/src/output/js_emitter.ts",
             "modules/@angular/compiler/src/facade/browser.ts",
             "modules/@angular/compiler/src/facade/intl.ts",
-            "modules/@angular/compiler/testing/xhr_mock.ts",
+            # "modules/@angular/compiler/testing/xhr_mock.ts",
             "modules/@angular/compiler/test/**/*.ts",
         ]),
     deps = [
@@ -204,6 +244,40 @@ ts_library(
     tsconfig = "modules/@angular/compiler/tsconfig-es5.json",
     module_name = "@angular/compiler",
     write_metadata = True,
+)
+
+ts_library(
+    name = "compiler_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/compiler/test/**/*.ts",
+            "modules/@angular/compiler/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:common",
+        "//:platform-browser",
+        "//:platform-browser-dynamic",
+        "//:platform-server",
+        "//:compiler",
+    ],
+    tsconfig = "modules/@angular/compiler/test/tsconfig.json",
+    root_dir = "modules/@angular/compiler",
+    out_dir = "modules/@angular/compiler/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "compiler_test",
+    srcs = [":compiler_test_module"],
+    helpers = [
+        "modules/@angular/compiler/test_out/test/jasmine_helper.js",
+    ],
 )
 
 ts_library(
@@ -256,6 +330,7 @@ ts_library(
         "//:common",
         "//:compiler",
         "//:platform-browser",
+        "//:platform-browser-dynamic",
         "//:platform-server",
     ],
     tsconfig = "modules/@angular/core/test/tsconfig.json",
@@ -294,6 +369,40 @@ ts_library(
 )
 
 ts_library(
+    name = "forms_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/forms/test/**/*.ts",
+            "modules/@angular/forms/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:common",
+        "//:platform-browser",
+        "//:platform-browser-dynamic",
+        "//:platform-server",
+        "//:forms",
+    ],
+    tsconfig = "modules/@angular/forms/test/tsconfig.json",
+    root_dir = "modules/@angular/forms",
+    out_dir = "modules/@angular/forms/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "forms_test",
+    srcs = [":forms_test_module"],
+    helpers = [
+        "modules/@angular/forms/test_out/test/jasmine_helper.js",
+    ],
+)
+
+ts_library(
     name = "http",
     srcs = glob(
         ["modules/@angular/http/**/*.ts"],
@@ -322,10 +431,9 @@ ts_library(
             "modules/@angular/platform-browser/src/facade/intl.ts",
             "modules/@angular/platform-browser/src/facade/math.ts",
             "modules/@angular/platform-browser/testing/benchmark_util.ts",
-            # Used by core test
             # "modules/@angular/platform-browser/testing/matchers.ts",
             # "modules/@angular/platform-browser/testing/mock_animation_driver.ts",
-            "modules/@angular/platform-browser/testing/mock_dom_animate_player.ts",
+            # "modules/@angular/platform-browser/testing/mock_dom_animate_player.ts",
             "modules/@angular/platform-browser/testing/perf_util.ts",
             "modules/@angular/platform-browser/test/**/*.ts",
         ]),
@@ -337,10 +445,79 @@ ts_library(
         "//:types-selenium-webdriver",
         "//:core",
         "//:common",
+        "//:platform-server",
     ],
     tsconfig = "modules/@angular/platform-browser/tsconfig-es5.json",
     module_name = "@angular/platform-browser",
     write_metadata = True,
+)
+
+ts_library(
+    name = "platform-browser_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/platform-browser/test/**/*.ts",
+            "modules/@angular/platform-browser/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:common",
+        "//:compiler",
+        "//:platform-server",
+        "//:platform-browser",
+        "//:platform-browser-dynamic",
+    ],
+    tsconfig = "modules/@angular/platform-browser/test/tsconfig.json",
+    root_dir = "modules/@angular/platform-browser",
+    out_dir = "modules/@angular/platform-browser/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "platform-browser_test",
+    srcs = [":platform-browser_test_module"],
+    helpers = [
+        "modules/@angular/platform-browser/test_out/test/jasmine_helper.js",
+    ],
+)
+
+ts_library(
+    name = "http_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/http/test/**/*.ts",
+            "modules/@angular/http/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:common",
+        "//:platform-browser",
+        "//:platform-browser-dynamic",
+        "//:platform-server",
+        "//:http",
+    ],
+    tsconfig = "modules/@angular/http/test/tsconfig.json",
+    root_dir = "modules/@angular/http",
+    out_dir = "modules/@angular/http/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "http_test",
+    srcs = [":http_test_module"],
+    helpers = [
+        "modules/@angular/http/test_out/test/jasmine_helper.js",
+    ],
 )
 
 ts_library(
@@ -367,6 +544,40 @@ ts_library(
 )
 
 ts_library(
+    name = "platform-browser-dynamic_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/platform-browser-dynamic/test/**/*.ts",
+            "modules/@angular/platform-browser-dynamic/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:compiler",
+        "//:router-deprecated",
+        "//:platform-browser",
+        "//:platform-server",
+        "//:platform-browser-dynamic",
+    ],
+    tsconfig = "modules/@angular/platform-browser-dynamic/test/tsconfig.json",
+    root_dir = "modules/@angular/platform-browser-dynamic",
+    out_dir = "modules/@angular/platform-browser-dynamic/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "platform-browser-dynamic_test",
+    srcs = [":platform-browser-dynamic_test_module"],
+    helpers = [
+        "modules/@angular/platform-browser-dynamic/test_out/test/jasmine_helper.js",
+    ],
+)
+
+ts_library(
     name = "platform-server",
     srcs = glob(
         ["modules/@angular/platform-server/**/*.ts"],
@@ -382,12 +593,42 @@ ts_library(
         "//:core",
         "//:common",
         "//:compiler",
-        "//:platform-browser",
-        "//:platform-browser-dynamic",
     ],
     tsconfig = "modules/@angular/platform-server/tsconfig-es5.json",
     module_name = "@angular/platform-server",
     write_metadata = True,
+)
+
+ts_library(
+    name = "platform-server_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/platform-server/test/**/*.ts",
+            "modules/@angular/platform-server/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:platform-browser",
+        "//:platform-browser-dynamic",
+        "//:platform-server",
+    ],
+    tsconfig = "modules/@angular/platform-server/test/tsconfig.json",
+    root_dir = "modules/@angular/platform-server",
+    out_dir = "modules/@angular/platform-server/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "platform-server_test",
+    srcs = [":platform-server_test_module"],
+    helpers = [
+        "modules/@angular/platform-server/test_out/test/jasmine_helper.js",
+    ],
 )
 
 ts_library(
@@ -413,6 +654,40 @@ ts_library(
 )
 
 ts_library(
+    name = "router-deprecated_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/router-deprecated/test/**/*.ts",
+            "modules/@angular/router-deprecated/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:common",
+        "//:platform-browser",
+        "//:platform-browser-dynamic",
+        "//:platform-server",
+        "//:router-deprecated",
+    ],
+    tsconfig = "modules/@angular/router-deprecated/test/tsconfig.json",
+    root_dir = "modules/@angular/router-deprecated",
+    out_dir = "modules/@angular/router-deprecated/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "router-deprecated_test",
+    srcs = [":router-deprecated_test_module"],
+    helpers = [
+        "modules/@angular/router-deprecated/test_out/test/jasmine_helper.js",
+    ],
+)
+
+ts_library(
     name = "router",
     srcs = glob(
         ["modules/@angular/router/**/*.ts"],
@@ -435,6 +710,39 @@ ts_library(
 )
 
 ts_library(
+    name = "router_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/router/test/**/*.ts",
+            "modules/@angular/router/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:common",
+        "//:router",
+        "//:platform-browser",
+        "//:platform-server",
+    ],
+    tsconfig = "modules/@angular/router/test/tsconfig.json",
+    root_dir = "modules/@angular/router",
+    out_dir = "modules/@angular/router/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "router_test",
+    srcs = [":router_test_module"],
+    helpers = [
+        "modules/@angular/router/test_out/test/jasmine_helper.js",
+    ],
+)
+
+ts_library(
     name = "upgrade",
     srcs = glob(
         ["modules/@angular/upgrade/**/*.ts"],
@@ -452,4 +760,50 @@ ts_library(
     tsconfig = "modules/@angular/upgrade/tsconfig-es5.json",
     module_name = "@angular/upgrade",
     write_metadata = True,
+)
+
+ts_library(
+    name = "upgrade_test_module",
+    srcs = glob(
+        [
+            "modules/@angular/upgrade/test/**/*.ts",
+            "modules/@angular/upgrade/src/facade/**/*.ts",
+        ],
+        exclude=[
+        ]),
+    deps = [
+        "//:types-node",
+        "//:types-jasmine",
+        "//:zone.js",
+        "//:core",
+        "//:platform-browser",
+        "//:platform-server",
+        "//:upgrade",
+    ],
+    tsconfig = "modules/@angular/upgrade/test/tsconfig.json",
+    root_dir = "modules/@angular/upgrade",
+    out_dir = "modules/@angular/upgrade/test_out",
+    write_metadata = True,
+)
+
+jasmine_node_test(
+    name = "upgrade_test",
+    srcs = [":upgrade_test_module"],
+    helpers = [
+        "modules/@angular/upgrade/test_out/test/jasmine_helper.js",
+    ],
+)
+
+test_suite(
+    name = "jasmine_tests",
+    tests = [
+        ":core_test",
+        ":common_test",
+        ":compiler_test",
+        ":compiler-cli_test",
+        ":http_test",
+        ":platform-server_test",
+        ":router_test",
+        ":router-deprecated_test",
+    ],
 )
