@@ -78,17 +78,17 @@ def _compile_ts(ctx):
       fail("Sources must be in the same package as the ts_library rule, " +
            "but %s is not in %s" % (src.label, ctx.label.package), "srcs")
 
-  for f in ctx.files.srcs:
-    if f.short_path.endswith(".d.ts"):
-      # The file being a .ts or .tsx is enforced by the attributes definition.
-      # We only need to special case .d.ts because it is also a .ts file.
-      fail("Sources must be *.ts or *.tsx files", "srcs")
+  # for f in ctx.files.srcs:
+  #   if f.short_path.endswith(".d.ts"):
+  #     # The file being a .ts or .tsx is enforced by the attributes definition.
+  #     # We only need to special case .d.ts because it is also a .ts file.
+  #     fail("Sources must be *.ts or *.tsx files, but %s is not" % f.short_path, "srcs")
 
   for dep in ctx.attr.deps_use_internal:
     if dep not in ctx.attr.deps:
       fail("deps_use_internal must be a subset of deps", "deps_use_internal")
 
-  transitive_module_d_ts = set()
+  transitive_module_d_ts = set([f for f in ctx.files.srcs if f.short_path.endswith(".d.ts")])
   transitive_module_mappings = {}
   transitive_ambient_d_ts = set()
   for dep in ctx.attr.deps:
@@ -107,9 +107,9 @@ def _compile_ts(ctx):
   tsconfig_to_workspace = "/".join([".." for x in ctx.configuration.bin_dir.path.split("/") if x] +
                                    [".." for x in ctx.label.package.split("/") if x])
 
-  root_dir = ctx.attr.root_dir or ctx.file.tsconfig.dirname
-  base_out_dir = ctx.attr.out_dir or ctx.file.tsconfig.dirname
-  source_ts = ctx.files.srcs
+  root_dir = ctx.attr.root_dir or _drop_dir(ctx.file.tsconfig.dirname, ctx.label.package)
+  base_out_dir = ctx.attr.out_dir or _drop_dir(ctx.file.tsconfig.dirname, ctx.label.package)
+  source_ts = [f for f in ctx.files.srcs if not f.short_path.endswith(".d.ts")]
 
   # Construct shared compiler options.
   paths = {}
@@ -128,7 +128,7 @@ def _compile_ts(ctx):
     paths[module_name + "/*"] = [mapped_dir + "/*"]
 
   files = [join_paths(tsconfig_to_workspace, src.path)
-           for src in source_ts + transitive_ambient_d_ts if src.path.endswith(".ts")]
+           for src in source_ts + transitive_ambient_d_ts]
   base_compiler_options = {
       "rootDir": join_paths(tsconfig_to_workspace, ctx.label.package, root_dir),
       "paths": paths,
@@ -136,6 +136,9 @@ def _compile_ts(ctx):
       # tsc-wrapped if they are needed.
       "skipLibCheck": True,
       "stripInternal": True,
+      "typeRoots": [],
+      "baseUrl": ".",
+      "declaration": True,
   }
 
   flavor_structs = {}
@@ -349,3 +352,6 @@ ts_ext_declaration = rule(
         "root_dir": attr.string(default=""),
     }
 )
+
+def ts_es6_files(target):
+  return target.typescript.flavors.es6.files

@@ -4,6 +4,7 @@ load("//build_defs:nodejs.bzl", "nodejs_binary")
 load("//build_defs:typescript.bzl", "ts_ext_declaration", "ts_library")
 load("//build_defs:jasmine.bzl", "jasmine_node_test")
 load("//build_defs:karma.bzl", "karma_test")
+load("//build_defs:bundle.bzl", "js_bundle")
 
 ###############################################################################
 # External dependencies
@@ -26,6 +27,24 @@ nodejs_binary(
     name = "karma",
     srcs = ["node_modules"],
     entry_point = "node_modules/karma/bin/karma",
+)
+
+nodejs_binary(
+    name = "rollup",
+    srcs = ["node_modules"],
+    entry_point = "node_modules/rollup/bin/rollup",
+)
+
+nodejs_binary(
+    name = "uglifyjs",
+    srcs = ["node_modules"],
+    entry_point = "node_modules/uglify-js/bin/uglifyjs",
+)
+
+sh_binary(
+    name = "uglifyjs_wrapped",
+    srcs = ["tools/uglifyjs_wrapped.sh"],
+    data = [":uglifyjs"],
 )
 
 ts_ext_declaration(
@@ -175,6 +194,14 @@ jasmine_node_test(
     size = "small",
 )
 
+js_bundle(
+    name = "common_bundle",
+    srcs = [":common"],
+    entry_point = "modules/@angular/common/es6/index.js",
+    rollup_config = "modules/@angular/common/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
+)
+
 ts_library(
     name = "compiler-cli",
     srcs = glob(
@@ -299,6 +326,14 @@ jasmine_node_test(
     size = "small",
 )
 
+js_bundle(
+    name = "compiler_bundle",
+    srcs = [":compiler"],
+    entry_point = "modules/@angular/compiler/es6/index.js",
+    rollup_config = "modules/@angular/compiler/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
+)
+
 ts_library(
     name = "core",
     srcs = glob(
@@ -370,6 +405,14 @@ jasmine_node_test(
     size = "small",
 )
 
+js_bundle(
+    name = "core_bundle",
+    srcs = [":core"],
+    entry_point = "modules/@angular/core/es6/index.js",
+    rollup_config = "modules/@angular/core/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
+)
+
 ts_library(
     name = "forms",
     srcs = glob(
@@ -420,6 +463,14 @@ ts_library(
     write_metadata = True,
 )
 
+js_bundle(
+    name = "forms_bundle",
+    srcs = [":forms"],
+    entry_point = "modules/@angular/forms/es6/index.js",
+    rollup_config = "modules/@angular/forms/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
+)
+
 ts_library(
     name = "http",
     srcs = glob(
@@ -466,6 +517,14 @@ ts_library(
     tsconfig = "modules/@angular/platform-browser/tsconfig-es5.json",
     module_name = "@angular/platform-browser",
     write_metadata = True,
+)
+
+js_bundle(
+    name = "http_bundle",
+    srcs = [":http"],
+    entry_point = "modules/@angular/http/es6/index.js",
+    rollup_config = "modules/@angular/http/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
 )
 
 ts_library(
@@ -592,6 +651,14 @@ ts_library(
     write_metadata = True,
 )
 
+js_bundle(
+    name = "platform-browser-dynamic_bundle",
+    srcs = [":platform-browser-dynamic"],
+    entry_point = "modules/@angular/platform-browser-dynamic/es6/index.js",
+    rollup_config = "modules/@angular/platform-browser-dynamic/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
+)
+
 ts_library(
     name = "platform-server",
     srcs = glob(
@@ -649,6 +716,14 @@ jasmine_node_test(
         "modules/@angular/platform-server/test_out/test/jasmine_helper.js",
     ],
     size = "small",
+)
+
+js_bundle(
+    name = "platform-server_bundle",
+    srcs = [":platform-server"],
+    entry_point = "modules/@angular/platform-server/es6/index.js",
+    rollup_config = "modules/@angular/platform-server/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
 )
 
 ts_library(
@@ -711,6 +786,14 @@ jasmine_node_test(
     size = "small",
 )
 
+js_bundle(
+    name = "router-deprecated_bundle",
+    srcs = [":router-deprecated"],
+    entry_point = "modules/@angular/router-deprecated/es6/index.js",
+    rollup_config = "modules/@angular/router-deprecated/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
+)
+
 ts_library(
     name = "router",
     srcs = glob(
@@ -770,6 +853,14 @@ jasmine_node_test(
     size = "small",
 )
 
+js_bundle(
+    name = "router_bundle",
+    srcs = [":router"],
+    entry_point = "modules/@angular/router/es6/index.js",
+    rollup_config = "modules/@angular/router/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
+)
+
 ts_library(
     name = "upgrade",
     srcs = glob(
@@ -815,6 +906,14 @@ ts_library(
     root_dir = "modules/@angular/upgrade",
     out_dir = "modules/@angular/upgrade/test_out",
     write_metadata = True,
+)
+
+js_bundle(
+    name = "upgrade_bundle",
+    srcs = [":upgrade"],
+    entry_point = "modules/@angular/upgrade/es6/index.js",
+    rollup_config = "modules/@angular/upgrade/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
 )
 
 test_suite(

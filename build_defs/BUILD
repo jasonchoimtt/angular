@@ -21,3 +21,9 @@ filegroup(
     srcs = ["karma_launcher_template.sh"],
     visibility = ["//visibility:public"],
 )
+
+filegroup(
+    name = "rollup_config_template",
+    srcs = ["rollup_config_template.js"],
+    visibility = ["//visibility:public"],
+)
