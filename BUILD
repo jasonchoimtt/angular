@@ -3,11 +3,12 @@ package(default_visibility=["//visibility:public"])
 load("//build_defs:nodejs.bzl", "nodejs_binary")
 load("//build_defs:typescript.bzl", "ts_ext_declaration", "ts_library")
 load("//build_defs:jasmine.bzl", "jasmine_node_test")
+load("//build_defs:karma.bzl", "karma_test")
 
 ###############################################################################
 # External dependencies
 ###############################################################################
-# TODO: add source-map-support, reflect-metadata
+# TODO: add source-map-support, reflect-metadata, es6-shim, angular1, systemjs
 
 nodejs_binary(
     name = "tsc_release",
@@ -19,6 +20,12 @@ nodejs_binary(
     name = "jasmine",
     srcs = ["node_modules"],
     entry_point = "node_modules/jasmine/bin/jasmine.js",
+)
+
+nodejs_binary(
+    name = "karma",
+    srcs = ["node_modules"],
+    entry_point = "node_modules/karma/bin/karma",
 )
 
 ts_ext_declaration(
@@ -162,6 +169,7 @@ jasmine_node_test(
     helpers = [
         "modules/@angular/common/test_out/test/jasmine_helper.js",
     ],
+    size = "small",
 )
 
 ts_library(
@@ -220,6 +228,7 @@ jasmine_node_test(
     helpers = [
         "modules/@angular/compiler-cli/test_out/test/jasmine_helper.js",
     ],
+    size = "small",
 )
 
 ts_library(
@@ -278,6 +287,7 @@ jasmine_node_test(
     helpers = [
         "modules/@angular/compiler/test_out/test/jasmine_helper.js",
     ],
+    size = "small",
 )
 
 ts_library(
@@ -345,6 +355,7 @@ jasmine_node_test(
     helpers = [
         "modules/@angular/core/test_out/test/jasmine_helper.js",
     ],
+    size = "small",
 )
 
 ts_library(
@@ -394,21 +405,12 @@ ts_library(
     write_metadata = True,
 )
 
-jasmine_node_test(
-    name = "forms_test",
-    srcs = [":forms_test_module"],
-    helpers = [
-        "modules/@angular/forms/test_out/test/jasmine_helper.js",
-    ],
-)
-
 ts_library(
     name = "http",
     srcs = glob(
         ["modules/@angular/http/**/*.ts"],
         exclude=[
             "modules/@angular/http/src/index.ts", # TODO: remove the unused file
-            "modules/@angular/http/src/facade/**/*.ts",
             "modules/@angular/http/test/**/*.ts",
         ]),
     deps = [
@@ -461,6 +463,11 @@ ts_library(
         ],
         exclude=[
         ]),
+    data = glob(
+        [
+            "modules/@angular/platform-browser/test/static_assets/**",
+            "modules/@angular/platform-browser/test/browser/static_assets/**",
+        ]),
     deps = [
         "//:types-node",
         "//:types-jasmine",
@@ -476,14 +483,6 @@ ts_library(
     root_dir = "modules/@angular/platform-browser",
     out_dir = "modules/@angular/platform-browser/test_out",
     write_metadata = True,
-)
-
-jasmine_node_test(
-    name = "platform-browser_test",
-    srcs = [":platform-browser_test_module"],
-    helpers = [
-        "modules/@angular/platform-browser/test_out/test/jasmine_helper.js",
-    ],
 )
 
 ts_library(
@@ -518,6 +517,7 @@ jasmine_node_test(
     helpers = [
         "modules/@angular/http/test_out/test/jasmine_helper.js",
     ],
+    size = "small",
 )
 
 ts_library(
@@ -569,21 +569,12 @@ ts_library(
     write_metadata = True,
 )
 
-jasmine_node_test(
-    name = "platform-browser-dynamic_test",
-    srcs = [":platform-browser-dynamic_test_module"],
-    helpers = [
-        "modules/@angular/platform-browser-dynamic/test_out/test/jasmine_helper.js",
-    ],
-)
-
 ts_library(
     name = "platform-server",
     srcs = glob(
         ["modules/@angular/platform-server/**/*.ts"],
         exclude=[
             "modules/@angular/platform-server/platform_browser_dynamic_testing_private.ts",
-            "modules/@angular/platform-server/src/facade/**/*.ts",
             "modules/@angular/platform-server/test/**/*.ts",
         ]),
     deps = [
@@ -629,6 +620,7 @@ jasmine_node_test(
     helpers = [
         "modules/@angular/platform-server/test_out/test/jasmine_helper.js",
     ],
+    size = "small",
 )
 
 ts_library(
@@ -685,6 +677,7 @@ jasmine_node_test(
     helpers = [
         "modules/@angular/router-deprecated/test_out/test/jasmine_helper.js",
     ],
+    size = "small",
 )
 
 ts_library(
@@ -740,6 +733,7 @@ jasmine_node_test(
     helpers = [
         "modules/@angular/router/test_out/test/jasmine_helper.js",
     ],
+    size = "small",
 )
 
 ts_library(
@@ -786,14 +780,6 @@ ts_library(
     write_metadata = True,
 )
 
-jasmine_node_test(
-    name = "upgrade_test",
-    srcs = [":upgrade_test_module"],
-    helpers = [
-        "modules/@angular/upgrade/test_out/test/jasmine_helper.js",
-    ],
-)
-
 test_suite(
     name = "jasmine_tests",
     tests = [
@@ -806,4 +792,36 @@ test_suite(
         ":router_test",
         ":router-deprecated_test",
     ],
+)
+
+karma_test(
+    name = "karma_test",
+    srcs = [
+        ":core_test_module",
+        ":common_test_module",
+        ":compiler_test_module",
+        ":forms_test_module",
+        ":http_test_module",
+        ":platform-browser_test_module",
+        ":platform-browser-dynamic_test_module",
+        # ":platform-server_test_module", # TODO: fix bug
+        # ":router_test_module", # TODO: migrate router to main karma architecture
+        ":router-deprecated_test_module",
+        ":upgrade_test_module",
+        "modules/empty.js",
+        "shims_for_IE.js",
+        "test-main-bazel.js",
+    ],
+    config = "karma-bazel.conf.js",
+    size = "small",
+)
+
+karma_test(
+    name = "router_karma_test",
+    srcs = [
+        ":router_test_module",
+        "modules/@angular/router/karma-test-shim.js",
+    ],
+    config = "modules/@angular/router/karma-bazel.conf.js",
+    size = "small",
 )

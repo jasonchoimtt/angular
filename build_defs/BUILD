@@ -15,3 +15,9 @@ filegroup(
     srcs = ["jasmine_launcher_template.sh"],
     visibility = ["//visibility:public"],
 )
+
+filegroup(
+    name = "karma_launcher_template",
+    srcs = ["karma_launcher_template.sh"],
+    visibility = ["//visibility:public"],
+)

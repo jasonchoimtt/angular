@@ -63,7 +63,8 @@ System.config({
       main: 'index.js',
       defaultExtension: 'js'
     }
-  }
+  },
+  transpiler: null,
 });
 
 
