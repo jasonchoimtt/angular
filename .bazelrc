@@ -1,2 +1,2 @@
-build --verbose_failures
-test --verbose_failures --test_output=errors
+build --verbose_failures --show_task_finish --profile=/tmp/last-bazel-profile --explain=/tmp/last-bazel-explain --verbose_explanations
+test --verbose_failures --test_output=errors --keep_going --show_task_finish --profile=/tmp/last-bazel-profile --explain=/tmp/last-bazel-explain --verbose_explanations

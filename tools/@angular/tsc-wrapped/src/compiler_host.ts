@@ -75,7 +75,7 @@ export class MetadataWriterHost extends DelegatingHost {
     if (/*DTS*/ /\.js$/.test(emitFilePath) && this.ngOptions.writeMetadata) {
       const path = emitFilePath.replace(/*DTS*/ /\.js$/, '.metadata.json');
       const metadata = this.metadataCollector.getMetadata(sourceFile);
-      const metadataText = metadata && metadata.metadata ? JSON.stringify(metadata) : '';
+      const metadataText = metadata && metadata.metadata ? JSON.stringify(metadata) : '{}';
       writeFileSync(path, metadataText, {encoding: 'utf-8'});
     }
   }

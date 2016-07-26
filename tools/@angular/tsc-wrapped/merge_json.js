@@ -18,6 +18,10 @@ while (argv.length) {
     if (merged.files && JSON.parse(arg).files) {
       delete merged.files;
     }
+    if (merged.compilerOptions && merged.compilerOptions.paths && JSON.parse(arg).compilerOptions &&
+        JSON.parse(arg).compilerOptions.paths) {
+      delete merged.compilerOptions.paths;
+    }
     deepMerge(merged, JSON.parse(arg));
   }
 }
