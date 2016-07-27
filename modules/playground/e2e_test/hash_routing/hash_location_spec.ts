@@ -17,7 +17,7 @@ function waitForElement(selector: any /** TODO #9100 */) {
 describe('hash routing example app', function() {
   afterEach(verifyNoBrowserErrors);
 
-  var URL = 'all/playground/src/hash_routing/index.html';
+  var URL = 'modules/playground/src/hash_routing/index.html';
 
   it('should navigate between routes', function() {
     browser.get(URL + '#/bye');
@@ -36,7 +36,7 @@ describe('hash routing example app', function() {
 
 
   it('should open in new window if target is _blank', () => {
-    var URL = 'all/playground/src/hash_routing/index.html';
+    var URL = 'modules/playground/src/hash_routing/index.html';
     browser.get(URL + '#/');
     waitForElement('hello-cmp');
 

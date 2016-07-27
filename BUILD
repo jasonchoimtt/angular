@@ -5,6 +5,7 @@ load("//build_defs:typescript.bzl", "ts_ext_declaration", "ts_library")
 load("//build_defs:jasmine.bzl", "jasmine_node_test")
 load("//build_defs:karma.bzl", "karma_test")
 load("//build_defs:bundle.bzl", "js_bundle")
+load("//build_defs:protractor.bzl", "protractor_test")
 
 ###############################################################################
 # External dependencies
@@ -45,6 +46,12 @@ sh_binary(
     name = "uglifyjs_wrapped",
     srcs = ["tools/uglifyjs_wrapped.sh"],
     data = [":uglifyjs"],
+)
+
+nodejs_binary(
+    name = "protractor",
+    srcs = ["node_modules"],
+    entry_point = "node_modules/protractor/bin/protractor",
 )
 
 ts_ext_declaration(
@@ -115,6 +122,12 @@ nodejs_binary(
     entry_point = "tools/@angular/tsc-wrapped/src/worker.js",
 )
 
+nodejs_binary(
+    name = "serve_runfiles",
+    srcs = ["node_modules", "tools/serve_runfiles.js"],
+    entry_point = "tools/serve_runfiles.js",
+)
+
 ###############################################################################
 # Packages
 ###############################################################################
@@ -162,7 +175,7 @@ ts_library(
             "modules/@angular/common/src/facade/exceptions.ts",
             "modules/@angular/common/src/facade/intl.ts",
             "modules/@angular/common/src/facade/math.ts",
-            # Not supported on cjs-jasmine
+            # FIXME: Not supported on cjs-jasmine
             "modules/@angular/common/test/forms-deprecated/**/*.ts",
         ]),
     deps = [
@@ -197,6 +210,7 @@ jasmine_node_test(
 js_bundle(
     name = "common_bundle",
     srcs = [":common"],
+    output = "modules/@angular/common/common.umd.js",
     entry_point = "modules/@angular/common/es6/index.js",
     rollup_config = "modules/@angular/common/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -329,6 +343,7 @@ jasmine_node_test(
 js_bundle(
     name = "compiler_bundle",
     srcs = [":compiler"],
+    output = "modules/@angular/compiler/compiler.umd.js",
     entry_point = "modules/@angular/compiler/es6/index.js",
     rollup_config = "modules/@angular/compiler/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -339,7 +354,7 @@ ts_library(
     srcs = glob(
         ["modules/@angular/core/**/*.ts"],
         exclude=[
-            "modules/@angular/core/src/facade/browser.ts",
+            # "modules/@angular/core/src/facade/browser.ts",
             "modules/@angular/core/src/facade/intl.ts",
             # Used in testing_internal
             # "modules/@angular/core/testing/animation/mock_animation_player.ts",
@@ -408,6 +423,7 @@ jasmine_node_test(
 js_bundle(
     name = "core_bundle",
     srcs = [":core"],
+    output = "modules/@angular/core/core.umd.js",
     entry_point = "modules/@angular/core/es6/index.js",
     rollup_config = "modules/@angular/core/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -466,6 +482,7 @@ ts_library(
 js_bundle(
     name = "forms_bundle",
     srcs = [":forms"],
+    output = "modules/@angular/forms/forms.umd.js",
     entry_point = "modules/@angular/forms/es6/index.js",
     rollup_config = "modules/@angular/forms/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -522,8 +539,18 @@ ts_library(
 js_bundle(
     name = "http_bundle",
     srcs = [":http"],
+    output = "modules/@angular/http/http.umd.js",
     entry_point = "modules/@angular/http/es6/index.js",
     rollup_config = "modules/@angular/http/rollup.config.js",
+    banner = "modules/@angular/license-banner.txt",
+)
+
+js_bundle(
+    name = "platform-browser_bundle",
+    srcs = [":platform-browser"],
+    output = "modules/@angular/platform-browser/platform-browser.umd.js",
+    entry_point = "modules/@angular/platform-browser/es6/index.js",
+    rollup_config = "modules/@angular/platform-browser/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
 )
 
@@ -654,6 +681,7 @@ ts_library(
 js_bundle(
     name = "platform-browser-dynamic_bundle",
     srcs = [":platform-browser-dynamic"],
+    output = "modules/@angular/platform-browser-dynamic/platform-browser-dynamic.umd.js",
     entry_point = "modules/@angular/platform-browser-dynamic/es6/index.js",
     rollup_config = "modules/@angular/platform-browser-dynamic/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -721,6 +749,7 @@ jasmine_node_test(
 js_bundle(
     name = "platform-server_bundle",
     srcs = [":platform-server"],
+    output = "modules/@angular/platform-server/platform-server.umd.js",
     entry_point = "modules/@angular/platform-server/es6/index.js",
     rollup_config = "modules/@angular/platform-server/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -789,6 +818,7 @@ jasmine_node_test(
 js_bundle(
     name = "router-deprecated_bundle",
     srcs = [":router-deprecated"],
+    output = "modules/@angular/router-deprecated/router-deprecated.umd.js",
     entry_point = "modules/@angular/router-deprecated/es6/index.js",
     rollup_config = "modules/@angular/router-deprecated/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -856,6 +886,7 @@ jasmine_node_test(
 js_bundle(
     name = "router_bundle",
     srcs = [":router"],
+    output = "modules/@angular/router/router.umd.js",
     entry_point = "modules/@angular/router/es6/index.js",
     rollup_config = "modules/@angular/router/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -911,6 +942,7 @@ ts_library(
 js_bundle(
     name = "upgrade_bundle",
     srcs = [":upgrade"],
+    output = "modules/@angular/upgrade/upgrade.umd.js",
     entry_point = "modules/@angular/upgrade/es6/index.js",
     rollup_config = "modules/@angular/upgrade/rollup.config.js",
     banner = "modules/@angular/license-banner.txt",
@@ -960,4 +992,140 @@ karma_test(
     ],
     config = "modules/@angular/router/karma-bazel.conf.js",
     size = "small",
+)
+
+###############################################################################
+# End to end tests
+###############################################################################
+ts_library(
+    name = "playground",
+    srcs = glob(
+        ["modules/playground/src/**/*.ts"],
+        exclude=[
+        ]),
+    deps = [
+        "//:core",
+        "//:common",
+        "//:http",
+        "//:platform-browser",
+        "//:platform-browser-dynamic",
+        "//:router",
+        "//:router-deprecated",
+        "//:upgrade",
+    ],
+    data = glob(
+        ["modules/playground/src/**/*"],
+        exclude=[
+            "modules/playground/src/**/*.ts",
+        ],
+    ),
+    tsconfig = "modules/tsconfig.json",
+)
+
+ts_library(
+    name = "e2e_util",
+    srcs = glob(
+        ["modules/e2e_util/**/*.ts"],
+    ),
+    deps = [
+        "//:types-node",
+        "//:types-protractor",
+        "//:types-selenium-webdriver",
+    ],
+    tsconfig = "modules/tsconfig.json",
+    root_dir = "modules/e2e_util",
+    out_dir = "modules/e2e_util",
+    module_name = "e2e_util",
+)
+
+ts_library(
+    name = "playground_test_module",
+    srcs = glob(
+        ["modules/playground/e2e_test/**/*.ts"],
+    ),
+    deps = [
+        "//:types-jasmine",
+        "//:e2e_util",
+    ],
+    tsconfig = "modules/tsconfig.json",
+)
+
+nodejs_binary(
+    name = "e2e_serve_unbundled",
+    srcs = ["node_modules", "tools/serve_runfiles.js"],
+    entry_point = "tools/serve_runfiles.js",
+    data = [
+        ":core",
+        ":common",
+        ":compiler",
+        ":forms",
+        ":http",
+        ":platform-browser",
+        ":platform-browser-dynamic",
+        ":platform-server",
+        ":router",
+        ":router-deprecated",
+        ":upgrade",
+        ":playground",
+    ],
+)
+
+nodejs_binary(
+    name = "e2e_serve_bundled",
+    srcs = ["node_modules", "tools/serve_runfiles.js"],
+    entry_point = "tools/serve_runfiles.js",
+    data = [
+        ":core",  # Needed for @angular/core/src/facade
+        ":core_bundle",
+        ":common_bundle",
+        ":compiler_bundle",
+        ":forms_bundle",
+        ":http_bundle",
+        ":platform-browser_bundle",
+        ":platform-browser-dynamic_bundle",
+        ":platform-server_bundle",
+        ":router_bundle",
+        ":router-deprecated_bundle",
+        ":upgrade_bundle",
+        ":playground",
+        "node_modules/es6-shim/es6-shim.js",
+        "node_modules/zone.js/dist/zone.js",
+        "node_modules/zone.js/dist/long-stack-trace-zone.js",
+        "node_modules/systemjs/dist/system.src.js",
+        "node_modules/base64-js/lib/b64.js",
+        "node_modules/reflect-metadata/Reflect.js",
+        "node_modules/rxjs",
+        "node_modules/angular/angular.js",
+    ],
+)
+
+protractor_test(
+    name = "playground_test",
+    srcs = [":playground_test_module"],
+    data = [
+        ":core",  # Needed for @angular/core/src/facade
+        ":core_bundle",
+        ":common_bundle",
+        ":compiler_bundle",
+        ":forms_bundle",
+        ":http_bundle",
+        ":platform-browser_bundle",
+        ":platform-browser-dynamic_bundle",
+        ":platform-server_bundle",
+        ":router_bundle",
+        ":router-deprecated_bundle",
+        ":upgrade_bundle",
+        ":playground",
+        "node_modules/es6-shim/es6-shim.js",
+        "node_modules/zone.js/dist/zone.js",
+        "node_modules/zone.js/dist/long-stack-trace-zone.js",
+        "node_modules/systemjs/dist/system.src.js",
+        "node_modules/base64-js/lib/b64.js",
+        "node_modules/reflect-metadata/Reflect.js",
+        "node_modules/rxjs",
+        "node_modules/angular/angular.js",
+        "favicon.ico",
+    ],
+    config = "protractor-bazel.conf.js",
+    # size = "medium",
 )

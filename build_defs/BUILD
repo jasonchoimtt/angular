@@ -27,3 +27,9 @@ filegroup(
     srcs = ["rollup_config_template.js"],
     visibility = ["//visibility:public"],
 )
+
+filegroup(
+    name = "protractor_launcher_template",
+    srcs = ["protractor_launcher_template.sh"],
+    visibility = ["//visibility:public"],
+)

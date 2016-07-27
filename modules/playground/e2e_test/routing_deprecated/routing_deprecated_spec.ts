@@ -19,7 +19,7 @@ describe('deprecated routing inbox-app', () => {
   afterEach(verifyNoBrowserErrors);
 
   describe('index view', () => {
-    var URL = 'all/playground/src/routing_deprecated/';
+    var URL = 'modules/playground/src/routing_deprecated/';
 
     it('should list out the current collection of items', () => {
       browser.get(URL);
@@ -39,7 +39,7 @@ describe('deprecated routing inbox-app', () => {
 
 
   describe('drafts view', () => {
-    var URL = 'all/playground/src/routing_deprecated/#/drafts';
+    var URL = 'modules/playground/src/routing_deprecated/#/drafts';
 
     it('should navigate to the drafts view when the drafts link is clicked', () => {
       browser.get(URL);
@@ -63,7 +63,7 @@ describe('deprecated routing inbox-app', () => {
 
 
   describe('detail view', () => {
-    var URL = 'all/playground/src/routing_deprecated/';
+    var URL = 'modules/playground/src/routing_deprecated/';
 
     it('should navigate to the detail view when an email is clicked', () => {
       browser.get(URL);

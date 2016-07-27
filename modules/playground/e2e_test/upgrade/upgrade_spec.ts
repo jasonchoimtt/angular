@@ -11,7 +11,7 @@ import {verifyNoBrowserErrors} from "e2e_util/e2e_util";
 // TODO(i): reenable once we fix issue with exposing testability to protractor when using ngUpgrade
 // https://github.com/angular/angular/issues/9407
 xdescribe('ngUpgrade', function() {
-  var URL = 'all/playground/src/upgrade/index.html';
+  var URL = 'modules/playground/src/upgrade/index.html';
 
   beforeEach(function() { browser.get(URL); });
 

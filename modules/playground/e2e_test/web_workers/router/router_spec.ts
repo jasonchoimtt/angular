@@ -22,7 +22,7 @@ describe("WebWorker Router", () => {
 
   let contentSelector = "app main h1";
   let navSelector = "app nav ul";
-  var baseUrl = 'all/playground/src/web_workers/router/index.html';
+  var baseUrl = 'modules/playground/src/web_workers/router/index.html';
 
   it("should route on click", () => {
     browser.get(baseUrl);
