@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "experimentalDecorators": true,
+    "inlineSourceMap": true,
+    "lib": ["es6", "dom"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "rootDir": ".",
+    "skipDefaultLibCheck": true,
+    "target": "es5",
+    "types": [
+      "../../node_modules/@types/node/index.d.ts",
+      "../../node_modules/@types/jasmine/index.d.ts"
+    ]
+  }
+}

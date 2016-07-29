@@ -1,7 +1,13 @@
 import * as assert from 'assert';
-import * as child_process from 'child_process';
+import {ChildProcess, SpawnOptions, spawn, spawnSync} from 'child_process';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 
+const chalk = require('chalk');
 const chokidar = require('chokidar');
+const protobufjs = require('protobufjs');
+protobufjs.convertFieldsToCamelCase = true;
 
 /**
  * Name of the bazel binary.
@@ -22,6 +28,11 @@ export interface IBazelEnvironment {
    */
   execute(argv: string[], options?: {inheritStdio?: boolean}): BazelResult;
   /**
+   * Runs the specified executable asynchronously. Returns a NodeJS child
+   * process.
+   */
+  spawnAsync(file: string, argv: string[], options?: SpawnOptions): ChildProcess;
+  /**
    * Gets bazel info.
    */
   info(): BazelInfo;
@@ -34,6 +45,10 @@ export interface IBazelEnvironment {
    */
   querySourceFiles(targets: string[]): string[];
   /**
+   * Queries the rule object of the specified targets.
+   */
+  queryRules(targets: string[]): any[];
+  /**
    * Gets a map of command-line flag to boolean indicating whether it is a
    * boolean flag.
    * e.g.{'--foo': true} means --foo does not take any argument
@@ -44,9 +59,25 @@ export interface IBazelEnvironment {
    */
   cwd(): string;
   /**
+   * Generates a path for a temporary file.
+   */
+  getTempFile(basename: string): string;
+  /**
    * Creates a file watcher that triggers callback on file changes.
    */
   createWatcher(callback: () => void, options?: any): FileWatcher;
+  /**
+   * Registers a function to be called when SIGINT is received.
+   */
+  registerCleanup(callback: () => void): void;
+  /**
+   * Logs a message to the console.
+   */
+  log(message: string): void;
+  /**
+   * Deletes a file.
+   */
+  unlink(fileName: string): void;
 }
 
 export interface BazelInfo { ['workspace']: string; }
@@ -54,7 +85,7 @@ export interface BazelInfo { ['workspace']: string; }
 export const REQUIRED_INFO_KEYS = ['workspace'];
 
 export interface BazelResult {
-  stdout: string;
+  stdout: string|Buffer;
   status: number;
 }
 
@@ -67,38 +98,53 @@ export interface FileWatcher {
 export class ProcessIBazelEnvironment implements IBazelEnvironment {
   execute(argv: string[], {inheritStdio = false} = {}): BazelResult {
     const outMode = inheritStdio ? 'inherit' : 'pipe';
-    const result = child_process.spawnSync(BAZEL, argv, {stdio: ['ignore', outMode, 'inherit']});
+    const result = spawnSync(BAZEL, argv, {stdio: ['ignore', outMode, 'inherit'], env: patchEnv(process.env)});
 
-    return {stdout: result.stdout ? result.stdout.toString() : null, status: result.status};
+    return {stdout: result.stdout, status: result.status};
   }
 
-  info() {
+  spawnAsync(file: string, argv: string[], options?: SpawnOptions): ChildProcess {
+    if (options && options.env) {
+      options = Object.assign({}, options, {
+        env: patchEnv(options.env)
+      });
+    }
+    return spawn(file, argv, options);
+  }
+
+  info(): BazelInfo {
     const result = this.execute(['info']);
-    assert(!result.status, `${IBAZEL}: "${BAZEL} info" exited with status ${result.status}\n`);
+    assert(!result.status, `${IBAZEL}: "${BAZEL} info" exited with status ${result.status}.`);
 
     const ret: any = {};
-    for (const line of result.stdout.split('\n').slice(0, -1)) {
+    for (const line of result.stdout.toString().split('\n').slice(0, -1)) {
       const [key, value] = line.split(': ');
       ret[key] = value;
     }
     for (const key of REQUIRED_INFO_KEYS) {
-      assert(ret[key], `${IBAZEL}: "${BAZEL} info" did not provide required key "${key}"`);
+      assert(ret[key], `${IBAZEL}: "${BAZEL} info" did not provide required key "${key}".`);
     }
     return ret;
   }
 
   queryBuildFiles(targets: string[]): string[] {
     const result = this.execute(['query', `buildfiles(deps(set(${targets.join(' ')})))`]);
-    assert(!result.status, `${IBAZEL}: "${BAZEL} query" exited with status ${result.status}`);
+    assert(!result.status, `${IBAZEL}: "${BAZEL} query" exited with status ${result.status}.`);
 
-    return result.stdout.split('\n').slice(0, -1).sort();
+    return result.stdout.toString().split('\n').slice(0, -1).sort();
   }
 
   querySourceFiles(targets: string[]): string[] {
     const result = this.execute(['query', `kind("source file", deps(set(${targets.join(' ')})))`]);
-    assert(!result.status, `${IBAZEL}: "${BAZEL} query" exited with status ${result.status}`);
+    assert(!result.status, `${IBAZEL}: "${BAZEL} query" exited with status ${result.status}.`);
 
-    return result.stdout.split('\n').slice(0, -1).sort();
+    return result.stdout.toString().split('\n').slice(0, -1).sort();
+  }
+
+  queryRules(targets: string[]): any[] {
+    const result = this.execute(['query', '--output=proto', `kind(rule, ${targets.join(' ')})`]);
+    const queryResult = getBuildPb().QueryResult.decode(result.stdout);
+    return queryResult.target.map((t: any) => t.rule);
   }
 
   getFlags(): {[option: string]: boolean} {
@@ -109,7 +155,7 @@ export class ProcessIBazelEnvironment implements IBazelEnvironment {
 
     const ret: {[option: string]: boolean} = {};
 
-    const flags = result.stdout.split('\n').slice(0, -1).filter(line => line[0] === '-');
+    const flags = result.stdout.toString().split('\n').slice(0, -1).filter(line => line[0] === '-');
 
     for (const flag of flags) {
       const [, key, hasArg] = /^(-[^=]+)(=?)/.exec(flag);
@@ -128,6 +174,11 @@ export class ProcessIBazelEnvironment implements IBazelEnvironment {
 
   cwd(): string { return process.cwd(); }
 
+  getTempFile(basename: string): string {
+    return path.join(
+        os.tmpdir(), `${basename}-${Date.now()}-${Math.round(Math.random() * 100000)}`);
+  }
+
   createWatcher(callback: Function, options: any = {}): FileWatcher {
     const chokidorFlags =
         Object.assign({}, options, {events: ['change', 'unlink'], ignoreInitial: true});
@@ -137,4 +188,39 @@ export class ProcessIBazelEnvironment implements IBazelEnvironment {
 
     return watcher;
   }
+
+  registerCleanup(callback: () => void): void {
+    process.on('SIGINT', callback);
+  }
+
+  log(message: string): void {
+    console.log(chalk.cyan(`${IBAZEL}:`) + ` ${message}`);
+  }
+
+  unlink(fileName: string): void {
+    fs.unlinkSync(fileName);
+  }
+}
+
+let buildPb: any;
+
+function getBuildPb() {
+  if (!buildPb) {
+    const protoPath = 'tools/ibazel/build.proto';
+    const protoNamespace =
+        protobufjs.loadProtoFile({root: process.env['RUNFILES'], file: protoPath});
+
+    if (!protoNamespace) {
+      throw new Error(`Cannot find ${protoPath}`);
+    }
+
+    buildPb = protoNamespace.build('blaze_query');
+  }
+  return buildPb;
+}
+
+function patchEnv(env: any) {
+  const ret = Object.assign({}, env);
+  delete ret['RUNFILES'];
+  return ret;
 }

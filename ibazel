@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e
+
+WORKSPACE="$(dirname "${0}")"
+
+export RUNFILES="${WORKSPACE}/bazel-bin/tools/ibazel/ibazel.runfiles/__main__"
+
+"${WORKSPACE}/bazel-bin/tools/ibazel/ibazel" "$@"
