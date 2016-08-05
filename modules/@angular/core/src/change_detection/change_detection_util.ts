@@ -7,7 +7,7 @@
  */
 
 import {areIterablesEqual, isListLikeIterable} from '../facade/collection';
-import {isPrimitive, looseIdentical} from '../facade/lang';
+import {isJsObject, isPrimitive, looseIdentical} from '../facade/lang';
 
 export {looseIdentical} from '../facade/lang';
 
@@ -20,7 +20,7 @@ export function devModeEqual(a: any, b: any): boolean {
     return areIterablesEqual(a, b, devModeEqual);
 
   } else if (
-      !isListLikeIterable(a) && !isPrimitive(a) && !isListLikeIterable(b) && !isPrimitive(b)) {
+      !isListLikeIterable(a) && isJsObject(a) && !isListLikeIterable(b) && isJsObject(b)) {
     return true;
 
   } else {

@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {getSymbolIterator, global, isArray, isBlank, isJsObject, isPresent} from './lang';
+import {getSymbolIterator, global, isArray, isBlank, isJsObject, isPresent, isPrimitive} from './lang';
 
 export var Map = global.Map;
 export var Set = global.Set;
@@ -294,7 +294,7 @@ function _flattenArray(source: any[], target: any[]): any[] {
 
 
 export function isListLikeIterable(obj: any): boolean {
-  if (!isJsObject(obj)) return false;
+  if (isPrimitive(obj)) return false;
   return isArray(obj) ||
       (!(obj instanceof Map) &&      // JS Map are iterables but return entries as [k, v]
        getSymbolIterator() in obj);  // JS Iterable have a Symbol.iterator prop
