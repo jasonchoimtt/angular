@@ -8,7 +8,7 @@
 
 import * as chars from '../chars';
 import {BaseException} from '../facade/exceptions';
-import {StringWrapper, isPresent, resolveEnumToken} from '../facade/lang';
+import {StringWrapper, isBlank, isPresent, resolveEnumToken} from '../facade/lang';
 
 export enum CssTokenType {
   EOF,
@@ -204,7 +204,7 @@ export class CssScanner {
       next = output.token;
     }
 
-    if (!isPresent(next)) {
+    if (isBlank(next)) {
       next = new CssToken(this.index, this.column, this.line, CssTokenType.EOF, 'end of file');
     }
 

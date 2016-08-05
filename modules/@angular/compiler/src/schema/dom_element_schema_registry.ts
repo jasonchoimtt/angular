@@ -9,7 +9,7 @@
 import {CUSTOM_ELEMENTS_SCHEMA, Injectable, SchemaMetadata, SecurityContext} from '@angular/core';
 
 import {StringMapWrapper} from '../facade/collection';
-import {isPresent} from '../facade/lang';
+import {isBlank, isPresent} from '../facade/lang';
 
 import {SECURITY_SCHEMA} from './dom_security_schema';
 import {ElementSchemaRegistry} from './element_schema_registry';
@@ -281,7 +281,7 @@ export class DomElementSchemaRegistry extends ElementSchemaRegistry {
       }
     }
     var elementProperties = this.schema[tagName.toLowerCase()];
-    if (!isPresent(elementProperties)) {
+    if (isBlank(elementProperties)) {
       elementProperties = this.schema['unknown'];
     }
     return isPresent(elementProperties[propName]);

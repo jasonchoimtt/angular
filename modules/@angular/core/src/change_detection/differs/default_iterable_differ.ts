@@ -705,7 +705,7 @@ class _DuplicateMap {
     var key = getMapKey(record.trackById);
 
     var duplicates = this.map.get(key);
-    if (!isPresent(duplicates)) {
+    if (isBlank(duplicates)) {
       duplicates = new _DuplicateItemRecordList();
       this.map.set(key, duplicates);
     }

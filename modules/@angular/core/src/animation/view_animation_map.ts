@@ -7,7 +7,7 @@
  */
 
 import {ListWrapper, Map, StringMapWrapper} from '../facade/collection';
-import {isPresent} from '../facade/lang';
+import {isBlank, isPresent} from '../facade/lang';
 
 import {AnimationPlayer} from './animation_player';
 
@@ -32,7 +32,7 @@ export class ViewAnimationMap {
 
   set(element: any, animationName: string, player: AnimationPlayer): void {
     var playersByAnimation = this._map.get(element);
-    if (!isPresent(playersByAnimation)) {
+    if (isBlank(playersByAnimation)) {
       playersByAnimation = {};
     }
     var existingEntry = playersByAnimation[animationName];

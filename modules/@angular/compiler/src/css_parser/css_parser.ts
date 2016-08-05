@@ -7,7 +7,7 @@
  */
 
 import * as chars from '../chars';
-import {isPresent} from '../facade/lang';
+import {isBlank, isPresent} from '../facade/lang';
 import {ParseError, ParseLocation, ParseSourceFile, ParseSourceSpan} from '../parse_util';
 
 import {BlockType, CssAst, CssAtRulePredicateAst, CssBlockAst, CssBlockDefinitionRuleAst, CssBlockRuleAst, CssDefinitionAst, CssInlineRuleAst, CssKeyframeDefinitionAst, CssKeyframeRuleAst, CssMediaQueryRuleAst, CssPseudoSelectorAst, CssRuleAst, CssSelectorAst, CssSelectorRuleAst, CssSimpleSelectorAst, CssStyleSheetAst, CssStyleValueAst, CssStylesBlockAst, CssUnknownRuleAst, CssUnknownTokenListAst, mergeTokens} from './css_ast';
@@ -141,7 +141,7 @@ export class CssParser {
       startLoc = start.location.start;
     } else {
       var token = start;
-      if (!isPresent(token)) {
+      if (isBlank(token)) {
         // the data here is invalid, however, if and when this does
         // occur, any other errors associated with this will be collected
         token = this._lastToken;
@@ -149,7 +149,7 @@ export class CssParser {
       startLoc = new ParseLocation(this._file, token.index, token.line, token.column);
     }
 
-    if (!isPresent(end)) {
+    if (isBlank(end)) {
       end = this._lastToken;
     }
 

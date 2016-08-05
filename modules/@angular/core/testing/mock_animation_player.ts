@@ -7,7 +7,7 @@
  */
 
 import {AnimationPlayer} from '../src/animation/animation_player';
-import {isPresent} from '../src/facade/lang';
+import {isBlank, isPresent} from '../src/facade/lang';
 
 export class MockAnimationPlayer implements AnimationPlayer {
   private _subscriptions: any[] /** TODO #9100 */ = [];
@@ -26,7 +26,7 @@ export class MockAnimationPlayer implements AnimationPlayer {
 
       this._subscriptions.forEach((entry) => { entry(); });
       this._subscriptions = [];
-      if (!isPresent(this.parentPlayer)) {
+      if (isBlank(this.parentPlayer)) {
         this.destroy();
       }
     }

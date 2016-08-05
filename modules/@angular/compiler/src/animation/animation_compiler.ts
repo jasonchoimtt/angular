@@ -402,7 +402,7 @@ class _AnimationTemplatePropertyVisitor implements t.TemplateAstVisitor {
     ast.inputs.forEach(input => {
       if (input.type == t.PropertyBindingType.Animation) {
         var animationName = input.name;
-        if (!isPresent(this._animationRegistry[animationName])) {
+        if (isBlank(this._animationRegistry[animationName])) {
           this.errors.push(
               new AnimationParseError(`couldn't find an animation entry for ${animationName}`));
         }

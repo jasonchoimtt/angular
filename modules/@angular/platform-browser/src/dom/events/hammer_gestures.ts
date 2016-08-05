@@ -9,7 +9,7 @@
 import {Inject, Injectable, OpaqueToken} from '@angular/core';
 
 import {BaseException} from '../../facade/exceptions';
-import {isPresent} from '../../facade/lang';
+import {isBlank, isPresent} from '../../facade/lang';
 
 import {HammerGesturesPluginCommon} from './hammer_common';
 
@@ -56,7 +56,7 @@ export class HammerGesturesPlugin extends HammerGesturesPluginCommon {
   supports(eventName: string): boolean {
     if (!super.supports(eventName) && !this.isCustomEvent(eventName)) return false;
 
-    if (!isPresent((window as any /** TODO #???? */)['Hammer'])) {
+    if (isBlank((window as any /** TODO #???? */)['Hammer'])) {
       throw new BaseException(`Hammer.js is not loaded, can not bind ${eventName} event`);
     }
 

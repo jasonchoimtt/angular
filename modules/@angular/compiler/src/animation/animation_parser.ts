@@ -102,7 +102,7 @@ function _parseAnimationTransitionExpr(
     eventStr: string, errors: AnimationParseError[]): AnimationStateTransitionExpression[] {
   var expressions: any[] /** TODO #9100 */ = [];
   var match = eventStr.match(/^(\*|[-\w]+)\s*(<?[=-]>)\s*(\*|[-\w]+)$/);
-  if (!isPresent(match) || match.length < 4) {
+  if (isBlank(match) || match.length < 4) {
     errors.push(new AnimationParseError(`the provided ${eventStr} is not of a supported format`));
     return expressions;
   }
@@ -189,7 +189,7 @@ function _normalizeStyleStepEntry(
       // or when the first style step is run. We want to concatenate all subsequent
       // style steps together into a single style step such that we have the correct
       // starting keyframe data to pass into the animation player.
-      if (!isPresent(combinedStyles)) {
+      if (isBlank(combinedStyles)) {
         combinedStyles = [];
       }
       _normalizeStyleMetadata(<CompileAnimationStyleMetadata>step, stateStyles, errors)
@@ -244,7 +244,7 @@ function _resolveStylesFromState(
   } else {
     var normalizedStateName = stateName.substring(1);
     var value = stateStyles[normalizedStateName];
-    if (!isPresent(value)) {
+    if (isBlank(value)) {
       errors.push(new AnimationParseError(
           `Unable to apply styles due to missing a state: "${normalizedStateName}"`));
     } else {
@@ -331,7 +331,7 @@ function _parseAnimationKeyframes(
 
     StringMapWrapper.forEach(
         styles, (value: any /** TODO #9100 */, prop: any /** TODO #9100 */) => {
-          if (!isPresent(firstKeyframeStyles[prop])) {
+          if (isBlank(firstKeyframeStyles[prop])) {
             firstKeyframeStyles[prop] = FILL_STYLE_FLAG;
           }
         });
@@ -343,7 +343,7 @@ function _parseAnimationKeyframes(
 
     StringMapWrapper.forEach(
         styles, (value: any /** TODO #9100 */, prop: any /** TODO #9100 */) => {
-          if (!isPresent(lastKeyframeStyles[prop])) {
+          if (isBlank(lastKeyframeStyles[prop])) {
             lastKeyframeStyles[prop] = value;
           }
         });
@@ -494,7 +494,7 @@ function _parseTimeExpression(
     }
 
     var easingVal = matches[5];
-    if (!isBlank(easingVal)) {
+    if (isPresent(easingVal)) {
       easing = easingVal;
     }
   } else {

@@ -11,7 +11,7 @@ import {AnimationEntryMetadata, Compiler, ComponentMetadata, DirectiveMetadata, 
 import {DirectiveResolver} from '../src/directive_resolver';
 import {Map} from '../src/facade/collection';
 import {BaseException} from '../src/facade/exceptions';
-import {Type, isArray, isPresent, stringify} from '../src/facade/lang';
+import {Type, isArray, isBlank, isPresent, stringify} from '../src/facade/lang';
 
 
 /**
@@ -186,7 +186,7 @@ export class MockDirectiveResolver extends DirectiveResolver {
 }
 
 function flattenArray(tree: any[], out: Array<Type|any[]>): void {
-  if (!isPresent(tree)) return;
+  if (isBlank(tree)) return;
   for (var i = 0; i < tree.length; i++) {
     var item = resolveForwardRef(tree[i]);
     if (isArray(item)) {

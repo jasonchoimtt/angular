@@ -13,7 +13,7 @@ import {take} from 'rxjs/operator/take';
 
 import {ReadyState} from '../src/enums';
 import {BaseException} from '../src/facade/exceptions';
-import {isPresent} from '../src/facade/lang';
+import {isBlank, isPresent} from '../src/facade/lang';
 import {Connection, ConnectionBackend} from '../src/interfaces';
 import {Request} from '../src/static_request';
 import {Response} from '../src/static_response';
@@ -232,7 +232,7 @@ export class MockBackend implements ConnectionBackend {
    * against the framework itself, not by end-users.
    */
   createConnection(req: Request): MockConnection {
-    if (!isPresent(req) || !(req instanceof Request)) {
+    if (isBlank(req) || !(req instanceof Request)) {
       throw new BaseException(`createConnection requires an instance of Request, got ${req}`);
     }
     let connection = new MockConnection(req);

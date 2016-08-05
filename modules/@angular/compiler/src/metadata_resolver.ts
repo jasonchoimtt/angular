@@ -711,7 +711,7 @@ export class CompileMetadataResolver {
     if (q.isVarBindingQuery) {
       selectors = q.varBindings.map(varName => this.getTokenMetadata(varName));
     } else {
-      if (!isPresent(q.selector)) {
+      if (isBlank(q.selector)) {
         throw new BaseException(
             `Can't construct a query for the property "${propertyName}" of "${stringify(typeOrFunc)}" since the query selector wasn't defined.`);
       }

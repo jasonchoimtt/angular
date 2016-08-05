@@ -10,7 +10,7 @@ import {AUTO_STYLE} from '@angular/core';
 
 import {AnimationPlayer} from '../../core_private';
 import {StringMapWrapper} from '../facade/collection';
-import {isPresent} from '../facade/lang';
+import {isBlank, isPresent} from '../facade/lang';
 
 import {getDOM} from './dom_adapter';
 import {DomAnimatePlayer} from './dom_animate_player';
@@ -34,7 +34,7 @@ export class WebAnimationsPlayer implements AnimationPlayer {
   private _onFinish() {
     if (!this._finished) {
       this._finished = true;
-      if (!isPresent(this.parentPlayer)) {
+      if (isBlank(this.parentPlayer)) {
         this.destroy();
       }
       this._subscriptions.forEach(fn => fn());

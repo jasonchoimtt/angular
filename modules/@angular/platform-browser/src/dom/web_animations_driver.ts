@@ -10,7 +10,7 @@ import {AUTO_STYLE, BaseException} from '@angular/core';
 
 import {AnimationKeyframe, AnimationPlayer, AnimationStyles, NoOpAnimationPlayer} from '../../core_private';
 import {StringMapWrapper} from '../facade/collection';
-import {StringWrapper, isNumber, isPresent} from '../facade/lang';
+import {StringWrapper, isNumber, isBlank, isPresent} from '../facade/lang';
 import {AnimationDriver} from './animation_driver';
 import {DomAnimatePlayer} from './dom_animate_player';
 import {dashCaseToCamelCase} from './util';
@@ -72,7 +72,7 @@ function _populateStyles(
     });
   });
   StringMapWrapper.forEach(defaultStyles, (value: string, prop: string) => {
-    if (!isPresent(data[prop])) {
+    if (isBlank(data[prop])) {
       data[prop] = value;
     }
   });

@@ -16,7 +16,7 @@ import {BaseRequestOptions, RequestOptions} from '../../src/base_request_options
 import {BaseResponseOptions, ResponseOptions} from '../../src/base_response_options';
 import {ReadyState, RequestMethod, ResponseType} from '../../src/enums';
 import {Map} from '../../src/facade/collection';
-import {isPresent} from '../../src/facade/lang';
+import {isBlank, isPresent} from '../../src/facade/lang';
 import {Request} from '../../src/static_request';
 import {Response} from '../../src/static_response';
 
@@ -33,7 +33,7 @@ class MockBrowserJsonp extends BrowserJsonp {
   removeEventListener(type: string, cb: Function) { this.callbacks.delete(type); }
 
   dispatchEvent(type: string, argument?: any) {
-    if (!isPresent(argument)) {
+    if (isBlank(argument)) {
       argument = {};
     }
     let cb = this.callbacks.get(type);

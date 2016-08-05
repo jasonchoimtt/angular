@@ -8,7 +8,7 @@
 
 import {Attribute, Directive, Host, Input, OnInit, TemplateRef, ViewContainerRef} from '@angular/core';
 
-import {isPresent} from '../facade/lang';
+import {isBlank, isPresent} from '../facade/lang';
 import {NgLocalization, getPluralCategory} from '../localization';
 
 import {SwitchView} from './ng_switch';
@@ -99,7 +99,7 @@ export class NgPlural {
 
   /** @internal */
   _activateView(view: SwitchView) {
-    if (!isPresent(view)) return;
+    if (isBlank(view)) return;
     this._activeView = view;
     this._activeView.create();
   }

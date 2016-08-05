@@ -344,7 +344,7 @@ export class PerflogMetric extends Metric {
         }
       }
     });
-    if (!isPresent(markStartEvent) || !isPresent(markEndEvent)) {
+    if (isBlank(markStartEvent) || isBlank(markEndEvent)) {
       // not all events have been received, no further processing for now
       return null;
     }

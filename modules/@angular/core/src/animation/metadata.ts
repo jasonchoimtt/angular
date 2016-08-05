@@ -7,7 +7,7 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {NumberWrapper, isArray, isPresent, isString} from '../facade/lang';
+import {NumberWrapper, isArray, isBlank, isPresent, isString} from '../facade/lang';
 
 /**
  * @experimental Animation support is experimental.
@@ -185,7 +185,7 @@ export function animate(
     timing: string | number, styles: AnimationStyleMetadata | AnimationKeyframesSequenceMetadata =
                                  null): AnimationAnimateMetadata {
   var stylesEntry = styles;
-  if (!isPresent(stylesEntry)) {
+  if (isBlank(stylesEntry)) {
     var EMPTY_STYLE: {[key: string]: string | number} = {};
     stylesEntry = new AnimationStyleMetadata([EMPTY_STYLE], 1);
   }

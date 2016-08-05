@@ -7,7 +7,7 @@
  */
 
 import {ListWrapper, StringMapWrapper} from '../facade/collection';
-import {isArray, isPresent} from '../facade/lang';
+import {isArray, isBlank, isPresent} from '../facade/lang';
 
 import {FILL_STYLE_FLAG} from './animation_constants';
 import {AUTO_STYLE} from './metadata';
@@ -22,7 +22,7 @@ export function prepareFinalAnimationStyles(
   });
 
   StringMapWrapper.forEach(previousStyles, (value: string, prop: string) => {
-    if (!isPresent(finalStyles[prop])) {
+    if (isBlank(finalStyles[prop])) {
       finalStyles[prop] = nullValue;
     }
   });
@@ -61,7 +61,7 @@ export function balanceAnimationKeyframes(
   var extraFinalKeyframeStyles: {[key: string]: string} = {};
   var hasExtraFinalStyles = false;
   StringMapWrapper.forEach(keyframeCollectedStyles, (value: string, prop: string) => {
-    if (!isPresent(flatenedFinalKeyframeStyles[prop])) {
+    if (isBlank(flatenedFinalKeyframeStyles[prop])) {
       extraFinalKeyframeStyles[prop] = AUTO_STYLE;
       hasExtraFinalStyles = true;
     }
@@ -72,7 +72,7 @@ export function balanceAnimationKeyframes(
   }
 
   StringMapWrapper.forEach(flatenedFinalKeyframeStyles, (value: string, prop: string) => {
-    if (!isPresent(flatenedFirstKeyframeStyles[prop])) {
+    if (isBlank(flatenedFirstKeyframeStyles[prop])) {
       extraFirstKeyframeStyles[prop] = AUTO_STYLE;
       hasExtraFirstStyles = true;
     }
@@ -98,7 +98,7 @@ export function collectAndResolveStyles(
     StringMapWrapper.forEach(entry, (value: string | number, prop: string) => {
       if (value == FILL_STYLE_FLAG) {
         value = collection[prop];
-        if (!isPresent(value)) {
+        if (isBlank(value)) {
           value = AUTO_STYLE;
         }
       }

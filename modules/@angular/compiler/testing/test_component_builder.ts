@@ -11,7 +11,7 @@ import {ComponentFixture, ComponentFixtureNoNgZone, TestBed, TestComponentBuilde
 
 import {DirectiveResolver} from '../index';
 import {MapWrapper} from '../src/facade/collection';
-import {ConcreteType, Type, isPresent} from '../src/facade/lang';
+import {ConcreteType, Type, isBlank, isPresent} from '../src/facade/lang';
 
 
 /**
@@ -70,7 +70,7 @@ export class OverridingTestComponentBuilder extends TestComponentBuilder {
   overrideDirective(componentType: Type, from: Type, to: Type): OverridingTestComponentBuilder {
     let clone = this._clone();
     let overridesForComponent = clone._directiveOverrides.get(componentType);
-    if (!isPresent(overridesForComponent)) {
+    if (isBlank(overridesForComponent)) {
       clone._directiveOverrides.set(componentType, new Map<Type, Type>());
       overridesForComponent = clone._directiveOverrides.get(componentType);
     }

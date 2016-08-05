@@ -11,7 +11,7 @@ import {Injectable, RenderComponentType, ViewEncapsulation} from '@angular/core'
 import {VIEW_ENCAPSULATION_VALUES} from '../../../core_private';
 import {Map, MapWrapper, StringMapWrapper} from '../../facade/collection';
 import {BaseException} from '../../facade/exceptions';
-import {Type, isArray, isPresent, serializeEnum} from '../../facade/lang';
+import {Type, isArray, isBlank, isPresent, serializeEnum} from '../../facade/lang';
 
 import {RenderStore} from './render_store';
 import {LocationType} from './serialized_types';
@@ -29,7 +29,7 @@ export class Serializer {
   constructor(private _renderStore: RenderStore) {}
 
   serialize(obj: any, type: any): Object {
-    if (!isPresent(obj)) {
+    if (isBlank(obj)) {
       return null;
     }
     if (isArray(obj)) {
@@ -52,7 +52,7 @@ export class Serializer {
   }
 
   deserialize(map: any, type: any, data?: any): any {
-    if (!isPresent(map)) {
+    if (isBlank(map)) {
       return null;
     }
     if (isArray(map)) {

@@ -8,7 +8,7 @@
 
 import {Location} from '@angular/common';
 import {Component, Injectable} from '@angular/core';
-import {DateWrapper, isPresent} from '@angular/core/src/facade/lang';
+import {DateWrapper, isBlank, isPresent} from '@angular/core/src/facade/lang';
 import {Route, RouteConfig, RouteParams, Router, RouterLink, RouterOutlet} from '@angular/router-deprecated';
 
 import * as db from './data';
@@ -69,7 +69,7 @@ class DbService {
 
   emails(): Promise<any[]> {
     return this.getData().then(
-        (data: any[]): any[] => data.filter(record => !isPresent(record['draft'])));
+        (data: any[]): any[] => data.filter(record => isBlank(record['draft'])));
   }
 
   email(id: any /** TODO #9100 */): Promise<any> {

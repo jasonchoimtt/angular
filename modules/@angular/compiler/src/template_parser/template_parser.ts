@@ -614,7 +614,7 @@ class TemplateParseVisitor implements html.Visitor {
     // This will occur when a @trigger is not paired with an expression.
     // For animations it is valid to not have an expression since */void
     // states will be applied by angular when the element is attached/detached
-    if (!isPresent(expression) || expression.length == 0) {
+    if (isBlank(expression) || expression.length == 0) {
       expression = 'null';
     }
     const ast = this._parseBinding(expression, sourceSpan);

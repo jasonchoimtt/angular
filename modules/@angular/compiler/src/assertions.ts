@@ -35,7 +35,7 @@ const INTERPOLATION_BLACKLIST_REGEXPS = [
 export function assertInterpolationSymbols(identifier: string, value: any): void {
   if (isPresent(value) && !(isArray(value) && value.length == 2)) {
     throw new Error(`Expected '${identifier}' to be an array, [start, end].`);
-  } else if (isDevMode() && !isBlank(value)) {
+  } else if (isDevMode() && isPresent(value)) {
     const start = value[0] as string;
     const end = value[1] as string;
     // black list checking

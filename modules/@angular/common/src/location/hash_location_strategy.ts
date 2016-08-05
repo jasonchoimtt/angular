@@ -8,7 +8,7 @@
 
 import {Inject, Injectable, Optional} from '@angular/core';
 
-import {isPresent} from '../facade/lang';
+import {isBlank, isPresent} from '../facade/lang';
 
 import {Location} from './location';
 import {APP_BASE_HREF, LocationStrategy} from './location_strategy';
@@ -81,7 +81,7 @@ export class HashLocationStrategy extends LocationStrategy {
     // the hash value is always prefixed with a `#`
     // and if it is empty then it will stay empty
     var path = this._platformLocation.hash;
-    if (!isPresent(path)) path = '#';
+    if (isBlank(path)) path = '#';
 
     return path.length > 0 ? path.substring(1) : path;
   }

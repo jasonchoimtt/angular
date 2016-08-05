@@ -7,7 +7,7 @@
  */
 
 import {DomAnimatePlayer} from '../src/dom/dom_animate_player';
-import {isPresent} from '../src/facade/lang';
+import {isBlank, isPresent} from '../src/facade/lang';
 
 export class MockDomAnimatePlayer implements DomAnimatePlayer {
   public captures: {[key: string]: any[]} = {};
@@ -17,7 +17,7 @@ export class MockDomAnimatePlayer implements DomAnimatePlayer {
 
   /** @internal */
   _capture(method: string, data: any): void {
-    if (!isPresent(this.captures[method])) {
+    if (isBlank(this.captures[method])) {
       this.captures[method] = [];
     }
     this.captures[method].push(data);

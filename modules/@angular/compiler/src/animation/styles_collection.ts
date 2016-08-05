@@ -7,7 +7,7 @@
  */
 
 import {ListWrapper} from '../facade/collection';
-import {isPresent} from '../facade/lang';
+import {isBlank, isPresent} from '../facade/lang';
 
 export class StylesCollectionEntry {
   constructor(public time: number, public value: string|number) {}
@@ -23,7 +23,7 @@ export class StylesCollection {
   insertAtTime(property: string, time: number, value: string|number) {
     var tuple = new StylesCollectionEntry(time, value);
     var entries = this.styles[property];
-    if (!isPresent(entries)) {
+    if (isBlank(entries)) {
       entries = this.styles[property] = [];
     }
 

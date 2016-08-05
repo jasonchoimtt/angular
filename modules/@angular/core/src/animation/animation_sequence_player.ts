@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {isPresent, scheduleMicroTask} from '../facade/lang';
+import {isBlank, isPresent, scheduleMicroTask} from '../facade/lang';
 
 import {AnimationPlayer, NoOpAnimationPlayer} from './animation_player';
 
@@ -47,7 +47,7 @@ export class AnimationSequencePlayer implements AnimationPlayer {
   private _onFinish() {
     if (!this._finished) {
       this._finished = true;
-      if (!isPresent(this.parentPlayer)) {
+      if (isBlank(this.parentPlayer)) {
         this.destroy();
       }
       this._subscriptions.forEach(subscription => subscription());
@@ -62,7 +62,7 @@ export class AnimationSequencePlayer implements AnimationPlayer {
   hasStarted() { return this._started; }
 
   play(): void {
-    if (!isPresent(this.parentPlayer)) {
+    if (isBlank(this.parentPlayer)) {
       this.init();
     }
     this._started = true;
