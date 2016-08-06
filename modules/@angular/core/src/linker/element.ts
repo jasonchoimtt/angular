@@ -50,7 +50,7 @@ export class AppElement {
 
   mapNestedViews(nestedViewClass: any, callback: Function): any[] {
     var result: any[] /** TODO #9100 */ = [];
-    if (isPresent(this.nestedViews)) {
+    if (this.nestedViews !== undefined && this.nestedViews !== null) {
       this.nestedViews.forEach((nestedView) => {
         if (nestedView.clazz === nestedViewClass) {
           result.push(callback(nestedView));
@@ -79,7 +79,7 @@ export class AppElement {
     } else {
       refRenderNode = this.nativeElement;
     }
-    if (isPresent(refRenderNode)) {
+    if (refRenderNode !== undefined && refRenderNode !== null) {
       view.renderer.attachViewAfter(refRenderNode, view.flatRootNodes);
     }
     view.markContentChildAsMoved(this);
@@ -102,7 +102,7 @@ export class AppElement {
     } else {
       refRenderNode = this.nativeElement;
     }
-    if (isPresent(refRenderNode)) {
+    if (refRenderNode !== undefined && refRenderNode !== null) {
       view.renderer.attachViewAfter(refRenderNode, view.flatRootNodes);
     }
     view.addToContentChildren(this);

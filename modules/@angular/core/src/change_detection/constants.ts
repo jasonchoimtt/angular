@@ -87,6 +87,6 @@ export var CHANGE_DETECTOR_STATUS_VALUES = [
 
 export function isDefaultChangeDetectionStrategy(changeDetectionStrategy: ChangeDetectionStrategy):
     boolean {
-  return isBlank(changeDetectionStrategy) ||
+  return changeDetectionStrategy === undefined || changeDetectionStrategy === null ||
       changeDetectionStrategy === ChangeDetectionStrategy.Default;
 }

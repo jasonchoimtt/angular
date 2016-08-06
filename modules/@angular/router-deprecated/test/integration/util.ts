@@ -109,7 +109,7 @@ export function itShouldRoute() {
   var specSuiteName = spaceCaseToCamelCase(specNameBuilder.join(' '));
 
   var spec = (specs as any /** TODO #9100 */)[specSuiteName];
-  if (isBlank(spec)) {
+  if (spec === undefined || spec === null) {
     throw new BaseException(`Router integration spec suite "${specSuiteName}" was not found.`);
   } else {
     // todo: remove spec from map, throw if there are extra left over??

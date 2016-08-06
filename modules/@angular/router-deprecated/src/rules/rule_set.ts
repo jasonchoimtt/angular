@@ -49,7 +49,8 @@ export class RuleSet {
   config(config: RouteDefinition): boolean {
     let handler: any /** TODO #9100 */;
 
-    if (isPresent(config.name) && config.name[0].toUpperCase() != config.name[0]) {
+    if (config.name !== undefined && config.name !== null &&
+        config.name[0].toUpperCase() != config.name[0]) {
       let suggestedName = config.name[0].toUpperCase() + config.name.substring(1);
       throw new BaseException(
           `Route "${config.path}" with name "${config.name}" does not begin with an uppercase letter. Route names should be PascalCase like "${suggestedName}".`);
@@ -60,7 +61,7 @@ export class RuleSet {
       let routePath = this._getRoutePath(config);
       let auxRule = new RouteRule(routePath, handler, config.name);
       this.auxRulesByPath.set(routePath.toString(), auxRule);
-      if (isPresent(config.name)) {
+      if (config.name !== undefined && config.name !== null) {
         this.auxRulesByName.set(config.name, auxRule);
       }
       return auxRule.terminal;
@@ -78,10 +79,12 @@ export class RuleSet {
 
     if (config instanceof Route) {
       handler = new SyncRouteHandler(config.component, config.data);
-      useAsDefault = isPresent(config.useAsDefault) && config.useAsDefault;
+      useAsDefault =
+          config.useAsDefault !== undefined && config.useAsDefault !== null && config.useAsDefault;
     } else if (config instanceof AsyncRoute) {
       handler = new AsyncRouteHandler(config.loader, config.data);
-      useAsDefault = isPresent(config.useAsDefault) && config.useAsDefault;
+      useAsDefault =
+          config.useAsDefault !== undefined && config.useAsDefault !== null && config.useAsDefault;
     }
     let routePath = this._getRoutePath(config);
     let newRule = new RouteRule(routePath, handler, config.name);
@@ -89,14 +92,14 @@ export class RuleSet {
     this._assertNoHashCollision(newRule.hash, config.path);
 
     if (useAsDefault) {
-      if (isPresent(this.defaultRule)) {
+      if (this.defaultRule !== undefined && this.defaultRule !== null) {
         throw new BaseException(`Only one route can be default`);
       }
       this.defaultRule = newRule;
     }
 
     this.rules.push(newRule);
-    if (isPresent(config.name)) {
+    if (config.name !== undefined && config.name !== null) {
       this.rulesByName.set(config.name, newRule);
     }
     return newRule.terminal;
@@ -112,13 +115,14 @@ export class RuleSet {
     this.rules.forEach((routeRecognizer: AbstractRule) => {
       var pathMatch = routeRecognizer.recognize(urlParse);
 
-      if (isPresent(pathMatch)) {
+      if (pathMatch !== undefined && pathMatch !== null) {
         solutions.push(pathMatch);
       }
     });
 
     // handle cases where we are routing just to an aux route
-    if (solutions.length == 0 && isPresent(urlParse) && urlParse.auxiliary.length > 0) {
+    if (solutions.length == 0 && urlParse !== undefined && urlParse !== null &&
+        urlParse.auxiliary.length > 0) {
       return [Promise.resolve(new PathMatch(null, null, urlParse.auxiliary))];
     }
 
@@ -127,7 +131,7 @@ export class RuleSet {
 
   recognizeAuxiliary(urlParse: Url): Promise<RouteMatch>[] {
     var routeRecognizer: RouteRule = this.auxRulesByPath.get(urlParse.path);
-    if (isPresent(routeRecognizer)) {
+    if (routeRecognizer !== undefined && routeRecognizer !== null) {
       return [routeRecognizer.recognize(urlParse)];
     }
 
@@ -137,7 +141,8 @@ export class RuleSet {
   hasRoute(name: string): boolean { return this.rulesByName.has(name); }
 
   componentLoaded(name: string): boolean {
-    return this.hasRoute(name) && isPresent(this.rulesByName.get(name).handler.componentType);
+    return this.hasRoute(name) && this.rulesByName.get(name).handler.componentType !== undefined &&
+        this.rulesByName.get(name).handler.componentType !== null;
   }
 
   loadComponent(name: string): Promise<any> {
@@ -146,7 +151,7 @@ export class RuleSet {
 
   generate(name: string, params: any): ComponentInstruction {
     var rule: RouteRule = this.rulesByName.get(name);
-    if (isBlank(rule)) {
+    if (rule === undefined || rule === null) {
       return null;
     }
     return rule.generate(params);
@@ -154,7 +159,7 @@ export class RuleSet {
 
   generateAuxiliary(name: string, params: any): ComponentInstruction {
     var rule: RouteRule = this.auxRulesByName.get(name);
-    if (isBlank(rule)) {
+    if (rule === undefined || rule === null) {
       return null;
     }
     return rule.generate(params);
@@ -170,15 +175,15 @@ export class RuleSet {
   }
 
   private _getRoutePath(config: RouteDefinition): RoutePath {
-    if (isPresent(config.regex)) {
-      if (isFunction(config.serializer)) {
+    if (config.regex !== undefined && config.regex !== null) {
+      if (typeof config.serializer === 'function') {
         return new RegexRoutePath(config.regex, config.serializer, config.regex_group_names);
       } else {
         throw new BaseException(
             `Route provides a regex property, '${config.regex}', but no serializer property`);
       }
     }
-    if (isPresent(config.path)) {
+    if (config.path !== undefined && config.path !== null) {
       // Auxiliary routes do not have a slash at the start
       let path = (config instanceof AuxRoute && config.path.startsWith('/')) ?
           config.path.substring(1) :

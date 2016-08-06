@@ -86,14 +86,14 @@ export class AsyncPipe implements OnDestroy {
   constructor(_ref: ChangeDetectorRef) { this._ref = _ref; }
 
   ngOnDestroy(): void {
-    if (isPresent(this._subscription)) {
+    if (this._subscription !== undefined && this._subscription !== null) {
       this._dispose();
     }
   }
 
   transform(obj: Observable<any>|Promise<any>|EventEmitter<any>): any {
-    if (isBlank(this._obj)) {
-      if (isPresent(obj)) {
+    if (this._obj === undefined || this._obj === null) {
+      if (obj !== undefined && obj !== null) {
         this._subscribe(obj);
       }
       this._latestReturnedValue = this._latestValue;
@@ -123,7 +123,7 @@ export class AsyncPipe implements OnDestroy {
 
   /** @internal */
   _selectStrategy(obj: Observable<any>|Promise<any>|EventEmitter<any>): any {
-    if (isPromise(obj)) {
+    if (obj !== undefined && obj !== null && typeof(<any>obj).then === 'function') {
       return _promiseStrategy;
     } else if ((<any>obj).subscribe) {
       return _observableStrategy;

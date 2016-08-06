@@ -36,7 +36,7 @@ export function isControl(control: Object): boolean {
 }
 
 function _find(control: AbstractControl, path: Array<string|number>| string) {
-  if (isBlank(path)) return null;
+  if (path === undefined || path === null) return null;
 
   if (!(path instanceof Array)) {
     path = (<string>path).split('/');
@@ -45,10 +45,11 @@ function _find(control: AbstractControl, path: Array<string|number>| string) {
 
   return (<Array<string|number>>path).reduce((v, name) => {
     if (v instanceof ControlGroup) {
-      return isPresent(v.controls[name]) ? v.controls[name] : null;
+      return v.controls[name] !== undefined && v.controls[name] !== null ? v.controls[name] : null;
     } else if (v instanceof ControlArray) {
       var index = <number>name;
-      return isPresent(v.at(index)) ? v.at(index) : null;
+      const obj = v.at(index);
+      return obj !== undefined && obj !== null ? v.at(index) : null;
     } else {
       return null;
     }
@@ -56,7 +57,9 @@ function _find(control: AbstractControl, path: Array<string|number>| string) {
 }
 
 function toObservable(r: any): Observable<any> {
-  return isPromise(r) ? PromiseObservable.create(r) : r;
+  return r !== undefined && r !== null && typeof(<any>r).then === 'function' ?
+      PromiseObservable.create(r) :
+      r;
 }
 
 /**
@@ -105,19 +108,19 @@ export abstract class AbstractControl {
   markAsTouched(): void { this._touched = true; }
 
   markAsDirty({onlySelf}: {onlySelf?: boolean} = {}): void {
-    onlySelf = normalizeBool(onlySelf);
+    onlySelf = onlySelf === undefined || onlySelf === null ? false : onlySelf;
     this._pristine = false;
 
-    if (isPresent(this._parent) && !onlySelf) {
+    if (this._parent !== undefined && this._parent !== null && !onlySelf) {
       this._parent.markAsDirty({onlySelf: onlySelf});
     }
   }
 
   markAsPending({onlySelf}: {onlySelf?: boolean} = {}): void {
-    onlySelf = normalizeBool(onlySelf);
+    onlySelf = onlySelf === undefined || onlySelf === null ? false : onlySelf;
     this._status = PENDING;
 
-    if (isPresent(this._parent) && !onlySelf) {
+    if (this._parent !== undefined && this._parent !== null && !onlySelf) {
       this._parent.markAsPending({onlySelf: onlySelf});
     }
   }
@@ -126,8 +129,8 @@ export abstract class AbstractControl {
 
   updateValueAndValidity({onlySelf, emitEvent}: {onlySelf?: boolean, emitEvent?: boolean} = {}):
       void {
-    onlySelf = normalizeBool(onlySelf);
-    emitEvent = isPresent(emitEvent) ? emitEvent : true;
+    onlySelf = onlySelf === undefined || onlySelf === null ? false : onlySelf;
+    emitEvent = emitEvent !== undefined && emitEvent !== null ? emitEvent : true;
 
     this._updateValue();
 
@@ -143,17 +146,17 @@ export abstract class AbstractControl {
       this._statusChanges.emit(this._status);
     }
 
-    if (isPresent(this._parent) && !onlySelf) {
+    if (this._parent !== undefined && this._parent !== null && !onlySelf) {
       this._parent.updateValueAndValidity({onlySelf: onlySelf, emitEvent: emitEvent});
     }
   }
 
   private _runValidator(): {[key: string]: any} {
-    return isPresent(this.validator) ? this.validator(this) : null;
+    return this.validator !== undefined && this.validator !== null ? this.validator(this) : null;
   }
 
   private _runAsyncValidator(emitEvent: boolean): void {
-    if (isPresent(this.asyncValidator)) {
+    if (this.asyncValidator !== undefined && this.asyncValidator !== null) {
       this._status = PENDING;
       this._cancelExistingSubscription();
       var obs = toObservable(this.asyncValidator(this));
@@ -163,7 +166,8 @@ export abstract class AbstractControl {
   }
 
   private _cancelExistingSubscription(): void {
-    if (isPresent(this._asyncValidationSubscription)) {
+    if (this._asyncValidationSubscription !== undefined &&
+        this._asyncValidationSubscription !== null) {
       this._asyncValidationSubscription.unsubscribe();
     }
   }
@@ -192,7 +196,7 @@ export abstract class AbstractControl {
    * ```
    */
   setErrors(errors: {[key: string]: any}, {emitEvent}: {emitEvent?: boolean} = {}): void {
-    emitEvent = isPresent(emitEvent) ? emitEvent : true;
+    emitEvent = emitEvent !== undefined && emitEvent !== null ? emitEvent : true;
 
     this._errors = errors;
     this._status = this._calculateStatus();
@@ -201,7 +205,7 @@ export abstract class AbstractControl {
       this._statusChanges.emit(this._status);
     }
 
-    if (isPresent(this._parent)) {
+    if (this._parent !== undefined && this._parent !== null) {
       this._parent._updateControlsErrors();
     }
   }
@@ -209,8 +213,10 @@ export abstract class AbstractControl {
   find(path: Array<string|number>|string): AbstractControl { return _find(this, path); }
 
   getError(errorCode: string, path: string[] = null): any {
-    var control = isPresent(path) && !ListWrapper.isEmpty(path) ? this.find(path) : this;
-    if (isPresent(control) && isPresent(control._errors)) {
+    var control =
+        path !== undefined && path !== null && !ListWrapper.isEmpty(path) ? this.find(path) : this;
+    if (control !== undefined && control !== null && control._errors !== undefined &&
+        control._errors !== null) {
       return StringMapWrapper.get(control._errors, errorCode);
     } else {
       return null;
@@ -218,13 +224,14 @@ export abstract class AbstractControl {
   }
 
   hasError(errorCode: string, path: string[] = null): boolean {
-    return isPresent(this.getError(errorCode, path));
+    const obj = this.getError(errorCode, path);
+    return obj !== undefined && obj !== null;
   }
 
   get root(): AbstractControl {
     let x: AbstractControl = this;
 
-    while (isPresent(x._parent)) {
+    while (x._parent !== undefined && x._parent !== null) {
       x = x._parent;
     }
 
@@ -235,7 +242,7 @@ export abstract class AbstractControl {
   _updateControlsErrors(): void {
     this._status = this._calculateStatus();
 
-    if (isPresent(this._parent)) {
+    if (this._parent !== undefined && this._parent !== null) {
       this._parent._updateControlsErrors();
     }
   }
@@ -248,7 +255,7 @@ export abstract class AbstractControl {
 
 
   private _calculateStatus(): string {
-    if (isPresent(this._errors)) return INVALID;
+    if (this._errors !== undefined && this._errors !== null) return INVALID;
     if (this._anyControlsHaveStatus(PENDING)) return PENDING;
     if (this._anyControlsHaveStatus(INVALID)) return INVALID;
     return VALID;
@@ -308,9 +315,12 @@ export class Control extends AbstractControl {
     emitEvent?: boolean,
     emitModelToViewChange?: boolean
   } = {}): void {
-    emitModelToViewChange = isPresent(emitModelToViewChange) ? emitModelToViewChange : true;
+    emitModelToViewChange = emitModelToViewChange !== undefined && emitModelToViewChange !== null ?
+        emitModelToViewChange :
+        true;
     this._value = value;
-    if (isPresent(this._onChange) && emitModelToViewChange) this._onChange(this._value);
+    if (this._onChange !== undefined && this._onChange !== null && emitModelToViewChange)
+      this._onChange(this._value);
     this.updateValueAndValidity({onlySelf: onlySelf, emitEvent: emitEvent});
   }
 
@@ -353,7 +363,7 @@ export class ControlGroup extends AbstractControl {
       public controls: {[key: string]: AbstractControl}, optionals: {[key: string]: boolean} = null,
       validator: ValidatorFn = null, asyncValidator: AsyncValidatorFn = null) {
     super(validator, asyncValidator);
-    this._optionals = isPresent(optionals) ? optionals : {};
+    this._optionals = optionals !== undefined && optionals !== null ? optionals : {};
     this._initObservables();
     this._setParentForControls();
     this.updateValueAndValidity({onlySelf: true, emitEvent: false});

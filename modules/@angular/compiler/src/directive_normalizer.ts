@@ -58,7 +58,7 @@ export class DirectiveNormalizer {
     }
     let normalizedTemplateSync: CompileTemplateMetadata = null;
     let normalizedTemplateAsync: Promise<CompileTemplateMetadata>;
-    if (isPresent(directive.template.template)) {
+    if (directive.template.template !== undefined && directive.template.template !== null) {
       normalizedTemplateSync = this.normalizeTemplateSync(directive.type, directive.template);
       normalizedTemplateAsync = Promise.resolve(normalizedTemplateSync);
     } else if (directive.template.templateUrl) {
@@ -120,7 +120,7 @@ export class DirectiveNormalizer {
     const allStyleUrls = templateMetadataStyles.styleUrls.concat(templateStyles.styleUrls);
 
     let encapsulation = templateMeta.encapsulation;
-    if (isBlank(encapsulation)) {
+    if (encapsulation === undefined || encapsulation === null) {
       encapsulation = this._config.defaultEncapsulation;
     }
     if (encapsulation === ViewEncapsulation.Emulated && allStyles.length === 0 &&

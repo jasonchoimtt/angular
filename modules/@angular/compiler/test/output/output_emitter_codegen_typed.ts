@@ -31,5 +31,6 @@ export function emit() {
 
 export function main(args: string[]) {
   const emittedCode = emit();
-  print(emittedCode);
+  console.log(emittedCode);
+  ;
 }

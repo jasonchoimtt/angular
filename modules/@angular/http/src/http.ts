@@ -27,7 +27,7 @@ function mergeOptions(
     defaultOpts: BaseRequestOptions, providedOpts: RequestOptionsArgs, method: RequestMethod,
     url: string): RequestOptions {
   var newOptions = defaultOpts;
-  if (isPresent(providedOpts)) {
+  if (providedOpts !== undefined && providedOpts !== null) {
     // Hack so Dart can used named parameters
     return newOptions.merge(new RequestOptions({
       method: providedOpts.method || method,
@@ -39,7 +39,7 @@ function mergeOptions(
       responseType: providedOpts.responseType
     }));
   }
-  if (isPresent(method)) {
+  if (method !== undefined && method !== null) {
     return newOptions.merge(new RequestOptions({method: method, url: url}));
   } else {
     return newOptions.merge(new RequestOptions({url: url}));
@@ -118,7 +118,7 @@ export class Http {
    */
   request(url: string|Request, options?: RequestOptionsArgs): Observable<Response> {
     var responseObservable: any;
-    if (isString(url)) {
+    if (typeof url === 'string') {
       responseObservable = httpRequest(
           this._backend,
           new Request(mergeOptions(this._defaultOptions, options, RequestMethod.Get, <string>url)));
@@ -223,7 +223,7 @@ export class Jsonp extends Http {
    */
   request(url: string|Request, options?: RequestOptionsArgs): Observable<Response> {
     var responseObservable: any;
-    if (isString(url)) {
+    if (typeof url === 'string') {
       url =
           new Request(mergeOptions(this._defaultOptions, options, RequestMethod.Get, <string>url));
     }

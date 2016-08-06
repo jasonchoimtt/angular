@@ -19,11 +19,11 @@ export class AsyncRouteHandler implements RouteHandler {
   public data: RouteData;
 
   constructor(private _loader: () => Promise<Type>, data: {[key: string]: any} = null) {
-    this.data = isPresent(data) ? new RouteData(data) : BLANK_ROUTE_DATA;
+    this.data = data !== undefined && data !== null ? new RouteData(data) : BLANK_ROUTE_DATA;
   }
 
   resolveComponentType(): Promise<Type> {
-    if (isPresent(this._resolvedComponent)) {
+    if (this._resolvedComponent !== undefined && this._resolvedComponent !== null) {
       return this._resolvedComponent;
     }
 

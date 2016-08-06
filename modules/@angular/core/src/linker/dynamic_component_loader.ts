@@ -129,8 +129,10 @@ export class DynamicComponentLoader_ extends DynamicComponentLoader {
     return this._compiler.compileComponentAsync(<any>type).then(componentFactory => {
       var componentRef = componentFactory.create(
           injector, projectableNodes,
-          isPresent(overrideSelectorOrNode) ? overrideSelectorOrNode : componentFactory.selector);
-      if (isPresent(onDispose)) {
+          overrideSelectorOrNode !== undefined && overrideSelectorOrNode !== null ?
+              overrideSelectorOrNode :
+              componentFactory.selector);
+      if (onDispose !== undefined && onDispose !== null) {
         componentRef.onDestroy(onDispose);
       }
       return componentRef;
@@ -142,7 +144,7 @@ export class DynamicComponentLoader_ extends DynamicComponentLoader {
       projectableNodes: any[][] = null): Promise<ComponentRef<any>> {
     return this._compiler.compileComponentAsync(<any>type).then(componentFactory => {
       var contextInjector = location.parentInjector;
-      var childInjector = isPresent(providers) && providers.length > 0 ?
+      var childInjector = providers !== undefined && providers !== null && providers.length > 0 ?
           ReflectiveInjector.fromResolvedProviders(providers, contextInjector) :
           contextInjector;
       return location.createComponent(

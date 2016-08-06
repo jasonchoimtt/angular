@@ -70,15 +70,15 @@ import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 @Pipe({name: 'slice', pure: false})
 export class SlicePipe implements PipeTransform {
   transform(value: any, start: number, end: number = null): any {
-    if (isBlank(value)) return value;
+    if (value === undefined || value === null) return value;
     if (!this.supports(value)) {
       throw new InvalidPipeArgumentException(SlicePipe, value);
     }
-    if (isString(value)) {
+    if (typeof value === 'string') {
       return StringWrapper.slice(value, start, end);
     }
     return ListWrapper.slice(value, start, end);
   }
 
-  private supports(obj: any): boolean { return isString(obj) || isArray(obj); }
+  private supports(obj: any): boolean { return typeof obj === 'string' || Array.isArray(obj); }
 }

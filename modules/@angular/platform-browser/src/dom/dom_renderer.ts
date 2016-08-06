@@ -37,7 +37,7 @@ export abstract class DomRootRenderer implements RootRenderer {
 
   renderComponent(componentProto: RenderComponentType): Renderer {
     var renderer = this.registeredComponents.get(componentProto.id);
-    if (isBlank(renderer)) {
+    if (renderer === undefined || renderer === null) {
       renderer = new DomRenderer(this, componentProto, this.animationDriver);
       this.registeredComponents.set(componentProto.id, renderer);
     }
@@ -77,9 +77,9 @@ export class DomRenderer implements Renderer {
 
   selectRootElement(selectorOrNode: string|any, debugInfo: RenderDebugInfo): Element {
     var el: any /** TODO #9100 */;
-    if (isString(selectorOrNode)) {
+    if (typeof selectorOrNode === 'string') {
       el = getDOM().querySelector(this._rootRenderer.document, selectorOrNode);
-      if (isBlank(el)) {
+      if (el === undefined || el === null) {
         throw new BaseException(`The selector "${selectorOrNode}" did not match any elements`);
       }
     } else {
@@ -91,14 +91,14 @@ export class DomRenderer implements Renderer {
 
   createElement(parent: Element, name: string, debugInfo: RenderDebugInfo): Node {
     var nsAndName = splitNamespace(name);
-    var el = isPresent(nsAndName[0]) ?
+    var el = nsAndName[0] !== undefined && nsAndName[0] !== null ?
         getDOM().createElementNS(
             (NAMESPACE_URIS as any /** TODO #9100 */)[nsAndName[0]], nsAndName[1]) :
         getDOM().createElement(nsAndName[1]);
-    if (isPresent(this._contentAttr)) {
+    if (this._contentAttr !== undefined && this._contentAttr !== null) {
       getDOM().setAttribute(el, this._contentAttr, '');
     }
-    if (isPresent(parent)) {
+    if (parent !== undefined && parent !== null) {
       getDOM().appendChild(parent, el);
     }
     return el;
@@ -113,7 +113,7 @@ export class DomRenderer implements Renderer {
         getDOM().appendChild(nodesParent, getDOM().createStyleElement(this._styles[i]));
       }
     } else {
-      if (isPresent(this._hostAttr)) {
+      if (this._hostAttr !== undefined && this._hostAttr !== null) {
         getDOM().setAttribute(hostElement, this._hostAttr, '');
       }
       nodesParent = hostElement;
@@ -123,7 +123,7 @@ export class DomRenderer implements Renderer {
 
   createTemplateAnchor(parentElement: any, debugInfo: RenderDebugInfo): any {
     var comment = getDOM().createComment(TEMPLATE_COMMENT_TEXT);
-    if (isPresent(parentElement)) {
+    if (parentElement !== undefined && parentElement !== null) {
       getDOM().appendChild(parentElement, comment);
     }
     return comment;
@@ -131,14 +131,14 @@ export class DomRenderer implements Renderer {
 
   createText(parentElement: any, value: string, debugInfo: RenderDebugInfo): any {
     var node = getDOM().createTextNode(value);
-    if (isPresent(parentElement)) {
+    if (parentElement !== undefined && parentElement !== null) {
       getDOM().appendChild(parentElement, node);
     }
     return node;
   }
 
   projectNodes(parentElement: any, nodes: any[]) {
-    if (isBlank(parentElement)) return;
+    if (parentElement === undefined || parentElement === null) return;
     appendNodes(parentElement, nodes);
   }
 
@@ -151,7 +151,8 @@ export class DomRenderer implements Renderer {
   }
 
   destroyView(hostElement: any, viewAllNodes: any[]) {
-    if (this.componentProto.encapsulation === ViewEncapsulation.Native && isPresent(hostElement)) {
+    if (this.componentProto.encapsulation === ViewEncapsulation.Native &&
+        hostElement !== undefined && hostElement !== null) {
       this._rootRenderer.sharedStylesHost.removeHost(getDOM().getShadowRoot(hostElement));
     }
   }
@@ -173,18 +174,18 @@ export class DomRenderer implements Renderer {
   setElementAttribute(renderElement: any, attributeName: string, attributeValue: string): void {
     var attrNs: any /** TODO #9100 */;
     var nsAndName = splitNamespace(attributeName);
-    if (isPresent(nsAndName[0])) {
+    if (nsAndName[0] !== undefined && nsAndName[0] !== null) {
       attributeName = nsAndName[0] + ':' + nsAndName[1];
       attrNs = (NAMESPACE_URIS as any /** TODO #9100 */)[nsAndName[0]];
     }
-    if (isPresent(attributeValue)) {
-      if (isPresent(attrNs)) {
+    if (attributeValue !== undefined && attributeValue !== null) {
+      if (attrNs !== undefined && attrNs !== null) {
         getDOM().setAttributeNS(renderElement, attrNs, attributeName, attributeValue);
       } else {
         getDOM().setAttribute(renderElement, attributeName, attributeValue);
       }
     } else {
-      if (isPresent(attrNs)) {
+      if (attrNs !== undefined && attrNs !== null) {
         getDOM().removeAttributeNS(renderElement, attrNs, nsAndName[1]);
       } else {
         getDOM().removeAttribute(renderElement, attributeName);
@@ -216,7 +217,7 @@ export class DomRenderer implements Renderer {
   }
 
   setElementStyle(renderElement: any, styleName: string, styleValue: string): void {
-    if (isPresent(styleValue)) {
+    if (styleValue !== undefined && styleValue !== null) {
       getDOM().setStyle(renderElement, styleName, stringify(styleValue));
     } else {
       getDOM().removeStyle(renderElement, styleName);
@@ -239,9 +240,9 @@ export class DomRenderer implements Renderer {
 
 function moveNodesAfterSibling(sibling: any /** TODO #9100 */, nodes: any /** TODO #9100 */) {
   var parent = getDOM().parentElement(sibling);
-  if (nodes.length > 0 && isPresent(parent)) {
+  if (nodes.length > 0 && parent !== undefined && parent !== null) {
     var nextSibling = getDOM().nextSibling(sibling);
-    if (isPresent(nextSibling)) {
+    if (nextSibling !== undefined && nextSibling !== null) {
       for (var i = 0; i < nodes.length; i++) {
         getDOM().insertBefore(nextSibling, nodes[i]);
       }
@@ -285,7 +286,7 @@ function _shimHostAttribute(componentShortId: string): string {
 function _flattenStyles(compId: string, styles: Array<any|any[]>, target: string[]): string[] {
   for (var i = 0; i < styles.length; i++) {
     var style = styles[i];
-    if (isArray(style)) {
+    if (Array.isArray(style)) {
       _flattenStyles(compId, style, target);
     } else {
       style = StringWrapper.replaceAll(style, COMPONENT_REGEX, compId);

@@ -22,12 +22,14 @@ export abstract class GenericBrowserDomAdapter extends DomAdapter {
     super();
     try {
       var element = this.createElement('div', this.defaultDoc());
-      if (isPresent(this.getStyle(element, 'animationName'))) {
+      const obj = this.getStyle(element, 'animationName');
+      if (obj !== undefined && obj !== null) {
         this._animationPrefix = '';
       } else {
         var domPrefixes = ['Webkit', 'Moz', 'O', 'ms'];
         for (var i = 0; i < domPrefixes.length; i++) {
-          if (isPresent(this.getStyle(element, domPrefixes[i] + 'AnimationName'))) {
+          const obj = this.getStyle(element, domPrefixes[i] + 'AnimationName');
+          if (obj !== undefined && obj !== null) {
             this._animationPrefix = '-' + domPrefixes[i].toLowerCase() + '-';
             break;
           }
@@ -40,7 +42,8 @@ export abstract class GenericBrowserDomAdapter extends DomAdapter {
         transition: 'transitionend'
       };
       StringMapWrapper.forEach(transEndEventNames, (value: string, key: string) => {
-        if (isPresent(this.getStyle(element, key))) {
+        const obj = this.getStyle(element, key);
+        if (obj !== undefined && obj !== null) {
           this._transitionEnd = value;
         }
       });
@@ -56,13 +59,19 @@ export abstract class GenericBrowserDomAdapter extends DomAdapter {
   }
   supportsDOMEvents(): boolean { return true; }
   supportsNativeShadowDOM(): boolean {
-    return isFunction((<any>this.defaultDoc().body).createShadowRoot);
+    return typeof(<any>this.defaultDoc().body).createShadowRoot === 'function';
   }
   getAnimationPrefix(): string {
-    return isPresent(this._animationPrefix) ? this._animationPrefix : '';
+    return this._animationPrefix !== undefined && this._animationPrefix !== null ?
+        this._animationPrefix :
+        '';
   }
-  getTransitionEnd(): string { return isPresent(this._transitionEnd) ? this._transitionEnd : ''; }
+  getTransitionEnd(): string {
+    return this._transitionEnd !== undefined && this._transitionEnd !== null ? this._transitionEnd :
+                                                                               '';
+  }
   supportsAnimation(): boolean {
-    return isPresent(this._animationPrefix) && isPresent(this._transitionEnd);
+    return this._animationPrefix !== undefined && this._animationPrefix !== null &&
+        this._transitionEnd !== undefined && this._transitionEnd !== null;
   }
 }

@@ -320,7 +320,7 @@ class _AnimationBuilder implements AnimationAstVisitor {
     StringMapWrapper.forEach(
         context.stateMap.states, (value: {[key: string]: string}, stateName: string) => {
           var variableValue = EMPTY_MAP;
-          if (isPresent(value)) {
+          if (value !== undefined && value !== null) {
             let styleMap: any[] = [];
             StringMapWrapper.forEach(value, (value: string, key: string) => {
               styleMap.push([key, o.literal(value)]);
@@ -347,7 +347,7 @@ class _AnimationBuilderStateMap {
   get states() { return this._states; }
   registerState(name: string, value: {[prop: string]: string | number} = null): void {
     var existingEntry = this._states[name];
-    if (isBlank(existingEntry)) {
+    if (existingEntry === undefined || existingEntry === null) {
       this._states[name] = value;
     }
   }
@@ -402,7 +402,8 @@ class _AnimationTemplatePropertyVisitor implements t.TemplateAstVisitor {
     ast.inputs.forEach(input => {
       if (input.type == t.PropertyBindingType.Animation) {
         var animationName = input.name;
-        if (isBlank(this._animationRegistry[animationName])) {
+        if (this._animationRegistry[animationName] === undefined ||
+            this._animationRegistry[animationName] === null) {
           this.errors.push(
               new AnimationParseError(`couldn't find an animation entry for ${animationName}`));
         }

@@ -33,7 +33,7 @@ export class ReflectiveKey {
    * Private
    */
   constructor(public token: Object, public id: number) {
-    if (isBlank(token)) {
+    if (token === undefined || token === null) {
       throw new BaseException('Token must be defined!');
     }
   }

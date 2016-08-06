@@ -31,11 +31,13 @@ export function sanitizeIdentifier(name: string): string {
 }
 
 export function visitValue(value: any, visitor: ValueVisitor, context: any): any {
-  if (isArray(value)) {
+  if (Array.isArray(value)) {
     return visitor.visitArray(<any[]>value, context);
   } else if (isStrictStringMap(value)) {
     return visitor.visitStringMap(<{[key: string]: any}>value, context);
-  } else if (isBlank(value) || isPrimitive(value)) {
+  } else if (
+      value === undefined || value === null ||
+      typeof value !== 'function' && typeof value !== 'object') {
     return visitor.visitPrimitive(value, context);
   } else {
     return visitor.visitOther(value, context);
@@ -73,7 +75,7 @@ export function assetUrl(pkg: string, path: string = null, type: string = 'src')
 }
 
 export function createDiTokenExpression(token: CompileTokenMetadata): o.Expression {
-  if (isPresent(token.value)) {
+  if (token.value !== undefined && token.value !== null) {
     return o.literal(token.value);
   } else if (token.identifierIsInstance) {
     return o.importExpr(token.identifier)

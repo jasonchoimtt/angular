@@ -39,7 +39,7 @@ export class RouterOutlet implements OnDestroy {
   constructor(
       private _viewContainerRef: ViewContainerRef, private _loader: DynamicComponentLoader,
       private _parentRouter: routerMod.Router, @Attribute('name') nameAttr: string) {
-    if (isPresent(nameAttr)) {
+    if (nameAttr !== undefined && nameAttr !== null) {
       this.name = nameAttr;
       this._parentRouter.registerAuxOutlet(this);
     } else {
@@ -88,7 +88,7 @@ export class RouterOutlet implements OnDestroy {
     // it's possible the component is removed before it can be reactivated (if nested withing
     // another dynamically loaded component, for instance). In that case, we simply activate
     // a new one.
-    if (isBlank(this._componentRef)) {
+    if (this._componentRef === undefined || this._componentRef === null) {
       return this.activate(nextInstruction);
     } else {
       return Promise.resolve(
@@ -106,7 +106,8 @@ export class RouterOutlet implements OnDestroy {
    */
   deactivate(nextInstruction: ComponentInstruction): Promise<any> {
     var next = _resolveToTrue;
-    if (isPresent(this._componentRef) && isPresent(this._currentInstruction) &&
+    if (this._componentRef !== undefined && this._componentRef !== null &&
+        this._currentInstruction !== undefined && this._currentInstruction !== null &&
         hasLifecycleHook(hookMod.routerOnDeactivate, this._currentInstruction.componentType)) {
       next = this._componentRef.then(
           (ref: ComponentRef<any>) =>
@@ -114,7 +115,7 @@ export class RouterOutlet implements OnDestroy {
                   .routerOnDeactivate(nextInstruction, this._currentInstruction));
     }
     return next.then((_) => {
-      if (isPresent(this._componentRef)) {
+      if (this._componentRef !== undefined && this._componentRef !== null) {
         var onDispose = this._componentRef.then((ref: ComponentRef<any>) => ref.destroy());
         this._componentRef = null;
         return onDispose;
@@ -131,7 +132,7 @@ export class RouterOutlet implements OnDestroy {
    * and otherwise resolves to true.
    */
   routerCanDeactivate(nextInstruction: ComponentInstruction): Promise<boolean> {
-    if (isBlank(this._currentInstruction)) {
+    if (this._currentInstruction === undefined || this._currentInstruction === null) {
       return _resolveToTrue;
     }
     if (hasLifecycleHook(hookMod.routerCanDeactivate, this._currentInstruction.componentType)) {
@@ -157,7 +158,7 @@ export class RouterOutlet implements OnDestroy {
   routerCanReuse(nextInstruction: ComponentInstruction): Promise<boolean> {
     var result: any /** TODO #9100 */;
 
-    if (isBlank(this._currentInstruction) ||
+    if (this._currentInstruction === undefined || this._currentInstruction === null ||
         this._currentInstruction.componentType != nextInstruction.componentType) {
       result = false;
     } else if (hasLifecycleHook(hookMod.routerCanReuse, this._currentInstruction.componentType)) {
@@ -166,7 +167,9 @@ export class RouterOutlet implements OnDestroy {
               (<CanReuse>ref.instance).routerCanReuse(nextInstruction, this._currentInstruction));
     } else {
       result = nextInstruction == this._currentInstruction ||
-          (isPresent(nextInstruction.params) && isPresent(this._currentInstruction.params) &&
+          (nextInstruction.params !== undefined && nextInstruction.params !== null &&
+           this._currentInstruction.params !== undefined &&
+           this._currentInstruction.params !== null &&
            StringMapWrapper.equals(nextInstruction.params, this._currentInstruction.params));
     }
     return <Promise<boolean>>Promise.resolve(result);

@@ -9,7 +9,7 @@
 import {Directive, ElementRef, Host, Input, OnDestroy, OpaqueToken, Optional, Renderer, Type, forwardRef} from '@angular/core';
 
 import {MapWrapper} from '../../facade/collection';
-import {StringWrapper, isBlank, isPresent, isJsObject, isPrimitive, isString, looseIdentical} from '../../facade/lang';
+import {StringWrapper, isBlank, isJsObject, isPresent, isPrimitive, isString, looseIdentical} from '../../facade/lang';
 
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from './control_value_accessor';
 
@@ -20,9 +20,10 @@ export const SELECT_MULTIPLE_VALUE_ACCESSOR = {
 };
 
 function _buildValueString(id: string, value: any): string {
-  if (isBlank(id)) return `${value}`;
-  if (isString(value)) value = `'${value}'`;
-  if (isJsObject(value)) value = 'Object';
+  if (id === undefined || id === null) return `${value}`;
+  if (typeof value === 'string') value = `'${value}'`;
+  if (value !== null && (typeof value === 'function' || typeof value === 'object'))
+    value = 'Object';
   return StringWrapper.slice(`${id}: ${value}`, 0, 50);
 }
 
@@ -116,7 +117,7 @@ export class SelectMultipleControlValueAccessor implements ControlValueAccessor 
   /** @internal */
   _getOptionValue(valueString: string): any {
     let opt = this._optionMap.get(_extractId(valueString));
-    return isPresent(opt) ? opt._value : valueString;
+    return opt !== undefined && opt !== null ? opt._value : valueString;
   }
 }
 
@@ -140,7 +141,7 @@ export class NgSelectMultipleOption implements OnDestroy {
   constructor(
       private _element: ElementRef, private _renderer: Renderer,
       @Optional() @Host() private _select: SelectMultipleControlValueAccessor) {
-    if (isPresent(this._select)) {
+    if (this._select !== undefined && this._select !== null) {
       this.id = this._select._registerOption(this);
     }
   }
@@ -155,7 +156,7 @@ export class NgSelectMultipleOption implements OnDestroy {
 
   @Input('value')
   set value(value: any) {
-    if (isPresent(this._select)) {
+    if (this._select !== undefined && this._select !== null) {
       this._value = value;
       this._setElementValue(_buildValueString(this.id, value));
       this._select.writeValue(this._select.value);
@@ -175,7 +176,7 @@ export class NgSelectMultipleOption implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (isPresent(this._select)) {
+    if (this._select !== undefined && this._select !== null) {
       this._select._optionMap.delete(this.id);
       this._select.writeValue(this._select.value);
     }

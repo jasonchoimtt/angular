@@ -95,7 +95,7 @@ export function main() {
     function createInjector(
         providers: any[], parent: ReflectiveInjector = null): ReflectiveInjector_ {
       var resolvedProviders = ReflectiveInjector.resolve(providers.concat(context['providers']));
-      if (isPresent(parent)) {
+      if (parent !== undefined && parent !== null) {
         return <ReflectiveInjector_>parent.createChildFromResolved(resolvedProviders);
       } else {
         return <ReflectiveInjector_>ReflectiveInjector.fromResolvedProviders(resolvedProviders);
@@ -485,7 +485,7 @@ export function main() {
       it('should resolve and flatten', () => {
         var providers = ReflectiveInjector.resolve([Engine, [BrokenEngine]]);
         providers.forEach(function(b) {
-          if (isBlank(b)) return;  // the result is a sparse array
+          if (b === undefined || b === null) return;  // the result is a sparse array
           expect(b instanceof ResolvedReflectiveProvider_).toBe(true);
         });
       });

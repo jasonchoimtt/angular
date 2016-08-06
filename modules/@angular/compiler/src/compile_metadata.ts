@@ -110,9 +110,14 @@ export class CompileIdentifierMetadata implements CompileMetadataWithIdentifier 
 
   get assetCacheKey(): any {
     if (this._assetCacheKey === UNDEFINED) {
-      if (isPresent(this.moduleUrl) && isPresent(getUrlScheme(this.moduleUrl))) {
-        var uri = reflector.importUri({'filePath': this.moduleUrl, 'name': this.name});
-        this._assetCacheKey = `${this.name}|${uri}`;
+      if (this.moduleUrl !== undefined && this.moduleUrl !== null) {
+        const scheme = getUrlScheme(this.moduleUrl);
+        if (scheme !== undefined && scheme !== null) {
+          var uri = reflector.importUri({'filePath': this.moduleUrl, 'name': this.name});
+          this._assetCacheKey = `${this.name}|${uri}`;
+        } else {
+          this._assetCacheKey = null;
+        }
       } else {
         this._assetCacheKey = null;
       }
@@ -123,8 +128,8 @@ export class CompileIdentifierMetadata implements CompileMetadataWithIdentifier 
   equalsTo(id2: CompileIdentifierMetadata): boolean {
     var rk = this.runtimeCacheKey;
     var ak = this.assetCacheKey;
-    return (isPresent(rk) && rk == id2.runtimeCacheKey) ||
-        (isPresent(ak) && ak == id2.assetCacheKey);
+    return (rk !== undefined && rk !== null && rk == id2.runtimeCacheKey) ||
+        (ak !== undefined && ak !== null && ak == id2.assetCacheKey);
   }
 }
 
@@ -154,12 +159,12 @@ export class CompileDiDependencyMetadata {
         token?: CompileTokenMetadata,
         value?: any
       } = {}) {
-    this.isAttribute = normalizeBool(isAttribute);
-    this.isSelf = normalizeBool(isSelf);
-    this.isHost = normalizeBool(isHost);
-    this.isSkipSelf = normalizeBool(isSkipSelf);
-    this.isOptional = normalizeBool(isOptional);
-    this.isValue = normalizeBool(isValue);
+    this.isAttribute = isAttribute === undefined || isAttribute === null ? false : isAttribute;
+    this.isSelf = isSelf === undefined || isSelf === null ? false : isSelf;
+    this.isHost = isHost === undefined || isHost === null ? false : isHost;
+    this.isSkipSelf = isSkipSelf === undefined || isSkipSelf === null ? false : isSkipSelf;
+    this.isOptional = isOptional === undefined || isOptional === null ? false : isOptional;
+    this.isValue = isValue === undefined || isValue === null ? false : isValue;
     this.query = query;
     this.viewQuery = viewQuery;
     this.token = token;
@@ -190,8 +195,8 @@ export class CompileProviderMetadata {
     this.useValue = useValue;
     this.useExisting = useExisting;
     this.useFactory = useFactory;
-    this.deps = normalizeBlank(deps);
-    this.multi = normalizeBool(multi);
+    this.deps = deps === undefined ? null : deps;
+    this.multi = multi === undefined || multi === null ? false : multi;
   }
 }
 
@@ -221,11 +226,13 @@ export class CompileTokenMetadata implements CompileMetadataWithIdentifier {
           {value?: any, identifier?: CompileIdentifierMetadata, identifierIsInstance?: boolean}) {
     this.value = value;
     this.identifier = identifier;
-    this.identifierIsInstance = normalizeBool(identifierIsInstance);
+    this.identifierIsInstance =
+        identifierIsInstance === undefined || identifierIsInstance === null ? false :
+                                                                              identifierIsInstance;
   }
 
   get runtimeCacheKey(): any {
-    if (isPresent(this.identifier)) {
+    if (this.identifier !== undefined && this.identifier !== null) {
       return this.identifier.runtimeCacheKey;
     } else {
       return this.value;
@@ -233,7 +240,7 @@ export class CompileTokenMetadata implements CompileMetadataWithIdentifier {
   }
 
   get assetCacheKey(): any {
-    if (isPresent(this.identifier)) {
+    if (this.identifier !== undefined && this.identifier !== null) {
       return this.identifier.assetCacheKey;
     } else {
       return this.value;
@@ -243,12 +250,13 @@ export class CompileTokenMetadata implements CompileMetadataWithIdentifier {
   equalsTo(token2: CompileTokenMetadata): boolean {
     var rk = this.runtimeCacheKey;
     var ak = this.assetCacheKey;
-    return (isPresent(rk) && rk == token2.runtimeCacheKey) ||
-        (isPresent(ak) && ak == token2.assetCacheKey);
+    return (rk !== undefined && rk !== null && rk == token2.runtimeCacheKey) ||
+        (ak !== undefined && ak !== null && ak == token2.assetCacheKey);
   }
 
   get name(): string {
-    return isPresent(this.value) ? sanitizeIdentifier(this.value) : this.identifier.name;
+    return this.value !== undefined && this.value !== null ? sanitizeIdentifier(this.value) :
+                                                             this.identifier.name;
   }
 }
 
@@ -267,18 +275,18 @@ export class CompileIdentifierMap<KEY extends CompileMetadataWithIdentifier, VAL
 
   add(token: KEY, value: VALUE) {
     var existing = this.get(token);
-    if (isPresent(existing)) {
+    if (existing !== undefined && existing !== null) {
       throw new BaseException(
           `Cannot overwrite in a CompileIdentifierMap! Token: ${token.identifier.name}`);
     }
     this._tokens.push(token);
     this._values.push(value);
     var rk = token.runtimeCacheKey;
-    if (isPresent(rk)) {
+    if (rk !== undefined && rk !== null) {
       this._valueMap.set(rk, value);
     }
     var ak = token.assetCacheKey;
-    if (isPresent(ak)) {
+    if (ak !== undefined && ak !== null) {
       this._valueMap.set(ak, value);
     }
   }
@@ -286,10 +294,10 @@ export class CompileIdentifierMap<KEY extends CompileMetadataWithIdentifier, VAL
     var rk = token.runtimeCacheKey;
     var ak = token.assetCacheKey;
     var result: VALUE;
-    if (isPresent(rk)) {
+    if (rk !== undefined && rk !== null) {
       result = this._valueMap.get(rk);
     }
-    if (isBlank(result) && isPresent(ak)) {
+    if ((result === undefined || result === null) && (ak !== undefined && ak !== null)) {
       result = this._valueMap.get(ak);
     }
     return result;
@@ -318,7 +326,7 @@ export class CompileTypeMetadata extends CompileIdentifierMetadata {
     lifecycleHooks?: LifecycleHooks[];
   } = {}) {
     super({runtime: runtime, name: name, moduleUrl: moduleUrl, prefix: prefix, value: value});
-    this.isHost = normalizeBool(isHost);
+    this.isHost = isHost === undefined || isHost === null ? false : isHost;
     this.diDeps = _normalizeArray(diDeps);
     this.lifecycleHooks = _normalizeArray(lifecycleHooks);
   }
@@ -339,8 +347,8 @@ export class CompileQueryMetadata {
     read?: CompileTokenMetadata
   } = {}) {
     this.selectors = selectors;
-    this.descendants = normalizeBool(descendants);
-    this.first = normalizeBool(first);
+    this.descendants = descendants === undefined || descendants === null ? false : descendants;
+    this.first = first === undefined || first === null ? false : first;
     this.propertyName = propertyName;
     this.read = read;
   }
@@ -394,9 +402,11 @@ export class CompileTemplateMetadata {
     this.styles = _normalizeArray(styles);
     this.styleUrls = _normalizeArray(styleUrls);
     this.externalStylesheets = _normalizeArray(externalStylesheets);
-    this.animations = isPresent(animations) ? ListWrapper.flatten(animations) : [];
-    this.ngContentSelectors = isPresent(ngContentSelectors) ? ngContentSelectors : [];
-    if (isPresent(interpolation) && interpolation.length != 2) {
+    this.animations =
+        animations !== undefined && animations !== null ? ListWrapper.flatten(animations) : [];
+    this.ngContentSelectors =
+        ngContentSelectors !== undefined && ngContentSelectors !== null ? ngContentSelectors : [];
+    if (interpolation !== undefined && interpolation !== null && interpolation.length != 2) {
       throw new BaseException(`'interpolation' should have a start and an end symbol.`);
     }
     this.interpolation = interpolation;
@@ -432,22 +442,22 @@ export class CompileDirectiveMetadata implements CompileMetadataWithIdentifier {
     var hostListeners: {[key: string]: string} = {};
     var hostProperties: {[key: string]: string} = {};
     var hostAttributes: {[key: string]: string} = {};
-    if (isPresent(host)) {
+    if (host !== undefined && host !== null) {
       StringMapWrapper.forEach(host, (value: string, key: string) => {
         const matches = key.match(HOST_REG_EXP);
         if (matches === null) {
           hostAttributes[key] = value;
-        } else if (isPresent(matches[1])) {
+        } else if (matches[1] !== undefined && matches[1] !== null) {
           hostProperties[matches[1]] = value;
-        } else if (isPresent(matches[2])) {
+        } else if (matches[2] !== undefined && matches[2] !== null) {
           hostListeners[matches[2]] = value;
-        } else if (isPresent(matches[3])) {
+        } else if (matches[3] !== undefined && matches[3] !== null) {
           hostProperties[matches[3]] = value;
         }
       });
     }
     var inputsMap: {[key: string]: string} = {};
-    if (isPresent(inputs)) {
+    if (inputs !== undefined && inputs !== null) {
       inputs.forEach((bindConfig: string) => {
         // canonical syntax: `dirProp: elProp`
         // if there is no `:`, use dirProp = elProp
@@ -456,7 +466,7 @@ export class CompileDirectiveMetadata implements CompileMetadataWithIdentifier {
       });
     }
     var outputsMap: {[key: string]: string} = {};
-    if (isPresent(outputs)) {
+    if (outputs !== undefined && outputs !== null) {
       outputs.forEach((bindConfig: string) => {
         // canonical syntax: `dirProp: elProp`
         // if there is no `:`, use dirProp = elProp
@@ -467,7 +477,10 @@ export class CompileDirectiveMetadata implements CompileMetadataWithIdentifier {
 
     return new CompileDirectiveMetadata({
       type,
-      isComponent: normalizeBool(isComponent), selector, exportAs, changeDetection,
+      isComponent: isComponent === undefined || isComponent === null ? false : isComponent,
+      selector,
+      exportAs,
+      changeDetection,
       inputs: inputsMap,
       outputs: outputsMap,
       hostListeners,
@@ -610,7 +623,7 @@ export class CompilePipeMetadata implements CompileMetadataWithIdentifier {
   } = {}) {
     this.type = type;
     this.name = name;
-    this.pure = normalizeBool(pure);
+    this.pure = pure === undefined || pure === null ? false : pure;
   }
   get identifier(): CompileIdentifierMetadata { return this.type; }
   get runtimeCacheKey(): any { return this.type.runtimeCacheKey; }
@@ -708,11 +721,12 @@ export function removeIdentifierDuplicates<T extends CompileMetadataWithIdentifi
 }
 
 function _normalizeArray(obj: any[]): any[] {
-  return isPresent(obj) ? obj : [];
+  return obj !== undefined && obj !== null ? obj : [];
 }
 
 export function isStaticSymbol(value: any): value is StaticSymbol {
-  return isStringMap(value) && isPresent(value['name']) && isPresent(value['filePath']);
+  return typeof value === 'object' && value !== null && value['name'] !== undefined &&
+      value['name'] !== null && value['filePath'] !== undefined && value['filePath'] !== null;
 }
 
 export interface StaticSymbol {

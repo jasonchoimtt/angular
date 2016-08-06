@@ -18,7 +18,8 @@ export function main() {
     return (c: any /** TODO #9100 */) => {
       var resolve: (result: any) => void;
       var promise = new Promise(res => { resolve = res; });
-      var t = isPresent((timeouts as any /** TODO #9100 */)[c.value]) ?
+      var t = (timeouts as any /** TODO #9100 */)[c.value] !== undefined &&
+              (timeouts as any /** TODO #9100 */)[c.value] !== null ?
           (timeouts as any /** TODO #9100 */)[c.value] :
           0;
       var res = c.value != expected ? {'async': true} : null;

@@ -18,7 +18,7 @@ export class StyleWithImports {
 }
 
 export function isStyleUrlResolvable(url: string): boolean {
-  if (isBlank(url) || url.length === 0 || url[0] == '/') return false;
+  if (url === undefined || url === null || url.length === 0 || url[0] == '/') return false;
   const schemeMatch = url.match(_urlWithSchemaRe);
   return schemeMatch === null || schemeMatch[1] == 'package' || schemeMatch[1] == 'asset';
 }
@@ -31,7 +31,7 @@ export function extractStyleUrls(
     resolver: UrlResolver, baseUrl: string, cssText: string): StyleWithImports {
   var foundUrls: string[] = [];
   var modifiedCssText = StringWrapper.replaceAllMapped(cssText, _cssImportRe, (m: string[]) => {
-    var url = isPresent(m[1]) ? m[1] : m[2];
+    var url = m[1] !== undefined && m[1] !== null ? m[1] : m[2];
     if (!isStyleUrlResolvable(url)) {
       // Do not attempt to resolve non-package absolute URLs with URI scheme
       return m[0];

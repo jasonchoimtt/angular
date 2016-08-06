@@ -18,7 +18,7 @@ export function interpretStatements(statements: o.Statement[], resultVar: string
   var ctx = new _ExecutionContext(null, null, null, new Map<string, any>());
   var visitor = new StatementInterpreter();
   var result = visitor.visitAllStatements(stmtsWithReturn, ctx);
-  return isPresent(result) ? result.value : null;
+  return result !== undefined && result !== null ? result.value : null;
 }
 
 function _executeFunctionStatements(
@@ -29,7 +29,7 @@ function _executeFunctionStatements(
     childCtx.vars.set(varNames[i], varValues[i]);
   }
   var result = visitor.visitAllStatements(statements, childCtx);
-  return isPresent(result) ? result.value : null;
+  return result !== undefined && result !== null ? result.value : null;
 }
 
 class _ExecutionContext {
@@ -107,7 +107,7 @@ class StatementInterpreter implements o.StatementVisitor, o.ExpressionVisitor {
   }
   visitReadVarExpr(ast: o.ReadVarExpr, ctx: _ExecutionContext): any {
     var varName = ast.name;
-    if (isPresent(ast.builtin)) {
+    if (ast.builtin !== undefined && ast.builtin !== null) {
       switch (ast.builtin) {
         case o.BuiltinVar.Super:
           return ctx.instance.__proto__;
@@ -150,7 +150,7 @@ class StatementInterpreter implements o.StatementVisitor, o.ExpressionVisitor {
     var receiver = expr.receiver.visitExpression(this, ctx);
     var args = this.visitAllExpressions(expr.args, ctx);
     var result: any;
-    if (isPresent(expr.builtin)) {
+    if (expr.builtin !== undefined && expr.builtin !== null) {
       switch (expr.builtin) {
         case o.BuiltinMethod.ConcatArray:
           result = ListWrapper.concat(receiver, args[0]);
@@ -195,7 +195,7 @@ class StatementInterpreter implements o.StatementVisitor, o.ExpressionVisitor {
     var condition = stmt.condition.visitExpression(this, ctx);
     if (condition) {
       return this.visitAllStatements(stmt.trueCase, ctx);
-    } else if (isPresent(stmt.falseCase)) {
+    } else if (stmt.falseCase !== undefined && stmt.falseCase !== null) {
       return this.visitAllStatements(stmt.falseCase, ctx);
     }
     return null;
@@ -224,7 +224,7 @@ class StatementInterpreter implements o.StatementVisitor, o.ExpressionVisitor {
   visitConditionalExpr(ast: o.ConditionalExpr, ctx: _ExecutionContext): any {
     if (ast.condition.visitExpression(this, ctx)) {
       return ast.trueCase.visitExpression(this, ctx);
-    } else if (isPresent(ast.falseCase)) {
+    } else if (ast.falseCase !== undefined && ast.falseCase !== null) {
       return ast.falseCase.visitExpression(this, ctx);
     }
     return null;

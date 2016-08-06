@@ -65,7 +65,7 @@ export class HashLocationStrategy extends LocationStrategy {
       private _platformLocation: PlatformLocation,
       @Optional() @Inject(APP_BASE_HREF) _baseHref?: string) {
     super();
-    if (isPresent(_baseHref)) {
+    if (_baseHref !== undefined && _baseHref !== null) {
       this._baseHref = _baseHref;
     }
   }
@@ -81,7 +81,7 @@ export class HashLocationStrategy extends LocationStrategy {
     // the hash value is always prefixed with a `#`
     // and if it is empty then it will stay empty
     var path = this._platformLocation.hash;
-    if (isBlank(path)) path = '#';
+    if (path === undefined || path === null) path = '#';
 
     return path.length > 0 ? path.substring(1) : path;
   }

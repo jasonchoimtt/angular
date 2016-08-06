@@ -29,10 +29,10 @@ export class Serializer {
   constructor(private _renderStore: RenderStore) {}
 
   serialize(obj: any, type: any): Object {
-    if (isBlank(obj)) {
+    if (obj === undefined || obj === null) {
       return null;
     }
-    if (isArray(obj)) {
+    if (Array.isArray(obj)) {
       return (<any[]>obj).map(v => this.serialize(v, type));
     }
     if (type == PRIMITIVE) {
@@ -43,7 +43,7 @@ export class Serializer {
     } else if (type === RenderComponentType) {
       return this._serializeRenderComponentType(obj);
     } else if (type === ViewEncapsulation) {
-      return serializeEnum(obj);
+      return obj;
     } else if (type === LocationType) {
       return this._serializeLocation(obj);
     } else {
@@ -52,10 +52,10 @@ export class Serializer {
   }
 
   deserialize(map: any, type: any, data?: any): any {
-    if (isBlank(map)) {
+    if (map === undefined || map === null) {
       return null;
     }
-    if (isArray(map)) {
+    if (Array.isArray(map)) {
       var obj: any[] = [];
       (<any[]>map).forEach(val => obj.push(this.deserialize(val, type, data)));
       return obj;

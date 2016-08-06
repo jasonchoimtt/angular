@@ -233,7 +233,7 @@ export class NoAnnotationError extends BaseException {
     var signature: string[] = [];
     for (var i = 0, ii = params.length; i < ii; i++) {
       var parameter = params[i];
-      if (isBlank(parameter) || parameter.length == 0) {
+      if (parameter === undefined || parameter === null || parameter.length == 0) {
         signature.push('?');
       } else {
         signature.push(parameter.map(stringify).join(' '));

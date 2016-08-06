@@ -15,8 +15,8 @@ import {Identifiers} from '../identifiers';
 import * as o from '../output/output_ast';
 
 function _enumExpression(classIdentifier: CompileIdentifierMetadata, value: any): o.Expression {
-  if (isBlank(value)) return o.NULL_EXPR;
-  var name = resolveEnumToken(classIdentifier.runtime, value);
+  if (value === undefined || value === null) return o.NULL_EXPR;
+  var name = classIdentifier.runtime[value];
   return o.importExpr(new CompileIdentifierMetadata({
     name: `${classIdentifier.name}.${name}`,
     moduleUrl: classIdentifier.moduleUrl,

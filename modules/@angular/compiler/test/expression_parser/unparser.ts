@@ -133,7 +133,7 @@ class Unparser implements AstVisitor {
   }
 
   visitLiteralPrimitive(ast: LiteralPrimitive, context: any) {
-    if (isString(ast.value)) {
+    if (typeof ast.value === 'string') {
       this._expression += `"${StringWrapper.replaceAll(ast.value, Unparser._quoteRegExp, '\"')}"`;
     } else {
       this._expression += `${ast.value}`;

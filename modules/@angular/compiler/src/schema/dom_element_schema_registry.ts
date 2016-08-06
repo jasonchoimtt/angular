@@ -245,7 +245,7 @@ export class DomElementSchemaRegistry extends ElementSchemaRegistry {
       var type = <{[property: string]: string}>{};
       typeName.split(',').forEach(tag => this.schema[tag] = type);
       var superType = this.schema[typeParts[1]];
-      if (isPresent(superType)) {
+      if (superType !== undefined && superType !== null) {
         StringMapWrapper.forEach(
             superType, (v: any /** TODO #9100 */, k: any /** TODO #9100 */) => type[k] = v);
       }
@@ -281,10 +281,10 @@ export class DomElementSchemaRegistry extends ElementSchemaRegistry {
       }
     }
     var elementProperties = this.schema[tagName.toLowerCase()];
-    if (isBlank(elementProperties)) {
+    if (elementProperties === undefined || elementProperties === null) {
       elementProperties = this.schema['unknown'];
     }
-    return isPresent(elementProperties[propName]);
+    return elementProperties[propName] !== undefined && elementProperties[propName] !== null;
   }
 
   /**
@@ -310,7 +310,7 @@ export class DomElementSchemaRegistry extends ElementSchemaRegistry {
 
   getMappedPropName(propName: string): string {
     var mappedPropName = StringMapWrapper.get(attrToPropMap, propName);
-    return isPresent(mappedPropName) ? mappedPropName : propName;
+    return mappedPropName !== undefined && mappedPropName !== null ? mappedPropName : propName;
   }
 
   getDefaultComponentElementName(): string { return 'ng-component'; }

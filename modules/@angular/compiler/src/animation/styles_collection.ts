@@ -23,7 +23,7 @@ export class StylesCollection {
   insertAtTime(property: string, time: number, value: string|number) {
     var tuple = new StylesCollectionEntry(time, value);
     var entries = this.styles[property];
-    if (isBlank(entries)) {
+    if (entries === undefined || entries === null) {
       entries = this.styles[property] = [];
     }
 
@@ -42,7 +42,7 @@ export class StylesCollection {
 
   getByIndex(property: string, index: number): StylesCollectionEntry {
     var items = this.styles[property];
-    if (isPresent(items)) {
+    if (items !== undefined && items !== null) {
       return index >= items.length ? null : items[index];
     }
     return null;
@@ -50,7 +50,7 @@ export class StylesCollection {
 
   indexOfAtOrBeforeTime(property: string, time: number): number {
     var entries = this.styles[property];
-    if (isPresent(entries)) {
+    if (entries !== undefined && entries !== null) {
       for (var i = entries.length - 1; i >= 0; i--) {
         if (entries[i].time <= time) return i;
       }

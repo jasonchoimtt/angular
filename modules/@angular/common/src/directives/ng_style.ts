@@ -79,15 +79,15 @@ export class NgStyle implements DoCheck {
   @Input()
   set ngStyle(v: {[key: string]: string}) {
     this._ngStyle = v;
-    if (isBlank(this._differ) && isPresent(v)) {
+    if ((this._differ === undefined || this._differ === null) && (v !== undefined && v !== null)) {
       this._differ = this._differs.find(this._ngStyle).create(null);
     }
   }
 
   ngDoCheck() {
-    if (isPresent(this._differ)) {
+    if (this._differ !== undefined && this._differ !== null) {
       var changes = this._differ.diff(this._ngStyle);
-      if (isPresent(changes)) {
+      if (changes !== undefined && changes !== null) {
         this._applyChanges(changes);
       }
     }
@@ -105,7 +105,8 @@ export class NgStyle implements DoCheck {
   private _setStyle(name: string, val: string): void {
     const nameParts = name.split('.');
     const nameToSet = nameParts[0];
-    const valToSet = isPresent(val) && nameParts.length === 2 ? `${val}${nameParts[1]}` : val;
+    const valToSet =
+        val !== undefined && val !== null && nameParts.length === 2 ? `${val}${nameParts[1]}` : val;
 
     this._renderer.setElementStyle(this._ngEl.nativeElement, nameToSet, valToSet);
   }

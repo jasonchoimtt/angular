@@ -133,12 +133,12 @@ export class Parse5DomAdapter extends DomAdapter {
   }
   on(el: any /** TODO #9100 */, evt: any /** TODO #9100 */, listener: any /** TODO #9100 */) {
     var listenersMap: {[k: /*any*/ string]: any} = el._eventListenersMap;
-    if (isBlank(listenersMap)) {
+    if (listenersMap === undefined || listenersMap === null) {
       var listenersMap: {[k: /*any*/ string]: any} = StringMapWrapper.create();
       el._eventListenersMap = listenersMap;
     }
     var listeners = StringMapWrapper.get(listenersMap, evt);
-    if (isBlank(listeners)) {
+    if (listeners === undefined || listeners === null) {
       listeners = [];
     }
     listeners.push(listener);
@@ -153,21 +153,21 @@ export class Parse5DomAdapter extends DomAdapter {
     };
   }
   dispatchEvent(el: any /** TODO #9100 */, evt: any /** TODO #9100 */) {
-    if (isBlank(evt.target)) {
+    if (evt.target === undefined || evt.target === null) {
       evt.target = el;
     }
-    if (isPresent(el._eventListenersMap)) {
+    if (el._eventListenersMap !== undefined && el._eventListenersMap !== null) {
       var listeners: any = StringMapWrapper.get(el._eventListenersMap, evt.type);
-      if (isPresent(listeners)) {
+      if (listeners !== undefined && listeners !== null) {
         for (var i = 0; i < listeners.length; i++) {
           listeners[i](evt);
         }
       }
     }
-    if (isPresent(el.parent)) {
+    if (el.parent !== undefined && el.parent !== null) {
       this.dispatchEvent(el.parent, evt);
     }
-    if (isPresent(el._window)) {
+    if (el._window !== undefined && el._window !== null) {
       this.dispatchEvent(el._window, evt);
     }
   }
@@ -182,7 +182,7 @@ export class Parse5DomAdapter extends DomAdapter {
   }
   preventDefault(evt: any /** TODO #9100 */) { evt.returnValue = false; }
   isPrevented(evt: any /** TODO #9100 */): boolean {
-    return isPresent(evt.returnValue) && !evt.returnValue;
+    return evt.returnValue !== undefined && evt.returnValue !== null && !evt.returnValue;
   }
   getInnerHTML(el: any /** TODO #9100 */): string {
     return serializer.serialize(this.templateAwareRoot(el));
@@ -272,7 +272,7 @@ export class Parse5DomAdapter extends DomAdapter {
       // In the DOM, comments within an element return an empty string for textContent
       // However, comment node instances return the comment content for textContent getter
       return isRecursive ? '' : el.data;
-    } else if (isBlank(el.childNodes) || el.childNodes.length == 0) {
+    } else if (el.childNodes === undefined || el.childNodes === null || el.childNodes.length == 0) {
       return '';
     } else {
       var textContent = '';
@@ -344,7 +344,7 @@ export class Parse5DomAdapter extends DomAdapter {
       nodeClone.children = null;
 
       mapProps.forEach(mapName => {
-        if (isPresent(node[mapName])) {
+        if (node[mapName] !== undefined && node[mapName] !== null) {
           nodeClone[mapName] = {};
           for (var prop in node[mapName]) {
             nodeClone[mapName][prop] = node[mapName][prop];
@@ -525,7 +525,9 @@ export class Parse5DomAdapter extends DomAdapter {
   isElementNode(node: any /** TODO #9100 */): boolean {
     return node ? treeAdapter.isElementNode(node) : false;
   }
-  hasShadowRoot(node: any /** TODO #9100 */): boolean { return isPresent(node.shadowRoot); }
+  hasShadowRoot(node: any /** TODO #9100 */): boolean {
+    return node.shadowRoot !== undefined && node.shadowRoot !== null;
+  }
   isShadowRoot(node: any /** TODO #9100 */): boolean { return this.getShadowRoot(node) == node; }
   importIntoDoc(node: any /** TODO #9100 */): any { return this.clone(node); }
   adoptNode(node: any /** TODO #9100 */): any { return node; }
@@ -554,7 +556,7 @@ export class Parse5DomAdapter extends DomAdapter {
                                       .replace(/\s*\+\s*/g, ' + ')
                                       .replace(/\s*>\s*/g, ' > ')
                                       .replace(/\[(\w+)=(\w+)\]/g, '[$1="$2"]'));
-        if (isBlank(parsedRule.declarations)) {
+        if (parsedRule.declarations === undefined || parsedRule.declarations === null) {
           continue;
         }
         for (var j = 0; j < parsedRule.declarations.length; j++) {

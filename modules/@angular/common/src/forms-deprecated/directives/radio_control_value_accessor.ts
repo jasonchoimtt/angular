@@ -115,7 +115,7 @@ export class RadioControlValueAccessor implements ControlValueAccessor,
 
   writeValue(value: any): void {
     this._state = value;
-    if (isPresent(value) && value.checked) {
+    if (value !== undefined && value !== null && value.checked) {
       this._renderer.setElementProperty(this._elementRef.nativeElement, 'checked', true);
     }
   }

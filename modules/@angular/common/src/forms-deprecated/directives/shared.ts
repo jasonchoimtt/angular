@@ -34,8 +34,9 @@ export function controlPath(name: string, parent: ControlContainer): string[] {
 }
 
 export function setUpControl(control: Control, dir: NgControl): void {
-  if (isBlank(control)) _throwError(dir, 'Cannot find control with');
-  if (isBlank(dir.valueAccessor)) _throwError(dir, 'No value accessor for form control with');
+  if (control === undefined || control === null) _throwError(dir, 'Cannot find control with');
+  if (dir.valueAccessor === undefined || dir.valueAccessor === null)
+    _throwError(dir, 'No value accessor for form control with');
 
   control.validator = Validators.compose([control.validator, dir.validator]);
   control.asyncValidator = Validators.composeAsync([control.asyncValidator, dir.asyncValidator]);
@@ -56,7 +57,7 @@ export function setUpControl(control: Control, dir: NgControl): void {
 }
 
 export function setUpControlGroup(control: ControlGroup, dir: NgControlGroup) {
-  if (isBlank(control)) _throwError(dir, 'Cannot find control with');
+  if (control === undefined || control === null) _throwError(dir, 'Cannot find control with');
   control.validator = Validators.compose([control.validator, dir.validator]);
   control.asyncValidator = Validators.composeAsync([control.asyncValidator, dir.asyncValidator]);
 }
@@ -74,13 +75,16 @@ function _throwError(dir: AbstractControlDirective, message: string): void {
 }
 
 export function composeValidators(validators: /* Array<Validator|Function> */ any[]): ValidatorFn {
-  return isPresent(validators) ? Validators.compose(validators.map(normalizeValidator)) : null;
+  return validators !== undefined && validators !== null ?
+      Validators.compose(validators.map(normalizeValidator)) :
+      null;
 }
 
 export function composeAsyncValidators(validators: /* Array<Validator|Function> */ any[]):
     AsyncValidatorFn {
-  return isPresent(validators) ? Validators.composeAsync(validators.map(normalizeAsyncValidator)) :
-                                 null;
+  return validators !== undefined && validators !== null ?
+      Validators.composeAsync(validators.map(normalizeAsyncValidator)) :
+      null;
 }
 
 export function isPropertyUpdated(changes: {[key: string]: any}, viewModel: any): boolean {
@@ -94,34 +98,34 @@ export function isPropertyUpdated(changes: {[key: string]: any}, viewModel: any)
 // TODO: vsavkin remove it once https://github.com/angular/angular/issues/3011 is implemented
 export function selectValueAccessor(
     dir: NgControl, valueAccessors: ControlValueAccessor[]): ControlValueAccessor {
-  if (isBlank(valueAccessors)) return null;
+  if (valueAccessors === undefined || valueAccessors === null) return null;
 
   var defaultAccessor: ControlValueAccessor;
   var builtinAccessor: ControlValueAccessor;
   var customAccessor: ControlValueAccessor;
   valueAccessors.forEach((v: ControlValueAccessor) => {
-    if (hasConstructor(v, DefaultValueAccessor)) {
+    if (v.constructor === DefaultValueAccessor) {
       defaultAccessor = v;
 
     } else if (
-        hasConstructor(v, CheckboxControlValueAccessor) || hasConstructor(v, NumberValueAccessor) ||
-        hasConstructor(v, SelectControlValueAccessor) ||
-        hasConstructor(v, SelectMultipleControlValueAccessor) ||
-        hasConstructor(v, RadioControlValueAccessor)) {
-      if (isPresent(builtinAccessor))
+        v.constructor === CheckboxControlValueAccessor || v.constructor === NumberValueAccessor ||
+        v.constructor === SelectControlValueAccessor ||
+        v.constructor === SelectMultipleControlValueAccessor ||
+        v.constructor === RadioControlValueAccessor) {
+      if (builtinAccessor !== undefined && builtinAccessor !== null)
         _throwError(dir, 'More than one built-in value accessor matches form control with');
       builtinAccessor = v;
 
     } else {
-      if (isPresent(customAccessor))
+      if (customAccessor !== undefined && customAccessor !== null)
         _throwError(dir, 'More than one custom value accessor matches form control with');
       customAccessor = v;
     }
   });
 
-  if (isPresent(customAccessor)) return customAccessor;
-  if (isPresent(builtinAccessor)) return builtinAccessor;
-  if (isPresent(defaultAccessor)) return defaultAccessor;
+  if (customAccessor !== undefined && customAccessor !== null) return customAccessor;
+  if (builtinAccessor !== undefined && builtinAccessor !== null) return builtinAccessor;
+  if (defaultAccessor !== undefined && defaultAccessor !== null) return defaultAccessor;
 
   _throwError(dir, 'No valid value accessor for form control with');
   return null;

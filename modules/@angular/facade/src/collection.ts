@@ -236,7 +236,7 @@ export class ListWrapper {
   }
   static splice<T>(l: T[], from: number, length: number): T[] { return l.splice(from, length); }
   static sort<T>(l: T[], compareFn?: (a: T, b: T) => number) {
-    if (isPresent(compareFn)) {
+    if (compareFn !== undefined && compareFn !== null) {
       l.sort(compareFn);
     } else {
       l.sort();
@@ -253,7 +253,7 @@ export class ListWrapper {
     var maxValue = -Infinity;
     for (var index = 0; index < list.length; index++) {
       var candidate = list[index];
-      if (isBlank(candidate)) {
+      if (candidate === undefined || candidate === null) {
         continue;
       }
       var candidateValue = predicate(candidate);
@@ -279,10 +279,10 @@ export class ListWrapper {
 }
 
 function _flattenArray(source: any[], target: any[]): any[] {
-  if (isPresent(source)) {
+  if (source !== undefined && source !== null) {
     for (var i = 0; i < source.length; i++) {
       var item = source[i];
-      if (isArray(item)) {
+      if (Array.isArray(item)) {
         _flattenArray(item, target);
       } else {
         target.push(item);
@@ -294,8 +294,8 @@ function _flattenArray(source: any[], target: any[]): any[] {
 
 
 export function isListLikeIterable(obj: any): boolean {
-  if (isPrimitive(obj)) return false;
-  return isArray(obj) ||
+  if (obj === null || typeof obj !== 'function' && typeof obj !== 'object') return false;
+  return Array.isArray(obj) ||
       (!(obj instanceof Map) &&      // JS Map are iterables but return entries as [k, v]
        getSymbolIterator() in obj);  // JS Iterable have a Symbol.iterator prop
 }
@@ -314,7 +314,7 @@ export function areIterablesEqual(a: any, b: any, comparator: Function): boolean
 }
 
 export function iterateListLike(obj: any, fn: Function) {
-  if (isArray(obj)) {
+  if (Array.isArray(obj)) {
     for (var i = 0; i < obj.length; i++) {
       fn(obj[i]);
     }

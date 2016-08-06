@@ -223,7 +223,7 @@ export class QueryMetadata extends DependencyMetadata {
   /**
    * whether this is querying for a variable binding or a directive.
    */
-  get isVarBindingQuery(): boolean { return isString(this.selector); }
+  get isVarBindingQuery(): boolean { return typeof this.selector === 'string'; }
 
   /**
    * returns a list of variable bindings this is querying for.

@@ -45,10 +45,13 @@ export class NgIf {
 
   @Input()
   set ngIf(newCondition: any) {
-    if (newCondition && (isBlank(this._prevCondition) || !this._prevCondition)) {
+    if (newCondition && (this._prevCondition === undefined || this._prevCondition === null ||
+                         !this._prevCondition)) {
       this._prevCondition = true;
       this._viewContainer.createEmbeddedView(this._templateRef);
-    } else if (!newCondition && (isBlank(this._prevCondition) || this._prevCondition)) {
+    } else if (
+        !newCondition && (this._prevCondition === undefined || this._prevCondition === null ||
+                          this._prevCondition)) {
       this._prevCondition = false;
       this._viewContainer.clear();
     }

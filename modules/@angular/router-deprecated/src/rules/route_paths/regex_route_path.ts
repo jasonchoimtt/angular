@@ -52,7 +52,7 @@ each matching group and a name for the complete match as its first element of re
     var params: {[key: string]: string} = {};
     var match = urlPath.match(this._regex);
 
-    if (isBlank(match)) {
+    if (match === undefined || match === null) {
       return null;
     }
 

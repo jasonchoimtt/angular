@@ -70,7 +70,7 @@ export class OverridingTestComponentBuilder extends TestComponentBuilder {
   overrideDirective(componentType: Type, from: Type, to: Type): OverridingTestComponentBuilder {
     let clone = this._clone();
     let overridesForComponent = clone._directiveOverrides.get(componentType);
-    if (isBlank(overridesForComponent)) {
+    if (overridesForComponent === undefined || overridesForComponent === null) {
       clone._directiveOverrides.set(componentType, new Map<Type, Type>());
       overridesForComponent = clone._directiveOverrides.get(componentType);
     }

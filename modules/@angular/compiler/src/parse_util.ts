@@ -13,7 +13,9 @@ export class ParseLocation {
       public col: number) {}
 
   toString(): string {
-    return isPresent(this.offset) ? `${this.file.url}@${this.line}:${this.col}` : this.file.url;
+    return this.offset !== undefined && this.offset !== null ?
+        `${this.file.url}@${this.line}:${this.col}` :
+        this.file.url;
   }
 }
 
@@ -45,7 +47,7 @@ export abstract class ParseError {
     var ctxStart = this.span.start.offset;
     var contextStr = '';
     var details = '';
-    if (isPresent(ctxStart)) {
+    if (ctxStart !== undefined && ctxStart !== null) {
       if (ctxStart > source.length - 1) {
         ctxStart = source.length - 1;
       }

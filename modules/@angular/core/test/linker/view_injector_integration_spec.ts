@@ -246,7 +246,7 @@ export function main() {
   function createCompFixture<T>(
       template: string, tcb: TestComponentBuilder,
       comp: ConcreteType<T> = null): ComponentFixture<T> {
-    if (isBlank(comp)) {
+    if (comp === undefined || comp === null) {
       comp = <any>TestComp;
     }
     return tcb

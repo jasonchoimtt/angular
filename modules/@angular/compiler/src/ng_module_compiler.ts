@@ -35,7 +35,8 @@ export class NgModuleCompileResult {
 export class NgModuleCompiler {
   compile(ngModuleMeta: CompileNgModuleMetadata, extraProviders: CompileProviderMetadata[]):
       NgModuleCompileResult {
-    var sourceFileName = isPresent(ngModuleMeta.type.moduleUrl) ?
+    var sourceFileName =
+        ngModuleMeta.type.moduleUrl !== undefined && ngModuleMeta.type.moduleUrl !== null ?
         `in NgModule ${ngModuleMeta.type.name} in ${ngModuleMeta.type.moduleUrl}` :
         `in NgModule ${ngModuleMeta.type.name}`;
     var sourceFile = new ParseSourceFile('', sourceFileName);
@@ -148,14 +149,16 @@ class _InjectorBuilder {
 
   private _getProviderValue(provider: CompileProviderMetadata): o.Expression {
     var result: o.Expression;
-    if (isPresent(provider.useExisting)) {
+    if (provider.useExisting !== undefined && provider.useExisting !== null) {
       result = this._getDependency(new CompileDiDependencyMetadata({token: provider.useExisting}));
-    } else if (isPresent(provider.useFactory)) {
-      var deps = isPresent(provider.deps) ? provider.deps : provider.useFactory.diDeps;
+    } else if (provider.useFactory !== undefined && provider.useFactory !== null) {
+      var deps = provider.deps !== undefined && provider.deps !== null ? provider.deps :
+                                                                         provider.useFactory.diDeps;
       var depsExpr = deps.map((dep) => this._getDependency(dep));
       result = o.importExpr(provider.useFactory).callFn(depsExpr);
-    } else if (isPresent(provider.useClass)) {
-      var deps = isPresent(provider.deps) ? provider.deps : provider.useClass.diDeps;
+    } else if (provider.useClass !== undefined && provider.useClass !== null) {
+      var deps = provider.deps !== undefined && provider.deps !== null ? provider.deps :
+                                                                         provider.useClass.diDeps;
       var depsExpr = deps.map((dep) => this._getDependency(dep));
       result =
           o.importExpr(provider.useClass).instantiate(depsExpr, o.importType(provider.useClass));
@@ -178,7 +181,7 @@ class _InjectorBuilder {
       resolvedProviderValueExpr = providerValueExpressions[0];
       type = providerValueExpressions[0].type;
     }
-    if (isBlank(type)) {
+    if (type === undefined || type === null) {
       type = o.DYNAMIC_TYPE;
     }
     if (isEager) {
@@ -210,11 +213,11 @@ class _InjectorBuilder {
            dep.token.equalsTo(identifierToken(Identifiers.ComponentFactoryResolver)))) {
         result = o.THIS_EXPR;
       }
-      if (isBlank(result)) {
+      if (result === undefined || result === null) {
         result = this._instances.get(dep.token);
       }
     }
-    if (isBlank(result)) {
+    if (result === undefined || result === null) {
       var args = [createDiTokenExpression(dep.token)];
       if (dep.isOptional) {
         args.push(o.NULL_EXPR);

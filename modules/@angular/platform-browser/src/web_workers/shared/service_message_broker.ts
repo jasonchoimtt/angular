@@ -79,7 +79,8 @@ export class ServiceMessageBroker_ extends ServiceMessageBroker {
       }
 
       var promise = FunctionWrapper.apply(method, deserializedArgs);
-      if (isPresent(returnType) && isPresent(promise)) {
+      if (returnType !== undefined && returnType !== null && promise !== undefined &&
+          promise !== null) {
         this._wrapWebWorkerPromise(message.id, promise, returnType);
       }
     });

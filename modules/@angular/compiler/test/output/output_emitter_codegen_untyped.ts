@@ -30,6 +30,7 @@ export function emit() {
 
 export function main(args: string[]) {
   var emittedCode = emit();
+  console.log(emittedCode);
   // debug: console.error(emittedCode);
-  print(emittedCode);
+  ;
 }

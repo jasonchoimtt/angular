@@ -114,12 +114,14 @@ export function main() {
              let promise: Promise<any> = new Promise((res) => { resolve = res; });
 
              _zone.run(() => {
-               scheduleMicroTask(() => {
-                 scheduleMicroTask(() => {
+               Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
+                 Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
                    resolve(null);
                    throw new BaseException('ddd');
                  });
+                 ;
                });
+               ;
              });
 
              promise.then((_) => {
@@ -159,7 +161,7 @@ export function main() {
 
              promise.then((_) => {
                expect(_traces.length).toBe(1);
-               if (isPresent(_traces[0])) {
+               if (_traces[0] !== undefined && _traces[0] !== null) {
                  // some browsers don't have stack traces.
                  expect(_traces[0].indexOf('---')).toEqual(-1);
                }
@@ -176,7 +178,10 @@ function commonTests() {
     it('should be false', () => { expect(_zone.hasPendingMicrotasks).toBe(false); });
 
     it('should be true', () => {
-      runNgZoneNoLog(() => { scheduleMicroTask(() => {}); });
+      runNgZoneNoLog(() => {
+        Zone.current.scheduleMicroTask('scheduleMicrotask', () => {});
+        ;
+      });
       expect(_zone.hasPendingMicrotasks).toBe(true);
     });
   });
@@ -194,7 +199,10 @@ function commonTests() {
     it('should be false', () => { expect(_zone.hasPendingMicrotasks).toBe(false); });
 
     it('should be true when microtask is scheduled', () => {
-      runNgZoneNoLog(() => { scheduleMicroTask(() => {}); });
+      runNgZoneNoLog(() => {
+        Zone.current.scheduleMicroTask('scheduleMicrotask', () => {});
+        ;
+      });
       expect(_zone.hasPendingMicrotasks).toBe(true);
     });
 
@@ -242,7 +250,10 @@ function commonTests() {
              _log.add(`onMicrotaskEmpty ${times}`);
              if (times < 2) {
                // Scheduling a microtask causes a second digest
-               runNgZoneNoLog(() => { scheduleMicroTask(() => {}); });
+               runNgZoneNoLog(() => {
+                 Zone.current.scheduleMicroTask('scheduleMicrotask', () => {});
+                 ;
+               });
              }
            }
          });
@@ -276,7 +287,8 @@ function commonTests() {
             next: () => {
               if (turnStart) throw 'Should not call this more than once';
               _log.add('onUnstable');
-              scheduleMicroTask(() => {});
+              Zone.current.scheduleMicroTask('scheduleMicrotask', () => {});
+              ;
               turnStart = true;
             }
           });
@@ -286,7 +298,8 @@ function commonTests() {
             next: () => {
               if (turnDone) throw 'Should not call this more than once';
               _log.add('onMicrotaskEmpty');
-              scheduleMicroTask(() => {});
+              Zone.current.scheduleMicroTask('scheduleMicrotask', () => {});
+              ;
               turnDone = true;
             }
           });
@@ -296,7 +309,8 @@ function commonTests() {
             next: () => {
               if (eventDone) throw 'Should not call this more than once';
               _log.add('onStable');
-              scheduleMicroTask(() => {});
+              Zone.current.scheduleMicroTask('scheduleMicrotask', () => {});
+              ;
               eventDone = true;
             }
           });
@@ -320,7 +334,10 @@ function commonTests() {
            next: () => {
              _log.add('onMyMicrotaskEmpty');
              if (turnDone) return;
-             _zone.run(() => { scheduleMicroTask(() => {}); });
+             _zone.run(() => {
+               Zone.current.scheduleMicroTask('scheduleMicrotask', () => {});
+               ;
+             });
              turnDone = true;
            }
          });
@@ -357,7 +374,8 @@ function commonTests() {
          runNgZoneNoLog(() => {
            macroTask(() => {
              _log.add('run start');
-             scheduleMicroTask(_log.fn('async'));
+             Zone.current.scheduleMicroTask('scheduleMicrotask', _log.fn('async'));
+             ;
              _log.add('run end');
            });
          });
@@ -377,7 +395,8 @@ function commonTests() {
              _log.add('start run');
              _zone.run(() => {
                _log.add('nested run');
-               scheduleMicroTask(_log.fn('nested run microtask'));
+               Zone.current.scheduleMicroTask('scheduleMicrotask', _log.fn('nested run microtask'));
+               ;
              });
              _log.add('end run');
            });
@@ -516,10 +535,11 @@ function commonTests() {
 
              if (!ran) {
                _zone.run(() => {
-                 scheduleMicroTask(() => {
+                 Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
                    ran = true;
                    _log.add('executedMicrotask');
                  });
+                 ;
                });
              }
 
@@ -544,7 +564,8 @@ function commonTests() {
          runNgZoneNoLog(() => {
            macroTask(() => {
              _log.add('scheduleMicroTask');
-             scheduleMicroTask(_log.fn('run(executeMicrotask)'));
+             Zone.current.scheduleMicroTask('scheduleMicrotask', _log.fn('run(executeMicrotask)'));
+             ;
            });
          });
 
@@ -555,10 +576,11 @@ function commonTests() {
              if (!ran) {
                _log.add('onMicrotaskEmpty(scheduleMicroTask)');
                _zone.run(() => {
-                 scheduleMicroTask(() => {
+                 Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
                    ran = true;
                    _log.add('onMicrotaskEmpty(executeMicrotask)');
                  });
+                 ;
                });
              }
              _log.add('onMicrotaskEmpty(end)');
@@ -600,7 +622,11 @@ function commonTests() {
              _log.add('onUnstable(begin)');
              if (!startPromiseRan) {
                _log.add('onUnstable(schedulePromise)');
-               _zone.run(() => { scheduleMicroTask(_log.fn('onUnstable(executePromise)')); });
+               _zone.run(() => {
+                 Zone.current.scheduleMicroTask(
+                     'scheduleMicrotask', _log.fn('onUnstable(executePromise)'));
+                 ;
+               });
                startPromiseRan = true;
              }
              _log.add('onUnstable(end)');
@@ -612,7 +638,11 @@ function commonTests() {
              _log.add('onMicrotaskEmpty(begin)');
              if (!donePromiseRan) {
                _log.add('onMicrotaskEmpty(schedulePromise)');
-               _zone.run(() => { scheduleMicroTask(_log.fn('onMicrotaskEmpty(executePromise)')); });
+               _zone.run(() => {
+                 Zone.current.scheduleMicroTask(
+                     'scheduleMicrotask', _log.fn('onMicrotaskEmpty(executePromise)'));
+                 ;
+               });
                donePromiseRan = true;
              }
              _log.add('onMicrotaskEmpty(end)');
@@ -675,10 +705,12 @@ function commonTests() {
          runNgZoneNoLog(() => {
            macroTask(() => {
              _log.add('run start');
-             scheduleMicroTask(() => {
+             Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
                _log.add('async1');
-               scheduleMicroTask(_log.fn('async2'));
+               Zone.current.scheduleMicroTask('scheduleMicrotask', _log.fn('async2'));
+               ;
              });
+             ;
              _log.add('run end');
            });
          });
@@ -744,7 +776,12 @@ function commonTests() {
        inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
          var exception = new BaseException('async');
 
-         macroTask(() => { _zone.run(() => { scheduleMicroTask(() => { throw exception; }); }); });
+         macroTask(() => {
+           _zone.run(() => {
+             Zone.current.scheduleMicroTask('scheduleMicrotask', () => { throw exception; });
+             ;
+           });
+         });
 
          macroTask(() => {
            expect(_errors.length).toBe(1);

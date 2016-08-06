@@ -31,7 +31,7 @@ export class CompileEventListener {
       targetEventListeners: CompileEventListener[]): CompileEventListener {
     var listener = targetEventListeners.find(
         listener => listener.eventTarget == eventTarget && listener.eventName == eventName);
-    if (isBlank(listener)) {
+    if (listener === undefined || listener === null) {
       listener = new CompileEventListener(
           compileElement, eventTarget, eventName, targetEventListeners.length);
       targetEventListeners.push(listener);
@@ -53,12 +53,13 @@ export class CompileEventListener {
   addAction(
       hostEvent: BoundEventAst, directive: CompileDirectiveMetadata,
       directiveInstance: o.Expression) {
-    if (isPresent(directive) && directive.isComponent) {
+    if (directive !== undefined && directive !== null && directive.isComponent) {
       this._hasComponentHostListener = true;
     }
     this._method.resetDebugInfo(this.compileElement.nodeIndex, hostEvent);
-    var context = isPresent(directiveInstance) ? directiveInstance :
-                                                 this.compileElement.view.componentContext;
+    var context = directiveInstance !== undefined && directiveInstance !== null ?
+        directiveInstance :
+        this.compileElement.view.componentContext;
     var actionStmts = convertCdStatementToIr(this.compileElement.view, context, hostEvent.handler);
     var lastIndex = actionStmts.length - 1;
     if (lastIndex >= 0) {
@@ -66,7 +67,7 @@ export class CompileEventListener {
       var returnExpr = convertStmtIntoExpression(lastStatement);
       var preventDefaultVar = o.variable(`pd_${this._actionResultExprs.length}`);
       this._actionResultExprs.push(preventDefaultVar);
-      if (isPresent(returnExpr)) {
+      if (returnExpr !== undefined && returnExpr !== null) {
         // Note: We need to cast the result of the method call to dynamic,
         // as it might be a void method!
         actionStmts[lastIndex] =
@@ -97,7 +98,7 @@ export class CompileEventListener {
     var eventListener = o.THIS_EXPR.callMethod(
         'eventHandler',
         [o.THIS_EXPR.prop(this._methodName).callMethod(o.BuiltinMethod.bind, [o.THIS_EXPR])]);
-    if (isPresent(this.eventTarget)) {
+    if (this.eventTarget !== undefined && this.eventTarget !== null) {
       listenExpr = ViewProperties.renderer.callMethod(
           'listenGlobal', [o.literal(this.eventTarget), o.literal(this.eventName), eventListener]);
     } else {

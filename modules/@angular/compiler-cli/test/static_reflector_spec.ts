@@ -450,7 +450,7 @@ class MockReflectorHost implements StaticReflectorHost {
   getStaticSymbol(declarationFile: string, name: string): StaticSymbol {
     var cacheKey = `${declarationFile}:${name}`;
     var result = this.staticTypeCache.get(cacheKey);
-    if (isBlank(result)) {
+    if (result === undefined || result === null) {
       result = new StaticSymbol(declarationFile, name);
       this.staticTypeCache.set(cacheKey, result);
     }

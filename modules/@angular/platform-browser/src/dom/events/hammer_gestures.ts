@@ -56,7 +56,8 @@ export class HammerGesturesPlugin extends HammerGesturesPluginCommon {
   supports(eventName: string): boolean {
     if (!super.supports(eventName) && !this.isCustomEvent(eventName)) return false;
 
-    if (isBlank((window as any /** TODO #???? */)['Hammer'])) {
+    if ((window as any /** TODO #???? */)['Hammer'] === undefined ||
+        (window as any /** TODO #???? */)['Hammer'] === null) {
       throw new BaseException(`Hammer.js is not loaded, can not bind ${eventName} event`);
     }
 

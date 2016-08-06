@@ -46,7 +46,7 @@ export function main() {
         dirResolver.setView(SomeComponent, new ViewMetadata({template: 'overridden template'}));
         var view = <ComponentMetadata>dirResolver.resolve(SomeComponent);
         expect(view.template).toEqual('overridden template');
-        expect(isBlank(view.directives)).toBe(true);
+        expect(view.directives === undefined || view.directives === null).toBe(true);
       });
 
       it('should allow overriding a view after it has been resolved', () => {
@@ -54,7 +54,7 @@ export function main() {
         dirResolver.setView(SomeComponent, new ViewMetadata({template: 'overridden template'}));
         var view = <ComponentMetadata>dirResolver.resolve(SomeComponent);
         expect(view.template).toEqual('overridden template');
-        expect(isBlank(view.directives)).toBe(true);
+        expect(view.directives === undefined || view.directives === null).toBe(true);
       });
     });
 

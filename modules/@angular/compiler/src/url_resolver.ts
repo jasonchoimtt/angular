@@ -62,13 +62,13 @@ export class UrlResolver {
    */
   resolve(baseUrl: string, url: string): string {
     var resolvedUrl = url;
-    if (isPresent(baseUrl) && baseUrl.length > 0) {
+    if (baseUrl !== undefined && baseUrl !== null && baseUrl.length > 0) {
       resolvedUrl = _resolveUrl(baseUrl, resolvedUrl);
     }
     var resolvedParts = _split(resolvedUrl);
     var prefix = this._packagePrefix;
-    if (isPresent(prefix) && isPresent(resolvedParts) &&
-        resolvedParts[_ComponentIndex.Scheme] == 'package') {
+    if (prefix !== undefined && prefix !== null && resolvedParts !== undefined &&
+        resolvedParts !== null && resolvedParts[_ComponentIndex.Scheme] == 'package') {
       var path = resolvedParts[_ComponentIndex.Path];
       if (this._packagePrefix === _ASSET_SCHEME) {
         var pathSegements = path.split(/\//);
@@ -116,33 +116,33 @@ function _buildFromEncodedParts(
     opt_path?: string, opt_queryData?: string, opt_fragment?: string): string {
   var out: string[] = [];
 
-  if (isPresent(opt_scheme)) {
+  if (opt_scheme !== undefined && opt_scheme !== null) {
     out.push(opt_scheme + ':');
   }
 
-  if (isPresent(opt_domain)) {
+  if (opt_domain !== undefined && opt_domain !== null) {
     out.push('//');
 
-    if (isPresent(opt_userInfo)) {
+    if (opt_userInfo !== undefined && opt_userInfo !== null) {
       out.push(opt_userInfo + '@');
     }
 
     out.push(opt_domain);
 
-    if (isPresent(opt_port)) {
+    if (opt_port !== undefined && opt_port !== null) {
       out.push(':' + opt_port);
     }
   }
 
-  if (isPresent(opt_path)) {
+  if (opt_path !== undefined && opt_path !== null) {
     out.push(opt_path);
   }
 
-  if (isPresent(opt_queryData)) {
+  if (opt_queryData !== undefined && opt_queryData !== null) {
     out.push('?' + opt_queryData);
   }
 
-  if (isPresent(opt_fragment)) {
+  if (opt_fragment !== undefined && opt_fragment !== null) {
     out.push('#' + opt_fragment);
   }
 
@@ -314,7 +314,7 @@ function _removeDotSegments(path: string): string {
  */
 function _joinAndCanonicalizePath(parts: any[]): string {
   var path = parts[_ComponentIndex.Path];
-  path = isBlank(path) ? '' : _removeDotSegments(path);
+  path = path === undefined || path === null ? '' : _removeDotSegments(path);
   parts[_ComponentIndex.Path] = path;
 
   return _buildFromEncodedParts(
@@ -332,14 +332,14 @@ function _resolveUrl(base: string, url: string): string {
   var parts = _split(encodeURI(url));
   var baseParts = _split(base);
 
-  if (isPresent(parts[_ComponentIndex.Scheme])) {
+  if (parts[_ComponentIndex.Scheme] !== undefined && parts[_ComponentIndex.Scheme] !== null) {
     return _joinAndCanonicalizePath(parts);
   } else {
     parts[_ComponentIndex.Scheme] = baseParts[_ComponentIndex.Scheme];
   }
 
   for (var i = _ComponentIndex.Scheme; i <= _ComponentIndex.Port; i++) {
-    if (isBlank(parts[i])) {
+    if (parts[i] === undefined || parts[i] === null) {
       parts[i] = baseParts[i];
     }
   }
@@ -349,7 +349,7 @@ function _resolveUrl(base: string, url: string): string {
   }
 
   var path = baseParts[_ComponentIndex.Path];
-  if (isBlank(path)) path = '/';
+  if (path === undefined || path === null) path = '/';
   var index = path.lastIndexOf('/');
   path = path.substring(0, index + 1) + parts[_ComponentIndex.Path];
   parts[_ComponentIndex.Path] = path;

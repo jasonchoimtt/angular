@@ -27,7 +27,7 @@ export class SystemJsComponentResolver implements ComponentResolver {
   constructor(private _resolver: ComponentResolver, private _console: Console) {}
 
   resolveComponent(componentType: string|Type): Promise<ComponentFactory<any>> {
-    if (isString(componentType)) {
+    if (typeof componentType === 'string') {
       this._console.warn(ComponentResolver.LazyLoadingDeprecationMsg);
       let [module, component] = componentType.split(_SEPARATOR);
 
@@ -61,7 +61,7 @@ const FACTORY_CLASS_SUFFIX = 'NgFactory';
 export class SystemJsCmpFactoryResolver implements ComponentResolver {
   constructor(private _console: Console) {}
   resolveComponent(componentType: string|Type): Promise<ComponentFactory<any>> {
-    if (isString(componentType)) {
+    if (typeof componentType === 'string') {
       this._console.warn(ComponentResolver.LazyLoadingDeprecationMsg);
       let [module, factory] = componentType.split(_SEPARATOR);
       return (<any>global)

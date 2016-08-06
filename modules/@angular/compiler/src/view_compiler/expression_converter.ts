@@ -213,11 +213,11 @@ class _AstToIrVisitor implements cdAst.AstVisitor {
       let receiver = this.visit(ast.receiver, _Mode.Expression);
       if (receiver === this._implicitReceiver) {
         var varExpr = this._nameResolver.getLocal(ast.name);
-        if (isPresent(varExpr)) {
+        if (varExpr !== undefined && varExpr !== null) {
           result = varExpr.callFn(args);
         }
       }
-      if (isBlank(result)) {
+      if (result === undefined || result === null) {
         result = receiver.callMethod(ast.name, args);
       }
       return convertToStatementIfNeeded(mode, result);
@@ -238,7 +238,7 @@ class _AstToIrVisitor implements cdAst.AstVisitor {
       if (receiver === this._implicitReceiver) {
         result = this._nameResolver.getLocal(ast.name);
       }
-      if (isBlank(result)) {
+      if (result === undefined || result === null) {
         result = receiver.prop(ast.name);
       }
       return convertToStatementIfNeeded(mode, result);
@@ -249,7 +249,7 @@ class _AstToIrVisitor implements cdAst.AstVisitor {
     let receiver: o.Expression = this.visit(ast.receiver, _Mode.Expression);
     if (receiver === this._implicitReceiver) {
       var varExpr = this._nameResolver.getLocal(ast.name);
-      if (isPresent(varExpr)) {
+      if (varExpr !== undefined && varExpr !== null) {
         throw new BaseException('Cannot assign to a reference or variable!');
       }
     }
@@ -380,7 +380,7 @@ class _AstToIrVisitor implements cdAst.AstVisitor {
 }
 
 function flattenStatements(arg: any, output: o.Statement[]) {
-  if (isArray(arg)) {
+  if (Array.isArray(arg)) {
     (<any[]>arg).forEach((entry) => flattenStatements(entry, output));
   } else {
     output.push(arg);

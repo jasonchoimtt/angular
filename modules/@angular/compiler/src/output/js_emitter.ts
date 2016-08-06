@@ -39,12 +39,13 @@ class JsEmitterVisitor extends AbstractJsEmitterVisitor {
   constructor(private _moduleUrl: string) { super(); }
 
   visitExternalExpr(ast: o.ExternalExpr, ctx: EmitterVisitorContext): any {
-    if (isBlank(ast.value.name)) {
+    if (ast.value.name === undefined || ast.value.name === null) {
       throw new BaseException(`Internal error: unknown identifier ${ast.value}`);
     }
-    if (isPresent(ast.value.moduleUrl) && ast.value.moduleUrl != this._moduleUrl) {
+    if (ast.value.moduleUrl !== undefined && ast.value.moduleUrl !== null &&
+        ast.value.moduleUrl != this._moduleUrl) {
       var prefix = this.importsWithPrefixes.get(ast.value.moduleUrl);
-      if (isBlank(prefix)) {
+      if (prefix === undefined || prefix === null) {
         prefix = `import${this.importsWithPrefixes.size}`;
         this.importsWithPrefixes.set(ast.value.moduleUrl, prefix);
       }

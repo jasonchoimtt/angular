@@ -71,7 +71,7 @@ export abstract class AppView<T> {
       this.animationPlayers.findAllPlayersByElement(element).forEach(player => player.destroy());
     } else {
       var player = this.animationPlayers.find(element, animationName);
-      if (isPresent(player)) {
+      if (player !== undefined && player !== null) {
         player.destroy();
       }
     }
@@ -107,7 +107,7 @@ export abstract class AppView<T> {
         projectableNodes = givenProjectableNodes;
         break;
     }
-    this._hasExternalHostElement = isPresent(rootSelectorOrNode);
+    this._hasExternalHostElement = rootSelectorOrNode !== undefined && rootSelectorOrNode !== null;
     this.projectableNodes = projectableNodes;
     return this.createInternal(rootSelectorOrNode);
   }
@@ -136,7 +136,7 @@ export abstract class AppView<T> {
   selectOrCreateHostElement(
       elementName: string, rootSelectorOrNode: string|any, debugInfo: RenderDebugInfo): any {
     var hostElement: any;
-    if (isPresent(rootSelectorOrNode)) {
+    if (rootSelectorOrNode !== undefined && rootSelectorOrNode !== null) {
       hostElement = this.renderer.selectRootElement(rootSelectorOrNode, debugInfo);
     } else {
       hostElement = this.renderer.createElement(null, elementName, debugInfo);
@@ -156,7 +156,7 @@ export abstract class AppView<T> {
   }
 
   injector(nodeIndex: number): Injector {
-    if (isPresent(nodeIndex)) {
+    if (nodeIndex !== undefined && nodeIndex !== null) {
       return new ElementInjector(this, nodeIndex);
     } else {
       return this.parentInjector;
@@ -166,7 +166,7 @@ export abstract class AppView<T> {
   destroy() {
     if (this._hasExternalHostElement) {
       this.renderer.detachView(this.flatRootNodes);
-    } else if (isPresent(this.viewContainerElement)) {
+    } else if (this.viewContainerElement !== undefined && this.viewContainerElement !== null) {
       this.viewContainerElement.detachView(this.viewContainerElement.nestedViews.indexOf(this));
     }
     this._destroyRecurse();
@@ -232,7 +232,9 @@ export abstract class AppView<T> {
   get changeDetectorRef(): ChangeDetectorRef { return this.ref; }
 
   get parent(): AppView<any> {
-    return isPresent(this.declarationAppElement) ? this.declarationAppElement.parentView : null;
+    return this.declarationAppElement !== undefined && this.declarationAppElement !== null ?
+        this.declarationAppElement.parentView :
+        null;
   }
 
   get flatRootNodes(): any[] { return flattenNestedViewRenderNodes(this.rootNodesOrAppElements); }
@@ -306,13 +308,13 @@ export abstract class AppView<T> {
 
   markPathToRootAsCheckOnce(): void {
     let c: AppView<any> = this;
-    while (isPresent(c) && c.cdMode !== ChangeDetectorStatus.Detached) {
+    while (c !== undefined && c !== null && c.cdMode !== ChangeDetectorStatus.Detached) {
       if (c.cdMode === ChangeDetectorStatus.Checked) {
         c.cdMode = ChangeDetectorStatus.CheckOnce;
       }
       let parentEl =
           c.type === ViewType.COMPONENT ? c.declarationAppElement : c.viewContainerElement;
-      c = isPresent(parentEl) ? parentEl.parentView : null;
+      c = parentEl !== undefined && parentEl !== null ? parentEl.parentView : null;
     }
   }
 
@@ -393,7 +395,7 @@ export class DebugAppView<T> extends AppView<T> {
       if (!(e instanceof ExpressionChangedAfterItHasBeenCheckedException)) {
         this.cdMode = ChangeDetectorStatus.Errored;
       }
-      if (isPresent(this._currentDebugContext)) {
+      if (this._currentDebugContext !== undefined && this._currentDebugContext !== null) {
         throw new ViewWrappedException(e, stack, this._currentDebugContext);
       }
     }
@@ -418,7 +420,7 @@ function _findLastRenderNode(node: any): any {
   if (node instanceof AppElement) {
     var appEl = <AppElement>node;
     lastNode = appEl.nativeElement;
-    if (isPresent(appEl.nestedViews)) {
+    if (appEl.nestedViews !== undefined && appEl.nestedViews !== null) {
       // Note: Views might have no root nodes at all!
       for (var i = appEl.nestedViews.length - 1; i >= 0; i--) {
         var nestedView = appEl.nestedViews[i];

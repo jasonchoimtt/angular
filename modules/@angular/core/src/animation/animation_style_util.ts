@@ -22,7 +22,7 @@ export function prepareFinalAnimationStyles(
   });
 
   StringMapWrapper.forEach(previousStyles, (value: string, prop: string) => {
-    if (isBlank(finalStyles[prop])) {
+    if (finalStyles[prop] === undefined || finalStyles[prop] === null) {
       finalStyles[prop] = nullValue;
     }
   });
@@ -61,7 +61,8 @@ export function balanceAnimationKeyframes(
   var extraFinalKeyframeStyles: {[key: string]: string} = {};
   var hasExtraFinalStyles = false;
   StringMapWrapper.forEach(keyframeCollectedStyles, (value: string, prop: string) => {
-    if (isBlank(flatenedFinalKeyframeStyles[prop])) {
+    if (flatenedFinalKeyframeStyles[prop] === undefined ||
+        flatenedFinalKeyframeStyles[prop] === null) {
       extraFinalKeyframeStyles[prop] = AUTO_STYLE;
       hasExtraFinalStyles = true;
     }
@@ -72,7 +73,8 @@ export function balanceAnimationKeyframes(
   }
 
   StringMapWrapper.forEach(flatenedFinalKeyframeStyles, (value: string, prop: string) => {
-    if (isBlank(flatenedFirstKeyframeStyles[prop])) {
+    if (flatenedFirstKeyframeStyles[prop] === undefined ||
+        flatenedFirstKeyframeStyles[prop] === null) {
       extraFirstKeyframeStyles[prop] = AUTO_STYLE;
       hasExtraFirstStyles = true;
     }
@@ -98,7 +100,7 @@ export function collectAndResolveStyles(
     StringMapWrapper.forEach(entry, (value: string | number, prop: string) => {
       if (value == FILL_STYLE_FLAG) {
         value = collection[prop];
-        if (isBlank(value)) {
+        if (value === undefined || value === null) {
           value = AUTO_STYLE;
         }
       }

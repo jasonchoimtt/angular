@@ -12,7 +12,7 @@ import {isBlank, isPresent} from '../src/facade/lang';
 
 export function convertUrlParamsToArray(urlParams: {[key: string]: any}): string[] {
   var paramsArray: any[] /** TODO #9100 */ = [];
-  if (isBlank(urlParams)) {
+  if (urlParams === undefined || urlParams === null) {
     return [];
   }
   StringMapWrapper.forEach(
@@ -57,7 +57,9 @@ export class Url {
   }
 
   /** @internal */
-  _childString(): string { return isPresent(this.child) ? ('/' + this.child.toString()) : ''; }
+  _childString(): string {
+    return this.child !== undefined && this.child !== null ? ('/' + this.child.toString()) : '';
+  }
 }
 
 export class RootUrl extends Url {
@@ -73,7 +75,7 @@ export class RootUrl extends Url {
   segmentToString(): string { return this.path + this._queryParamsToString(); }
 
   private _queryParamsToString(): string {
-    if (isBlank(this.params)) {
+    if (this.params === undefined || this.params === null) {
       return '';
     }
 
@@ -197,7 +199,7 @@ export class UrlParser {
 
   parseParam(params: {[key: string]: any}): void {
     var key = matchUrlSegment(this._remaining);
-    if (isBlank(key)) {
+    if (key === undefined || key === null) {
       return;
     }
     this.capture(key);
@@ -205,7 +207,7 @@ export class UrlParser {
     if (this.peekStartsWith('=')) {
       this.capture('=');
       var valueMatch = matchUrlSegment(this._remaining);
-      if (isPresent(valueMatch)) {
+      if (valueMatch !== undefined && valueMatch !== null) {
         value = valueMatch;
         this.capture(value);
       }
@@ -216,7 +218,7 @@ export class UrlParser {
 
   parseQueryParam(params: {[key: string]: any}): void {
     var key = matchUrlSegment(this._remaining);
-    if (isBlank(key)) {
+    if (key === undefined || key === null) {
       return;
     }
     this.capture(key);
@@ -224,7 +226,7 @@ export class UrlParser {
     if (this.peekStartsWith('=')) {
       this.capture('=');
       var valueMatch = matchUrlQueryParamValue(this._remaining);
-      if (isPresent(valueMatch)) {
+      if (valueMatch !== undefined && valueMatch !== null) {
         value = valueMatch;
         this.capture(value);
       }

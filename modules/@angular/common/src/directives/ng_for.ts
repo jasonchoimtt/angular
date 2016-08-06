@@ -89,7 +89,7 @@ export class NgFor implements DoCheck, OnChanges {
 
   @Input()
   set ngForTemplate(value: TemplateRef<NgForRow>) {
-    if (isPresent(value)) {
+    if (value !== undefined && value !== null) {
       this._templateRef = value;
     }
   }
@@ -98,21 +98,22 @@ export class NgFor implements DoCheck, OnChanges {
     if ('ngForOf' in changes) {
       // React on ngForOf changes only once all inputs have been initialized
       const value = changes['ngForOf'].currentValue;
-      if (isBlank(this._differ) && isPresent(value)) {
+      if ((this._differ === undefined || this._differ === null) &&
+          (value !== undefined && value !== null)) {
         try {
           this._differ = this._iterableDiffers.find(value).create(this._cdr, this.ngForTrackBy);
         } catch (e) {
           throw new BaseException(
-              `Cannot find a differ supporting object '${value}' of type '${getTypeNameForDebugging(value)}'. NgFor only supports binding to Iterables such as Arrays.`);
+              `Cannot find a differ supporting object '${value}' of type '${ value['name'] || typeof value}'. NgFor only supports binding to Iterables such as Arrays.`);
         }
       }
     }
   }
 
   ngDoCheck() {
-    if (isPresent(this._differ)) {
+    if (this._differ !== undefined && this._differ !== null) {
       const changes = this._differ.diff(this.ngForOf);
-      if (isPresent(changes)) this._applyChanges(changes);
+      if (changes !== undefined && changes !== null) this._applyChanges(changes);
     }
   }
 

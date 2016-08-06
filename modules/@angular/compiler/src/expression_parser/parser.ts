@@ -74,7 +74,7 @@ export class Parser {
     // our lexer or parser for that, so we check for that ahead of time.
     var quote = this._parseQuote(input, location);
 
-    if (isPresent(quote)) {
+    if (quote !== undefined && quote !== null) {
       return quote;
     }
 
@@ -84,7 +84,7 @@ export class Parser {
   }
 
   private _parseQuote(input: string, location: any): AST {
-    if (isBlank(input)) return null;
+    if (input === undefined || input === null) return null;
     var prefixSeparatorIndex = input.indexOf(':');
     if (prefixSeparatorIndex == -1) return null;
     var prefix = input.substring(0, prefixSeparatorIndex).trim();
@@ -114,7 +114,8 @@ export class Parser {
 
     return new ASTWithSource(
         new Interpolation(
-            new ParseSpan(0, isBlank(input) ? 0 : input.length), split.strings, expressions),
+            new ParseSpan(0, input === undefined || input === null ? 0 : input.length),
+            split.strings, expressions),
         input, location, this.errors);
   }
 
@@ -148,13 +149,14 @@ export class Parser {
 
   wrapLiteralPrimitive(input: string, location: any): ASTWithSource {
     return new ASTWithSource(
-        new LiteralPrimitive(new ParseSpan(0, isBlank(input) ? 0 : input.length), input), input,
-        location, this.errors);
+        new LiteralPrimitive(
+            new ParseSpan(0, input === undefined || input === null ? 0 : input.length), input),
+        input, location, this.errors);
   }
 
   private _stripComments(input: string): string {
     const i = this._commentStart(input);
-    return isPresent(i) ? input.substring(0, i).trim() : input;
+    return i !== undefined && i !== null ? input.substring(0, i).trim() : input;
   }
 
   private _commentStart(input: string): number {
@@ -163,11 +165,13 @@ export class Parser {
       const char = StringWrapper.charCodeAt(input, i);
       const nextChar = StringWrapper.charCodeAt(input, i + 1);
 
-      if (char === chars.$SLASH && nextChar == chars.$SLASH && isBlank(outerQuote)) return i;
+      if (char === chars.$SLASH && nextChar == chars.$SLASH &&
+          (outerQuote === undefined || outerQuote === null))
+        return i;
 
       if (outerQuote === char) {
         outerQuote = null;
-      } else if (isBlank(outerQuote) && isQuote(char)) {
+      } else if ((outerQuote === undefined || outerQuote === null) && isQuote(char)) {
         outerQuote = char;
       }
     }
@@ -710,7 +714,7 @@ export class _ParseAST {
   }
 
   private locationText(index: number = null) {
-    if (isBlank(index)) index = this.index;
+    if (index === undefined || index === null) index = this.index;
     return (index < this.tokens.length) ? `at column ${this.tokens[index].index + 1} in` :
                                           `at the end of the expression`;
   }

@@ -220,7 +220,7 @@ export class ShadowCss {
     cssText = this._convertColonHost(cssText);
     cssText = this._convertColonHostContext(cssText);
     cssText = this._convertShadowDOMSelectors(cssText);
-    if (isPresent(scopeSelector)) {
+    if (scopeSelector !== undefined && scopeSelector !== null) {
       cssText = this._scopeSelectors(cssText, scopeSelector, hostSelector);
     }
     cssText = cssText + '\n' + unscoped;
@@ -289,11 +289,11 @@ export class ShadowCss {
   private _convertColonRule(cssText: string, regExp: RegExp, partReplacer: Function): string {
     // p1 = :host, p2 = contents of (), p3 rest of rule
     return StringWrapper.replaceAllMapped(cssText, regExp, function(m: any /** TODO #9100 */) {
-      if (isPresent(m[2])) {
+      if (m[2] !== undefined && m[2] !== null) {
         var parts = m[2].split(','), r: any[] /** TODO #9100 */ = [];
         for (var i = 0; i < parts.length; i++) {
           var p = parts[i];
-          if (isBlank(p)) break;
+          if (p === undefined || p === null) break;
           p = p.trim();
           r.push(partReplacer(_polyfillHostNoCombinator, p, m[3]));
         }
@@ -478,7 +478,7 @@ export function processRules(input:string, ruleCallback:Function):string {
     var content = '';
     var suffix = m[4];
     var contentPrefix = '';
-    if (isPresent(m[4]) && m[4].startsWith('{'+BLOCK_PLACEHOLDER)) {
+    if ( m[4] !== undefined && m[4] !== null && m[4].startsWith('{'+BLOCK_PLACEHOLDER)) {
       content = inputWithEscapedBlocks.blocks[nextBlockIndex++];
       suffix = m[4].substring(BLOCK_PLACEHOLDER.length+1);
       contentPrefix = '{';

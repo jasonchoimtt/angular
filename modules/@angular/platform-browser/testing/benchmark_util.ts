@@ -31,7 +31,7 @@ export function getStringParameter(name: string) {
     }
   }
 
-  if (isBlank(value)) {
+  if (value === undefined || value === null) {
     throw new BaseException(`Could not find and input field with name ${name}`);
   }
 

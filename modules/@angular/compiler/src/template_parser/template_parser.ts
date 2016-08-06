@@ -143,7 +143,7 @@ export class TemplateParser {
       return new TemplateParseResult(result, errors);
     }
 
-    if (isPresent(this.transforms)) {
+    if (this.transforms !== undefined && this.transforms !== null) {
       this.transforms.forEach(
           (transform: TemplateAstVisitor) => { result = templateVisitAll(transform, result); });
     }
@@ -187,7 +187,8 @@ class TemplateParseVisitor implements html.Visitor {
 
     const tempMeta = providerViewContext.component.template;
 
-    if (isPresent(tempMeta) && isPresent(tempMeta.interpolation)) {
+    if (tempMeta !== undefined && tempMeta !== null && tempMeta.interpolation !== undefined &&
+        tempMeta.interpolation !== null) {
       this._interpolationConfig = {
         start: tempMeta.interpolation[0],
         end: tempMeta.interpolation[1]
@@ -223,7 +224,7 @@ class TemplateParseVisitor implements html.Visitor {
       const ast = this._exprParser.parseInterpolation(value, sourceInfo, this._interpolationConfig);
       if (ast) this._reportParserErors(ast.errors, sourceSpan);
       this._checkPipes(ast, sourceSpan);
-      if (isPresent(ast) &&
+      if (ast !== undefined && ast !== null &&
           (<Interpolation>ast.ast).expressions.length > MAX_INTERPOLATION_VALUES) {
         throw new BaseException(
             `Only support at most ${MAX_INTERPOLATION_VALUES} interpolation values!`);
@@ -274,7 +275,7 @@ class TemplateParseVisitor implements html.Visitor {
       const bindingsResult = this._exprParser.parseTemplateBindings(value, sourceInfo);
       this._reportParserErors(bindingsResult.errors, sourceSpan);
       bindingsResult.templateBindings.forEach((binding) => {
-        if (isPresent(binding.expression)) {
+        if (binding.expression !== undefined && binding.expression !== null) {
           this._checkPipes(binding.expression, sourceSpan);
         }
       });
@@ -288,7 +289,7 @@ class TemplateParseVisitor implements html.Visitor {
   }
 
   private _checkPipes(ast: ASTWithSource, sourceSpan: ParseSourceSpan) {
-    if (isPresent(ast)) {
+    if (ast !== undefined && ast !== null) {
       const collector = new PipeCollector();
       ast.visit(collector);
       collector.pipes.forEach((pipeName) => {
@@ -306,7 +307,7 @@ class TemplateParseVisitor implements html.Visitor {
   visitText(text: html.Text, parent: ElementContext): any {
     const ngContentIndex = parent.findNgContentIndex(TEXT_CSS_SELECTOR);
     const expr = this._parseInterpolation(text.value, text.sourceSpan);
-    if (isPresent(expr)) {
+    if (expr !== undefined && expr !== null) {
       return new BoundTextAst(expr, ngContentIndex, text.sourceSpan);
     } else {
       return new TextAst(text.value, ngContentIndex, text.sourceSpan);
@@ -395,14 +396,16 @@ class TemplateParseVisitor implements html.Visitor {
             isTemplateElement ? parent.providerContext : providerContext));
     providerContext.afterElement();
     // Override the actual selector when the `ngProjectAs` attribute is provided
-    const projectionSelector = isPresent(preparsedElement.projectAs) ?
+    const projectionSelector =
+        preparsedElement.projectAs !== undefined && preparsedElement.projectAs !== null ?
         CssSelector.parse(preparsedElement.projectAs)[0] :
         elementCssSelector;
     const ngContentIndex = parent.findNgContentIndex(projectionSelector);
     let parsedElement: TemplateAst;
 
     if (preparsedElement.type === PreparsedElementType.NG_CONTENT) {
-      if (isPresent(element.children) && element.children.length > 0) {
+      if (element.children !== undefined && element.children !== null &&
+          element.children.length > 0) {
         this._reportError(
             `<ng-content> element cannot have content. <ng-content> must be immediately followed by </ng-content>`,
             element.sourceSpan);
@@ -465,13 +468,13 @@ class TemplateParseVisitor implements html.Visitor {
       const key = attr.name.substring(TEMPLATE_ATTR_PREFIX.length);  // remove the star
       templateBindingsSource = (attr.value.length == 0) ? key : key + ' ' + attr.value;
     }
-    if (isPresent(templateBindingsSource)) {
+    if (templateBindingsSource !== undefined && templateBindingsSource !== null) {
       const bindings = this._parseTemplateBindings(templateBindingsSource, attr.sourceSpan);
       for (let i = 0; i < bindings.length; i++) {
         const binding = bindings[i];
         if (binding.keyIsVar) {
           targetVars.push(new VariableAst(binding.key, binding.name, attr.sourceSpan));
-        } else if (isPresent(binding.expression)) {
+        } else if (binding.expression !== undefined && binding.expression !== null) {
           this._parsePropertyAst(
               binding.key, binding.expression, attr.sourceSpan, targetMatchableAttrs, targetProps);
         } else {
@@ -495,12 +498,13 @@ class TemplateParseVisitor implements html.Visitor {
     let hasBinding = false;
     if (bindParts !== null) {
       hasBinding = true;
-      if (isPresent(bindParts[1])) {  // match: bind-prop
+      if (bindParts[1] !== undefined && bindParts[1] !== null) {  // match: bind-prop
         this._parsePropertyOrAnimation(
             bindParts[8], attrValue, attr.sourceSpan, targetMatchableAttrs, targetProps,
             targetAnimationProps);
 
-      } else if (isPresent(bindParts[2])) {  // match: var-name / var-name="iden"
+      } else if (bindParts[2] !== undefined && bindParts[2] !== null) {  // match: var-name /
+                                                                         // var-name="iden"
         const identifier = bindParts[8];
         if (isTemplateElement) {
           this._reportError(
@@ -514,7 +518,7 @@ class TemplateParseVisitor implements html.Visitor {
           this._parseReference(identifier, attrValue, attr.sourceSpan, targetRefs);
         }
 
-      } else if (isPresent(bindParts[3])) {  // match: let-name
+      } else if (bindParts[3] !== undefined && bindParts[3] !== null) {  // match: let-name
         if (isTemplateElement) {
           const identifier = bindParts[8];
           this._parseVariable(identifier, attrValue, attr.sourceSpan, targetVars);
@@ -522,42 +526,43 @@ class TemplateParseVisitor implements html.Visitor {
           this._reportError(`"let-" is only supported on template elements.`, attr.sourceSpan);
         }
 
-      } else if (isPresent(bindParts[4])) {  // match: ref- / #iden
+      } else if (bindParts[4] !== undefined && bindParts[4] !== null) {  // match: ref- / #iden
         const identifier = bindParts[8];
         this._parseReference(identifier, attrValue, attr.sourceSpan, targetRefs);
 
-      } else if (isPresent(bindParts[5])) {  // match: on-event
+      } else if (bindParts[5] !== undefined && bindParts[5] !== null) {  // match: on-event
         this._parseEvent(
             bindParts[8], attrValue, attr.sourceSpan, targetMatchableAttrs, targetEvents);
 
-      } else if (isPresent(bindParts[6])) {  // match: bindon-prop
+      } else if (bindParts[6] !== undefined && bindParts[6] !== null) {  // match: bindon-prop
         this._parsePropertyOrAnimation(
             bindParts[8], attrValue, attr.sourceSpan, targetMatchableAttrs, targetProps,
             targetAnimationProps);
         this._parseAssignmentEvent(
             bindParts[8], attrValue, attr.sourceSpan, targetMatchableAttrs, targetEvents);
 
-      } else if (isPresent(bindParts[7])) {  // match: animate-name
-        if (attrName[0] == '@' && isPresent(attrValue) && attrValue.length > 0) {
+      } else if (bindParts[7] !== undefined && bindParts[7] !== null) {  // match: animate-name
+        if (attrName[0] == '@' && attrValue !== undefined && attrValue !== null &&
+            attrValue.length > 0) {
           this._reportError(
               `Assigning animation triggers via @prop="exp" attributes with an expression is deprecated. Use [@prop]="exp" instead!`,
               attr.sourceSpan, ParseErrorLevel.WARNING);
         }
         this._parseAnimation(
             bindParts[8], attrValue, attr.sourceSpan, targetMatchableAttrs, targetAnimationProps);
-      } else if (isPresent(bindParts[9])) {  // match: [(expr)]
+      } else if (bindParts[9] !== undefined && bindParts[9] !== null) {  // match: [(expr)]
         this._parsePropertyOrAnimation(
             bindParts[9], attrValue, attr.sourceSpan, targetMatchableAttrs, targetProps,
             targetAnimationProps);
         this._parseAssignmentEvent(
             bindParts[9], attrValue, attr.sourceSpan, targetMatchableAttrs, targetEvents);
 
-      } else if (isPresent(bindParts[10])) {  // match: [expr]
+      } else if (bindParts[10] !== undefined && bindParts[10] !== null) {  // match: [expr]
         this._parsePropertyOrAnimation(
             bindParts[10], attrValue, attr.sourceSpan, targetMatchableAttrs, targetProps,
             targetAnimationProps);
 
-      } else if (isPresent(bindParts[11])) {  // match: (event)
+      } else if (bindParts[11] !== undefined && bindParts[11] !== null) {  // match: (event)
         this._parseEvent(
             bindParts[11], attrValue, attr.sourceSpan, targetMatchableAttrs, targetEvents);
       }
@@ -614,7 +619,7 @@ class TemplateParseVisitor implements html.Visitor {
     // This will occur when a @trigger is not paired with an expression.
     // For animations it is valid to not have an expression since */void
     // states will be applied by angular when the element is attached/detached
-    if (isBlank(expression) || expression.length == 0) {
+    if (expression === undefined || expression === null || expression.length == 0) {
       expression = 'null';
     }
     const ast = this._parseBinding(expression, sourceSpan);
@@ -627,7 +632,7 @@ class TemplateParseVisitor implements html.Visitor {
       name: string, value: string, sourceSpan: ParseSourceSpan, targetMatchableAttrs: string[][],
       targetProps: BoundElementOrDirectiveProperty[]): boolean {
     const expr = this._parseInterpolation(value, sourceSpan);
-    if (isPresent(expr)) {
+    if (expr !== undefined && expr !== null) {
       this._parsePropertyAst(name, expr, sourceSpan, targetMatchableAttrs, targetProps);
       return true;
     }
@@ -678,7 +683,7 @@ class TemplateParseVisitor implements html.Visitor {
     selectorMatcher.match(elementCssSelector, (selector, directive) => {
       directives[this.directivesIndex.get(directive)] = directive;
     });
-    return directives.filter(dir => isPresent(dir));
+    return directives.filter(dir => dir !== undefined && dir !== null);
   }
 
   private _createDirectiveAsts(
@@ -718,7 +723,7 @@ class TemplateParseVisitor implements html.Visitor {
               `There is no directive with "exportAs" set to "${elOrDirRef.value}"`,
               elOrDirRef.sourceSpan);
         }
-      } else if (isBlank(component)) {
+      } else if (component === undefined || component === null) {
         let refToken: CompileTokenMetadata = null;
         if (isTemplateElement) {
           refToken = identifierToken(Identifiers.TemplateRef);
@@ -732,7 +737,7 @@ class TemplateParseVisitor implements html.Visitor {
   private _createDirectiveHostPropertyAsts(
       elementName: string, hostProps: {[key: string]: string}, sourceSpan: ParseSourceSpan,
       targetPropertyAsts: BoundElementPropertyAst[]) {
-    if (isPresent(hostProps)) {
+    if (hostProps !== undefined && hostProps !== null) {
       StringMapWrapper.forEach(hostProps, (expression: string, propName: string) => {
         const exprAst = this._parseBinding(expression, sourceSpan);
         targetPropertyAsts.push(
@@ -744,7 +749,7 @@ class TemplateParseVisitor implements html.Visitor {
   private _createDirectiveHostEventAsts(
       hostListeners: {[key: string]: string}, sourceSpan: ParseSourceSpan,
       targetEventAsts: BoundEventAst[]) {
-    if (isPresent(hostListeners)) {
+    if (hostListeners !== undefined && hostListeners !== null) {
       StringMapWrapper.forEach(hostListeners, (expression: string, propName: string) => {
         this._parseEvent(propName, expression, sourceSpan, [], targetEventAsts);
       });
@@ -754,11 +759,11 @@ class TemplateParseVisitor implements html.Visitor {
   private _createDirectivePropertyAsts(
       directiveProperties: {[key: string]: string}, boundProps: BoundElementOrDirectiveProperty[],
       targetBoundDirectiveProps: BoundDirectivePropertyAst[]) {
-    if (isPresent(directiveProperties)) {
+    if (directiveProperties !== undefined && directiveProperties !== null) {
       const boundPropsByName = new Map<string, BoundElementOrDirectiveProperty>();
       boundProps.forEach(boundProp => {
         const prevValue = boundPropsByName.get(boundProp.name);
-        if (isBlank(prevValue) || prevValue.isLiteral) {
+        if (prevValue === undefined || prevValue === null || prevValue.isLiteral) {
           // give [a]="b" a higher precedence than a="b" on the same element
           boundPropsByName.set(boundProp.name, boundProp);
         }
@@ -768,7 +773,7 @@ class TemplateParseVisitor implements html.Visitor {
         const boundProp = boundPropsByName.get(elProp);
 
         // Bindings are optional, so this binding only needs to be set up if an expression is given.
-        if (isPresent(boundProp)) {
+        if (boundProp !== undefined && boundProp !== null) {
           targetBoundDirectiveProps.push(new BoundDirectivePropertyAst(
               dirProp, boundProp.name, boundProp.expression, boundProp.sourceSpan));
         }
@@ -787,9 +792,12 @@ class TemplateParseVisitor implements html.Visitor {
       });
     });
     props.forEach((prop: BoundElementOrDirectiveProperty) => {
-      if (!prop.isLiteral && isBlank(boundDirectivePropsIndex.get(prop.name))) {
-        boundElementProps.push(this._createElementPropertyAst(
-            elementName, prop.name, prop.expression, prop.sourceSpan));
+      if (!prop.isLiteral) {
+        const obj = boundDirectivePropsIndex.get(prop.name);
+        if (obj === undefined || obj === null) {
+          boundElementProps.push(this._createElementPropertyAst(
+              elementName, prop.name, prop.expression, prop.sourceSpan));
+        }
       }
     });
     return boundElementProps;
@@ -910,7 +918,8 @@ class TemplateParseVisitor implements html.Visitor {
       });
     });
     events.forEach(event => {
-      if (isPresent(event.target) || !SetWrapper.has(allDirectiveEvents, event.name)) {
+      if (event.target !== undefined && event.target !== null ||
+          !SetWrapper.has(allDirectiveEvents, event.name)) {
         this._reportError(
             `Event binding ${event.fullName} not emitted by any directive on an embedded template. Make sure that the event name is spelled correctly and all directives are listed in the "directives" section.`,
             event.sourceSpan);
@@ -976,7 +985,7 @@ class ElementContext {
     const matcher = new SelectorMatcher();
     let wildcardNgContentIndex: number = null;
     const component = directives.find(directive => directive.directive.isComponent);
-    if (isPresent(component)) {
+    if (component !== undefined && component !== null) {
       const ngContentSelectors = component.directive.template.ngContentSelectors;
       for (let i = 0; i < ngContentSelectors.length; i++) {
         const selector = ngContentSelectors[i];
@@ -998,7 +1007,7 @@ class ElementContext {
     this._ngContentIndexMatcher.match(
         selector, (selector, ngContentIndex) => { ngContentIndices.push(ngContentIndex); });
     ListWrapper.sort(ngContentIndices);
-    if (isPresent(this._wildcardNgContentIndex)) {
+    if (this._wildcardNgContentIndex !== undefined && this._wildcardNgContentIndex !== null) {
       ngContentIndices.push(this._wildcardNgContentIndex);
     }
     return ngContentIndices.length > 0 ? ngContentIndices[0] : null;

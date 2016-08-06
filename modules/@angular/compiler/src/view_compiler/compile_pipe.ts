@@ -23,7 +23,7 @@ export class CompilePipe {
     if (meta.pure) {
       // pure pipes live on the component view
       pipe = compView.purePipes.get(name);
-      if (isBlank(pipe)) {
+      if (pipe === undefined || pipe === null) {
         pipe = new CompilePipe(compView, meta);
         compView.purePipes.set(name, pipe);
         compView.pipes.push(pipe);
@@ -84,7 +84,7 @@ function _findPipeMeta(view: CompileView, name: string): CompilePipeMetadata {
       break;
     }
   }
-  if (isBlank(pipeMeta)) {
+  if (pipeMeta === undefined || pipeMeta === null) {
     throw new BaseException(
         `Illegal state: Could not find pipe ${name} although the parser should have detected this error!`);
   }

@@ -45,7 +45,10 @@ import {isBlank, isPresent, normalizeBlank} from '../src/facade/lang';
 export class RouteParams {
   constructor(public params: {[key: string]: string}) {}
 
-  get(param: string): string { return normalizeBlank(StringMapWrapper.get(this.params, param)); }
+  get(param: string): string {
+    const obj = StringMapWrapper.get(this.params, param);
+    return obj === undefined ? null : obj;
+  }
 }
 
 /**
@@ -84,7 +87,10 @@ export class RouteParams {
 export class RouteData {
   constructor(public data: {[key: string]: any} = {}) {}
 
-  get(key: string): any { return normalizeBlank(StringMapWrapper.get(this.data, key)); }
+  get(key: string): any {
+    const obj = StringMapWrapper.get(this.data, key);
+    return obj === undefined ? null : obj;
+  }
 }
 
 export var BLANK_ROUTE_DATA = new RouteData();
@@ -123,16 +129,20 @@ export abstract class Instruction {
       public component: ComponentInstruction, public child: Instruction,
       public auxInstruction: {[key: string]: Instruction}) {}
 
-  get urlPath(): string { return isPresent(this.component) ? this.component.urlPath : ''; }
+  get urlPath(): string {
+    return this.component !== undefined && this.component !== null ? this.component.urlPath : '';
+  }
 
-  get urlParams(): string[] { return isPresent(this.component) ? this.component.urlParams : []; }
+  get urlParams(): string[] {
+    return this.component !== undefined && this.component !== null ? this.component.urlParams : [];
+  }
 
   get specificity(): string {
     var total = '';
-    if (isPresent(this.component)) {
+    if (this.component !== undefined && this.component !== null) {
       total += this.component.specificity;
     }
-    if (isPresent(this.child)) {
+    if (this.child !== undefined && this.child !== null) {
       total += this.child.specificity;
     }
     return total;
@@ -148,7 +158,7 @@ export abstract class Instruction {
   /** @internal */
   _toNonRootUrl(): string {
     return this._stringifyPathMatrixAuxPrefixed() +
-        (isPresent(this.child) ? this.child._toNonRootUrl() : '');
+        (this.child !== undefined && this.child !== null ? this.child._toNonRootUrl() : '');
   }
 
   toUrlQuery(): string { return this.urlParams.length > 0 ? ('?' + this.urlParams.join('&')) : ''; }
@@ -166,20 +176,21 @@ export abstract class Instruction {
    */
   toUrlPath(): string {
     return this.urlPath + this._stringifyAux() +
-        (isPresent(this.child) ? this.child._toNonRootUrl() : '');
+        (this.child !== undefined && this.child !== null ? this.child._toNonRootUrl() : '');
   }
 
   // default instructions override these
   toLinkUrl(): string {
     return this.urlPath + this._stringifyAux() +
-        (isPresent(this.child) ? this.child._toLinkUrl() : '') + this.toUrlQuery();
+        (this.child !== undefined && this.child !== null ? this.child._toLinkUrl() : '') +
+        this.toUrlQuery();
   }
 
   // this is the non-root version (called recursively)
   /** @internal */
   _toLinkUrl(): string {
     return this._stringifyPathMatrixAuxPrefixed() +
-        (isPresent(this.child) ? this.child._toLinkUrl() : '');
+        (this.child !== undefined && this.child !== null ? this.child._toLinkUrl() : '');
   }
 
   /** @internal */
@@ -198,7 +209,8 @@ export abstract class Instruction {
 
   /** @internal */
   _stringifyPathMatrixAux(): string {
-    if (isBlank(this.component) && isBlank(this.urlPath)) {
+    if ((this.component === undefined || this.component === null) &&
+        (this.urlPath === undefined || this.urlPath === null)) {
       return '';
     }
     return this.urlPath + this._stringifyMatrixParams() + this._stringifyAux();
@@ -258,32 +270,33 @@ export class UnresolvedInstruction extends Instruction {
   }
 
   get urlPath(): string {
-    if (isPresent(this.component)) {
+    if (this.component !== undefined && this.component !== null) {
       return this.component.urlPath;
     }
-    if (isPresent(this._urlPath)) {
+    if (this._urlPath !== undefined && this._urlPath !== null) {
       return this._urlPath;
     }
     return '';
   }
 
   get urlParams(): string[] {
-    if (isPresent(this.component)) {
+    if (this.component !== undefined && this.component !== null) {
       return this.component.urlParams;
     }
-    if (isPresent(this._urlParams)) {
+    if (this._urlParams !== undefined && this._urlParams !== null) {
       return this._urlParams;
     }
     return [];
   }
 
   resolveComponent(): Promise<ComponentInstruction> {
-    if (isPresent(this.component)) {
+    if (this.component !== undefined && this.component !== null) {
       return Promise.resolve(this.component);
     }
     return this._resolver().then((instruction: Instruction) => {
-      this.child = isPresent(instruction) ? instruction.child : null;
-      return this.component = isPresent(instruction) ? instruction.component : null;
+      this.child = instruction !== undefined && instruction !== null ? instruction.child : null;
+      return this.component =
+                 instruction !== undefined && instruction !== null ? instruction.component : null;
     });
   }
 }
@@ -324,6 +337,6 @@ export class ComponentInstruction {
       public componentType: any /** TODO #9100 */, public terminal: boolean,
       public specificity: string, public params: {[key: string]: string} = null,
       public routeName: string) {
-    this.routeData = isPresent(data) ? data : BLANK_ROUTE_DATA;
+    this.routeData = data !== undefined && data !== null ? data : BLANK_ROUTE_DATA;
   }
 }

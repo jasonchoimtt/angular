@@ -107,12 +107,12 @@ export class URLSearchParams {
 
   getAll(param: string): string[] {
     var mapParam = this.paramsMap.get(param);
-    return isPresent(mapParam) ? mapParam : [];
+    return mapParam !== undefined && mapParam !== null ? mapParam : [];
   }
 
   set(param: string, val: string) {
     var mapParam = this.paramsMap.get(param);
-    var list = isPresent(mapParam) ? mapParam : [];
+    var list = mapParam !== undefined && mapParam !== null ? mapParam : [];
     ListWrapper.clear(list);
     list.push(val);
     this.paramsMap.set(param, list);
@@ -127,7 +127,7 @@ export class URLSearchParams {
   setAll(searchParams: URLSearchParams) {
     searchParams.paramsMap.forEach((value, param) => {
       var mapParam = this.paramsMap.get(param);
-      var list = isPresent(mapParam) ? mapParam : [];
+      var list = mapParam !== undefined && mapParam !== null ? mapParam : [];
       ListWrapper.clear(list);
       list.push(value[0]);
       this.paramsMap.set(param, list);
@@ -136,7 +136,7 @@ export class URLSearchParams {
 
   append(param: string, val: string): void {
     var mapParam = this.paramsMap.get(param);
-    var list = isPresent(mapParam) ? mapParam : [];
+    var list = mapParam !== undefined && mapParam !== null ? mapParam : [];
     list.push(val);
     this.paramsMap.set(param, list);
   }
@@ -151,7 +151,7 @@ export class URLSearchParams {
   appendAll(searchParams: URLSearchParams) {
     searchParams.paramsMap.forEach((value, param) => {
       var mapParam = this.paramsMap.get(param);
-      var list = isPresent(mapParam) ? mapParam : [];
+      var list = mapParam !== undefined && mapParam !== null ? mapParam : [];
       for (var i = 0; i < value.length; ++i) {
         list.push(value[i]);
       }
@@ -170,7 +170,7 @@ export class URLSearchParams {
   replaceAll(searchParams: URLSearchParams) {
     searchParams.paramsMap.forEach((value, param) => {
       var mapParam = this.paramsMap.get(param);
-      var list = isPresent(mapParam) ? mapParam : [];
+      var list = mapParam !== undefined && mapParam !== null ? mapParam : [];
       ListWrapper.clear(list);
       for (var i = 0; i < value.length; ++i) {
         list.push(value[i]);

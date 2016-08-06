@@ -45,7 +45,7 @@ export class NumberValueAccessor implements ControlValueAccessor {
 
   writeValue(value: number): void {
     // The value needs to be normalized for IE9, otherwise it is set to 'null' when null
-    const normalizedValue = isBlank(value) ? '' : value;
+    const normalizedValue = value === undefined || value === null ? '' : value;
     this._renderer.setElementProperty(this._elementRef.nativeElement, 'value', normalizedValue);
   }
 

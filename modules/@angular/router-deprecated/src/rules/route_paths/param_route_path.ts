@@ -126,7 +126,7 @@ export class ParamRoutePath implements RoutePath {
       }
       currentUrlSegment = nextUrlSegment;
 
-      if (isPresent(currentUrlSegment)) {
+      if (currentUrlSegment !== undefined && currentUrlSegment !== null) {
         // the star segment consumes all of the remaining URL, including matrix params
         if (pathSegment instanceof StarPathSegment) {
           (positionalParams as any /** TODO #9100 */)[pathSegment.name] =
@@ -151,7 +151,7 @@ export class ParamRoutePath implements RoutePath {
       }
     }
 
-    if (this.terminal && isPresent(nextUrlSegment)) {
+    if (this.terminal && nextUrlSegment !== undefined && nextUrlSegment !== null) {
       return null;
     }
 
@@ -160,11 +160,11 @@ export class ParamRoutePath implements RoutePath {
     var auxiliary: any[] /** TODO #9100 */ = [];
     var urlParams: any[] /** TODO #9100 */ = [];
     var allParams = positionalParams;
-    if (isPresent(currentUrlSegment)) {
+    if (currentUrlSegment !== undefined && currentUrlSegment !== null) {
       // If this is the root component, read query params. Otherwise, read matrix params.
       var paramsSegment = url instanceof RootUrl ? url : currentUrlSegment;
 
-      if (isPresent(paramsSegment.params)) {
+      if (paramsSegment.params !== undefined && paramsSegment.params !== null) {
         allParams = StringMapWrapper.merge(paramsSegment.params, positionalParams);
         urlParams = convertUrlParamsToArray(paramsSegment.params);
       } else {
@@ -213,9 +213,9 @@ export class ParamRoutePath implements RoutePath {
     for (var i = 0; i <= limit; i++) {
       var segment = segmentStrings[i], match: RegExpMatchArray;
 
-      if (isPresent(match = segment.match(DynamicPathSegment.paramMatcher))) {
+      if ((match = segment.match(DynamicPathSegment.paramMatcher)) !== null) {
         this._segments.push(new DynamicPathSegment(match[1]));
-      } else if (isPresent(match = segment.match(StarPathSegment.wildcardMatcher))) {
+      } else if ((match = segment.match(StarPathSegment.wildcardMatcher)) !== null) {
         this._segments.push(new StarPathSegment(match[1]));
       } else if (segment == '...') {
         if (i < limit) {
@@ -272,7 +272,7 @@ export class ParamRoutePath implements RoutePath {
           `Path "${path}" should not include "#". Use "HashLocationStrategy" instead.`);
     }
     const illegalCharacter = path.match(ParamRoutePath.RESERVED_CHARS);
-    if (isPresent(illegalCharacter)) {
+    if (illegalCharacter !== null) {
       throw new BaseException(
           `Path "${path}" contains "${illegalCharacter[0]}" which is not allowed in a route config.`);
     }
@@ -287,7 +287,7 @@ let REGEXP_CLOSE_PARENT = /\)/g;
 let REGEXP_SEMICOLON = /;/g;
 
 function encodeDynamicSegment(value: string): string {
-  if (isBlank(value)) {
+  if (value === undefined || value === null) {
     return null;
   }
 
@@ -307,7 +307,7 @@ let REGEXP_ENC_SLASH = /%2F/ig;
 let REGEXP_ENC_PERCENT = /%25/ig;
 
 function decodeDynamicSegment(value: string): string {
-  if (isBlank(value)) {
+  if (value === undefined || value === null) {
     return null;
   }
 

@@ -77,13 +77,13 @@ export function isDevMode(): boolean {
  * @experimental APIs related to application bootstrap are currently under review.
  */
 export function createPlatform(injector: Injector): PlatformRef {
-  if (isPresent(_platform) && !_platform.disposed) {
+  if (_platform !== undefined && _platform !== null && !_platform.disposed) {
     throw new BaseException(
         'There can be only one platform. Destroy the previous one to create a new one.');
   }
   _platform = injector.get(PlatformRef);
   const inits: Function[] = <Function[]>injector.get(PLATFORM_INITIALIZER, null);
-  if (isPresent(inits)) inits.forEach(init => init());
+  if (inits !== undefined && inits !== null) inits.forEach(init => init());
   return _platform;
 }
 
@@ -124,12 +124,15 @@ export function createPlatformFactory(
  */
 export function assertPlatform(requiredToken: any): PlatformRef {
   var platform = getPlatform();
-  if (isBlank(platform)) {
+  if (platform === undefined || platform === null) {
     throw new BaseException('No platform exists!');
   }
-  if (isPresent(platform) && isBlank(platform.injector.get(requiredToken, null))) {
-    throw new BaseException(
-        'A platform with a different configuration has been created. Please destroy it first.');
+  if (platform !== undefined && platform !== null) {
+    const obj = platform.injector.get(requiredToken, null);
+    if (obj === undefined || obj === null) {
+      throw new BaseException(
+          'A platform with a different configuration has been created. Please destroy it first.');
+    }
   }
   return platform;
 }
@@ -149,7 +152,7 @@ export function disposePlatform(): void {
  * @experimental APIs related to application bootstrap are currently under review.
  */
 export function destroyPlatform(): void {
-  if (isPresent(_platform) && !_platform.destroyed) {
+  if (_platform !== undefined && _platform !== null && !_platform.destroyed) {
     _platform.destroy();
   }
 }
@@ -160,7 +163,7 @@ export function destroyPlatform(): void {
  * @experimental APIs related to application bootstrap are currently under review.
  */
 export function getPlatform(): PlatformRef {
-  return isPresent(_platform) && !_platform.disposed ? _platform : null;
+  return _platform !== undefined && _platform !== null && !_platform.disposed ? _platform : null;
 }
 
 /**
@@ -284,7 +287,7 @@ function _callAndReportToExceptionHandler(
     exceptionHandler: ExceptionHandler, callback: () => any): any {
   try {
     const result = callback();
-    if (isPromise(result)) {
+    if (result !== undefined && result !== null && typeof(<any>result).then === 'function') {
       return result.catch((e: any) => {
         exceptionHandler.call(e);
         // rethrow as the exception handler might not do it
@@ -582,7 +585,7 @@ export class ApplicationRef_ extends ApplicationRef {
     var compRef = componentFactory.create(this._injector, [], componentFactory.selector);
     compRef.onDestroy(() => { this._unloadComponent(compRef); });
     var testability = compRef.injector.get(Testability, null);
-    if (isPresent(testability)) {
+    if (testability !== undefined && testability !== null) {
       compRef.injector.get(TestabilityRegistry)
           .registerApplication(compRef.location.nativeElement, testability);
     }

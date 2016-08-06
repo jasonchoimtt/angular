@@ -48,7 +48,8 @@ export class DefaultIterableDiffer implements IterableDiffer {
   private _identityChangesTail: CollectionChangeRecord = null;
 
   constructor(private _trackByFn?: TrackByFn) {
-    this._trackByFn = isPresent(this._trackByFn) ? this._trackByFn : trackByIdentity;
+    this._trackByFn = this._trackByFn !== undefined && this._trackByFn !== null ? this._trackByFn :
+                                                                                  trackByIdentity;
   }
 
   get collection() { return this._collection; }
@@ -148,7 +149,7 @@ export class DefaultIterableDiffer implements IterableDiffer {
   }
 
   diff(collection: any): DefaultIterableDiffer {
-    if (isBlank(collection)) collection = [];
+    if (collection === undefined || collection === null) collection = [];
     if (!isListLikeIterable(collection)) {
       throw new BaseException(`Error trying to diff '${collection}'`);
     }
@@ -171,7 +172,7 @@ export class DefaultIterableDiffer implements IterableDiffer {
     var index: number;
     var item: any /** TODO #9100 */;
     var itemTrackBy: any /** TODO #9100 */;
-    if (isArray(collection)) {
+    if (Array.isArray(collection)) {
       var list = collection;
       this._length = collection.length;
 
@@ -702,10 +703,10 @@ class _DuplicateMap {
 
   put(record: CollectionChangeRecord) {
     // todo(vicb) handle corner cases
-    var key = getMapKey(record.trackById);
+    var key = record.trackById;
 
     var duplicates = this.map.get(key);
-    if (isBlank(duplicates)) {
+    if (duplicates === undefined || duplicates === null) {
       duplicates = new _DuplicateItemRecordList();
       this.map.set(key, duplicates);
     }
@@ -720,10 +721,11 @@ class _DuplicateMap {
    * have any more `a`s needs to return the last `a` not the first or second.
    */
   get(trackById: any, afterIndex: number = null): CollectionChangeRecord {
-    var key = getMapKey(trackById);
+    var key = trackById;
 
     var recordList = this.map.get(key);
-    return isBlank(recordList) ? null : recordList.get(trackById, afterIndex);
+    return recordList === undefined || recordList === null ? null :
+                                                             recordList.get(trackById, afterIndex);
   }
 
   /**
@@ -732,7 +734,7 @@ class _DuplicateMap {
    * The list of duplicates also is removed from the map if it gets empty.
    */
   remove(record: CollectionChangeRecord): CollectionChangeRecord {
-    var key = getMapKey(record.trackById);
+    var key = record.trackById;
     // todo(vicb)
     // assert(this.map.containsKey(key));
     var recordList: _DuplicateItemRecordList = this.map.get(key);

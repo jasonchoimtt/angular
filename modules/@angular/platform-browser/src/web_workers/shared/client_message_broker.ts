@@ -75,7 +75,8 @@ export class ClientMessageBroker_ extends ClientMessageBroker {
     var time: string = stringify(DateWrapper.toMillis(DateWrapper.now()));
     var iteration: number = 0;
     var id: string = name + time + stringify(iteration);
-    while (isPresent((this as any /** TODO #9100 */)._pending[id])) {
+    while ((this as any /** TODO #9100 */)._pending[id] !== undefined &&
+           (this as any /** TODO #9100 */)._pending[id] !== null) {
       id = `${name}${time}${iteration}`;
       iteration++;
     }
@@ -84,7 +85,7 @@ export class ClientMessageBroker_ extends ClientMessageBroker {
 
   runOnService(args: UiArguments, returnType: Type): Promise<any> {
     var fnArgs: any[] /** TODO #9100 */ = [];
-    if (isPresent(args.args)) {
+    if (args.args !== undefined && args.args !== null) {
       args.args.forEach(argument => {
         if (argument.type != null) {
           fnArgs.push(this._serializer.serialize(argument.value, argument.type));
@@ -102,7 +103,7 @@ export class ClientMessageBroker_ extends ClientMessageBroker {
       id = this._generateMessageId(args.method);
       this._pending.set(id, completer);
       promise.catch((err) => {
-        print(err);
+        console.log(err);
         completer.reject(err);
       });
 

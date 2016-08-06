@@ -39,7 +39,7 @@ function bind(
     method: CompileMethod) {
   var checkExpression =
       convertCdExpressionToIr(view, context, parsedExpression, DetectChangesVars.valUnwrapper);
-  if (isBlank(checkExpression.expression)) {
+  if (checkExpression.expression === undefined || checkExpression.expression === null) {
     // e.g. an empty expression was given
     return;
   }
@@ -126,7 +126,7 @@ function bindAndWriteToRenderer(
         break;
       case PropertyBindingType.Style:
         var strValue: o.Expression = renderValue.callMethod('toString', []);
-        if (isPresent(boundProp.unit)) {
+        if (boundProp.unit !== undefined && boundProp.unit !== null) {
           strValue = strValue.plus(o.literal(boundProp.unit));
         }
 

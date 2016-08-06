@@ -35,7 +35,8 @@ export class CssSelector {
   static parse(selector: string): CssSelector[] {
     var results: CssSelector[] = [];
     var _addResult = (res: CssSelector[], cssSel: CssSelector) => {
-      if (cssSel.notSelectors.length > 0 && isBlank(cssSel.element) &&
+      if (cssSel.notSelectors.length > 0 &&
+          (cssSel.element === undefined || cssSel.element === null) &&
           ListWrapper.isEmpty(cssSel.classNames) && ListWrapper.isEmpty(cssSel.attrs)) {
         cssSel.element = '*';
       }
@@ -46,8 +47,8 @@ export class CssSelector {
     var current = cssSelector;
     var inNot = false;
     _SELECTOR_REGEXP.lastIndex = 0;
-    while (isPresent(match = _SELECTOR_REGEXP.exec(selector))) {
-      if (isPresent(match[1])) {
+    while ((match = _SELECTOR_REGEXP.exec(selector)) !== null) {
+      if (match[1] !== undefined && match[1] !== null) {
         if (inNot) {
           throw new BaseException('Nesting :not is not allowed in a selector');
         }
@@ -55,20 +56,20 @@ export class CssSelector {
         current = new CssSelector();
         cssSelector.notSelectors.push(current);
       }
-      if (isPresent(match[2])) {
+      if (match[2] !== undefined && match[2] !== null) {
         current.setElement(match[2]);
       }
-      if (isPresent(match[3])) {
+      if (match[3] !== undefined && match[3] !== null) {
         current.addClassName(match[3]);
       }
-      if (isPresent(match[4])) {
+      if (match[4] !== undefined && match[4] !== null) {
         current.addAttribute(match[4], match[5]);
       }
-      if (isPresent(match[6])) {
+      if (match[6] !== undefined && match[6] !== null) {
         inNot = false;
         current = cssSelector;
       }
-      if (isPresent(match[7])) {
+      if (match[7] !== undefined && match[7] !== null) {
         if (inNot) {
           throw new BaseException('Multiple selectors in :not are not supported');
         }
@@ -81,15 +82,16 @@ export class CssSelector {
   }
 
   isElementSelector(): boolean {
-    return isPresent(this.element) && ListWrapper.isEmpty(this.classNames) &&
-        ListWrapper.isEmpty(this.attrs) && this.notSelectors.length === 0;
+    return this.element !== undefined && this.element !== null &&
+        ListWrapper.isEmpty(this.classNames) && ListWrapper.isEmpty(this.attrs) &&
+        this.notSelectors.length === 0;
   }
 
   setElement(element: string = null) { this.element = element; }
 
   /** Gets a template string for an element that matches the selector. */
   getMatchingElementTemplate(): string {
-    let tagName = isPresent(this.element) ? this.element : 'div';
+    let tagName = this.element !== undefined && this.element !== null ? this.element : 'div';
     let classAttr = this.classNames.length > 0 ? ` class="${this.classNames.join(' ')}"` : '';
 
     let attrs = '';
@@ -104,7 +106,7 @@ export class CssSelector {
 
   addAttribute(name: string, value: string = _EMPTY_ATTR_VALUE) {
     this.attrs.push(name);
-    if (isPresent(value)) {
+    if (value !== undefined && value !== null) {
       value = value.toLowerCase();
     } else {
       value = _EMPTY_ATTR_VALUE;
@@ -116,15 +118,15 @@ export class CssSelector {
 
   toString(): string {
     var res = '';
-    if (isPresent(this.element)) {
+    if (this.element !== undefined && this.element !== null) {
       res += this.element;
     }
-    if (isPresent(this.classNames)) {
+    if (this.classNames !== undefined && this.classNames !== null) {
       for (var i = 0; i < this.classNames.length; i++) {
         res += '.' + this.classNames[i];
       }
     }
-    if (isPresent(this.attrs)) {
+    if (this.attrs !== undefined && this.attrs !== null) {
       for (var i = 0; i < this.attrs.length;) {
         var attrName = this.attrs[i++];
         var attrValue = this.attrs[i++];
@@ -183,7 +185,7 @@ export class SelectorMatcher {
     var attrs = cssSelector.attrs;
     var selectable = new SelectorContext(cssSelector, callbackCtxt, listContext);
 
-    if (isPresent(element)) {
+    if (element !== undefined && element !== null) {
       var isTerminal = attrs.length === 0 && classNames.length === 0;
       if (isTerminal) {
         this._addTerminal(matcher._elementMap, element, selectable);
@@ -192,7 +194,7 @@ export class SelectorMatcher {
       }
     }
 
-    if (isPresent(classNames)) {
+    if (classNames !== undefined && classNames !== null) {
       for (var index = 0; index < classNames.length; index++) {
         var isTerminal = attrs.length === 0 && index === classNames.length - 1;
         var className = classNames[index];
@@ -204,7 +206,7 @@ export class SelectorMatcher {
       }
     }
 
-    if (isPresent(attrs)) {
+    if (attrs !== undefined && attrs !== null) {
       for (var index = 0; index < attrs.length;) {
         var isTerminal = index === attrs.length - 2;
         var attrName = attrs[index++];
@@ -212,7 +214,7 @@ export class SelectorMatcher {
         if (isTerminal) {
           var terminalMap = matcher._attrValueMap;
           var terminalValuesMap = terminalMap.get(attrName);
-          if (isBlank(terminalValuesMap)) {
+          if (terminalValuesMap === undefined || terminalValuesMap === null) {
             terminalValuesMap = new Map<string, SelectorContext[]>();
             terminalMap.set(attrName, terminalValuesMap);
           }
@@ -220,7 +222,7 @@ export class SelectorMatcher {
         } else {
           var parttialMap = matcher._attrValuePartialMap;
           var partialValuesMap = parttialMap.get(attrName);
-          if (isBlank(partialValuesMap)) {
+          if (partialValuesMap === undefined || partialValuesMap === null) {
             partialValuesMap = new Map<string, SelectorMatcher>();
             parttialMap.set(attrName, partialValuesMap);
           }
@@ -233,7 +235,7 @@ export class SelectorMatcher {
   private _addTerminal(
       map: Map<string, SelectorContext[]>, name: string, selectable: SelectorContext) {
     var terminalList = map.get(name);
-    if (isBlank(terminalList)) {
+    if (terminalList === undefined || terminalList === null) {
       terminalList = [];
       map.set(name, terminalList);
     }
@@ -242,7 +244,7 @@ export class SelectorMatcher {
 
   private _addPartial(map: Map<string, SelectorMatcher>, name: string): SelectorMatcher {
     var matcher = map.get(name);
-    if (isBlank(matcher)) {
+    if (matcher === undefined || matcher === null) {
       matcher = new SelectorMatcher();
       map.set(name, matcher);
     }
@@ -270,7 +272,7 @@ export class SelectorMatcher {
     result = this._matchPartial(this._elementPartialMap, element, cssSelector, matchedCallback) ||
         result;
 
-    if (isPresent(classNames)) {
+    if (classNames !== undefined && classNames !== null) {
       for (var index = 0; index < classNames.length; index++) {
         var className = classNames[index];
         result =
@@ -281,7 +283,7 @@ export class SelectorMatcher {
       }
     }
 
-    if (isPresent(attrs)) {
+    if (attrs !== undefined && attrs !== null) {
       for (var index = 0; index < attrs.length;) {
         var attrName = attrs[index++];
         var attrValue = attrs[index++];
@@ -312,16 +314,16 @@ export class SelectorMatcher {
   _matchTerminal(
       map: Map<string, SelectorContext[]>, name: string, cssSelector: CssSelector,
       matchedCallback: (c: CssSelector, a: any) => void): boolean {
-    if (isBlank(map) || isBlank(name)) {
+    if (map === undefined || map === null || name === undefined || name === null) {
       return false;
     }
 
     var selectables = map.get(name);
     var starSelectables = map.get('*');
-    if (isPresent(starSelectables)) {
+    if (starSelectables !== undefined && starSelectables !== null) {
       selectables = selectables.concat(starSelectables);
     }
-    if (isBlank(selectables)) {
+    if (selectables === undefined || selectables === null) {
       return false;
     }
     var selectable: SelectorContext;
@@ -337,11 +339,11 @@ export class SelectorMatcher {
   _matchPartial(
       map: Map<string, SelectorMatcher>, name: string, cssSelector: CssSelector,
       matchedCallback: (c: CssSelector, a: any) => void): boolean {
-    if (isBlank(map) || isBlank(name)) {
+    if (map === undefined || map === null || name === undefined || name === null) {
       return false;
     }
     var nestedSelector = map.get(name);
-    if (isBlank(nestedSelector)) {
+    if (nestedSelector === undefined || nestedSelector === null) {
       return false;
     }
     // TODO(perf): get rid of recursion and measure again
@@ -371,13 +373,15 @@ export class SelectorContext {
   finalize(cssSelector: CssSelector, callback: (c: CssSelector, a: any) => void): boolean {
     var result = true;
     if (this.notSelectors.length > 0 &&
-        (isBlank(this.listContext) || !this.listContext.alreadyMatched)) {
+        (this.listContext === undefined || this.listContext === null ||
+         !this.listContext.alreadyMatched)) {
       var notMatcher = SelectorMatcher.createNotMatcher(this.notSelectors);
       result = !notMatcher.match(cssSelector, null);
     }
-    if (result && isPresent(callback) &&
-        (isBlank(this.listContext) || !this.listContext.alreadyMatched)) {
-      if (isPresent(this.listContext)) {
+    if (result && callback !== undefined && callback !== null &&
+        (this.listContext === undefined || this.listContext === null ||
+         !this.listContext.alreadyMatched)) {
+      if (this.listContext !== undefined && this.listContext !== null) {
         this.listContext.alreadyMatched = true;
       }
       callback(this.selector, this.cbContext);

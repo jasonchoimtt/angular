@@ -62,9 +62,9 @@ export class I18nPluralPipe implements PipeTransform {
   constructor(private _localization: NgLocalization) {}
 
   transform(value: number, pluralMap: {[count: string]: string}): string {
-    if (isBlank(value)) return '';
+    if (value === undefined || value === null) return '';
 
-    if (!isStringMap(pluralMap)) {
+    if (!(typeof pluralMap === 'object' && pluralMap !== null)) {
       throw new InvalidPipeArgumentException(I18nPluralPipe, pluralMap);
     }
 

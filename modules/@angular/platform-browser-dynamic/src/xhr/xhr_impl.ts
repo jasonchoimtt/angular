@@ -26,7 +26,8 @@ export class XHRImpl extends XHR {
     xhr.onload = function() {
       // responseText is the old-school way of retrieving response (supported by IE8 & 9)
       // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
-      var response = isPresent(xhr.response) ? xhr.response : xhr.responseText;
+      var response =
+          xhr.response !== undefined && xhr.response !== null ? xhr.response : xhr.responseText;
 
       // normalize IE9 bug (http://bugs.jquery.com/ticket/1450)
       var status = xhr.status === 1223 ? 204 : xhr.status;

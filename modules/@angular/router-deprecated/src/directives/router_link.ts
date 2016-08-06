@@ -84,7 +84,7 @@ export class RouterLink {
 
   onClick(): boolean {
     // If no target, or if target is _self, prevent default browser behavior
-    if (!isString(this.target) || this.target == '_self') {
+    if (!(typeof this.target === 'string') || this.target == '_self') {
       this._router.navigateByInstruction(this._navigationInstruction);
       return false;
     }

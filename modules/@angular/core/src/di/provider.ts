@@ -203,7 +203,9 @@ export class Provider {
    * ]);
    * ```
    */
-  get multi(): boolean { return normalizeBool(this._multi); }
+  get multi(): boolean {
+    return this._multi === undefined || this._multi === null ? false : this._multi;
+  }
 }
 
 /**
@@ -302,7 +304,7 @@ export class ProviderBuilder {
    * ```
    */
   toClass(type: Type): Provider {
-    if (!isType(type)) {
+    if (!(typeof type === 'function')) {
       throw new BaseException(
           `Trying to create a class provider but "${stringify(type)}" is not a class!`);
     }
@@ -357,7 +359,7 @@ export class ProviderBuilder {
    * ```
    */
   toAlias(aliasToken: /*Type*/ any): Provider {
-    if (isBlank(aliasToken)) {
+    if (aliasToken === undefined || aliasToken === null) {
       throw new BaseException(`Can not alias ${stringify(this.token)} to a blank value!`);
     }
     return new Provider(this.token, {useExisting: aliasToken});
@@ -379,7 +381,7 @@ export class ProviderBuilder {
    * ```
    */
   toFactory(factory: Function, dependencies?: any[]): Provider {
-    if (!isFunction(factory)) {
+    if (!(typeof factory === 'function')) {
       throw new BaseException(
           `Trying to create a factory provider but "${stringify(factory)}" is not a function!`);
     }

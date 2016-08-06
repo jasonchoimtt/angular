@@ -57,25 +57,26 @@ export class ExceptionHandler {
 
     this._logger.logGroup(`EXCEPTION: ${this._extractMessage(exception)}`);
 
-    if (isPresent(stackTrace) && isBlank(originalStack)) {
+    if (stackTrace !== undefined && stackTrace !== null &&
+        (originalStack === undefined || originalStack === null)) {
       this._logger.logError('STACKTRACE:');
       this._logger.logError(this._longStackTrace(stackTrace));
     }
 
-    if (isPresent(reason)) {
+    if (reason !== undefined && reason !== null) {
       this._logger.logError(`REASON: ${reason}`);
     }
 
-    if (isPresent(originalException)) {
+    if (originalException !== undefined && originalException !== null) {
       this._logger.logError(`ORIGINAL EXCEPTION: ${this._extractMessage(originalException)}`);
     }
 
-    if (isPresent(originalStack)) {
+    if (originalStack !== undefined && originalStack !== null) {
       this._logger.logError('ORIGINAL STACKTRACE:');
       this._logger.logError(this._longStackTrace(originalStack));
     }
 
-    if (isPresent(context)) {
+    if (context !== undefined && context !== null) {
       this._logger.logError('ERROR CONTEXT:');
       this._logger.logError(context);
     }
@@ -103,8 +104,9 @@ export class ExceptionHandler {
   _findContext(exception: any): any {
     try {
       if (!(exception instanceof BaseWrappedException)) return null;
-      return isPresent(exception.context) ? exception.context :
-                                            this._findContext(exception.originalException);
+      return exception.context !== undefined && exception.context !== null ?
+          exception.context :
+          this._findContext(exception.originalException);
     } catch (e) {
       // exception.context can throw an exception. if it happens, we ignore the context.
       return null;
@@ -116,7 +118,8 @@ export class ExceptionHandler {
     if (!(exception instanceof BaseWrappedException)) return null;
 
     var e = exception.originalException;
-    while (e instanceof BaseWrappedException && isPresent(e.originalException)) {
+    while (e instanceof BaseWrappedException && e.originalException !== undefined &&
+           e.originalException !== null) {
       e = e.originalException;
     }
 
@@ -129,9 +132,11 @@ export class ExceptionHandler {
 
     var e = exception;
     var stack = exception.originalStack;
-    while (e instanceof BaseWrappedException && isPresent(e.originalException)) {
+    while (e instanceof BaseWrappedException && e.originalException !== undefined &&
+           e.originalException !== null) {
       e = e.originalException;
-      if (e instanceof BaseWrappedException && isPresent(e.originalException)) {
+      if (e instanceof BaseWrappedException && e.originalException !== undefined &&
+          e.originalException !== null) {
         stack = e.originalStack;
       }
     }

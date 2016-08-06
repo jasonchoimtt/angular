@@ -35,7 +35,7 @@ export class CompileMethod {
     if (this._newState.nodeIndex !== this._currState.nodeIndex ||
         this._newState.sourceAst !== this._currState.sourceAst) {
       var expr = this._updateDebugContext(this._newState);
-      if (isPresent(expr)) {
+      if (expr !== undefined && expr !== null) {
         this._bodyStatements.push(expr.toStmt());
       }
     }
@@ -44,13 +44,16 @@ export class CompileMethod {
   private _updateDebugContext(newState: _DebugState): o.Expression {
     this._currState = this._newState = newState;
     if (this._debugEnabled) {
-      var sourceLocation =
-          isPresent(newState.sourceAst) ? newState.sourceAst.sourceSpan.start : null;
+      var sourceLocation = newState.sourceAst !== undefined && newState.sourceAst !== null ?
+          newState.sourceAst.sourceSpan.start :
+          null;
 
       return o.THIS_EXPR.callMethod('debug', [
         o.literal(newState.nodeIndex),
-        isPresent(sourceLocation) ? o.literal(sourceLocation.line) : o.NULL_EXPR,
-        isPresent(sourceLocation) ? o.literal(sourceLocation.col) : o.NULL_EXPR
+        sourceLocation !== undefined && sourceLocation !== null ? o.literal(sourceLocation.line) :
+                                                                  o.NULL_EXPR,
+        sourceLocation !== undefined && sourceLocation !== null ? o.literal(sourceLocation.col) :
+                                                                  o.NULL_EXPR
       ]);
     } else {
       return null;
@@ -59,7 +62,7 @@ export class CompileMethod {
 
   resetDebugInfoExpr(nodeIndex: number, templateAst: TemplateAst): o.Expression {
     var res = this._updateDebugContext(new _DebugState(nodeIndex, templateAst));
-    return isPresent(res) ? res : o.NULL_EXPR;
+    return res !== undefined && res !== null ? res : o.NULL_EXPR;
   }
 
   resetDebugInfo(nodeIndex: number, templateAst: TemplateAst) {

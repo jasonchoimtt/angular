@@ -88,7 +88,7 @@ export interface TypeDecorator {
 }
 
 function extractAnnotation(annotation: any): any {
-  if (isFunction(annotation) && annotation.hasOwnProperty('annotation')) {
+  if (typeof annotation === 'function' && annotation.hasOwnProperty('annotation')) {
     // it is a decorator, extract annotation
     annotation = annotation.annotation;
   }
@@ -100,13 +100,13 @@ function applyParams(fnOrArray: (Function | any[]), key: string): Function {
       fnOrArray === Number || fnOrArray === Array) {
     throw new Error(`Can not use native ${stringify(fnOrArray)} as constructor`);
   }
-  if (isFunction(fnOrArray)) {
+  if (typeof fnOrArray === 'function') {
     return <Function>fnOrArray;
   } else if (fnOrArray instanceof Array) {
     const annotations: any[] = fnOrArray;
     const annoLength = annotations.length - 1;
     const fn: Function = fnOrArray[annoLength];
-    if (!isFunction(fn)) {
+    if (!(typeof fn === 'function')) {
       throw new Error(
           `Last position of Class method array must be Function in key ${key} was '${stringify(fn)}'`);
     }
@@ -123,7 +123,7 @@ function applyParams(fnOrArray: (Function | any[]), key: string): Function {
         for (let j = 0; j < annotation.length; j++) {
           paramAnnotations.push(extractAnnotation(annotation[j]));
         }
-      } else if (isFunction(annotation)) {
+      } else if (typeof annotation === 'function') {
         paramAnnotations.push(extractAnnotation(annotation));
       } else {
         paramAnnotations.push(annotation);
@@ -224,7 +224,7 @@ export function Class(clsDef: ClassDefinition): ConcreteType<any> {
       clsDef.hasOwnProperty('constructor') ? clsDef.constructor : undefined, 'constructor');
   let proto = constructor.prototype;
   if (clsDef.hasOwnProperty('extends')) {
-    if (isFunction(clsDef.extends)) {
+    if (typeof clsDef.extends === 'function') {
       (<Function>constructor).prototype = proto =
           Object.create((<Function>clsDef.extends).prototype);
     } else {
@@ -266,7 +266,7 @@ export function makeDecorator(annotationCls: any, chainFn: (fn: Function) => voi
       return annotationInstance;
     } else {
       const chainAnnotation =
-          isFunction(this) && this.annotations instanceof Array ? this.annotations : [];
+          typeof this === 'function' && this.annotations instanceof Array ? this.annotations : [];
       chainAnnotation.push(annotationInstance);
       const TypeDecorator: TypeDecorator = <TypeDecorator>function TypeDecorator(cls: Type) {
         const annotations = Reflect.getOwnMetadata('annotations', cls) || [];

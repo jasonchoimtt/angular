@@ -138,7 +138,8 @@ export class BrowserDomAdapter extends GenericBrowserDomAdapter {
     evt.returnValue = false;
   }
   isPrevented(evt: Event): boolean {
-    return evt.defaultPrevented || isPresent(evt.returnValue) && !evt.returnValue;
+    return evt.defaultPrevented ||
+        evt.returnValue !== undefined && evt.returnValue !== null && !evt.returnValue;
   }
   getInnerHTML(el: any /** TODO #9100 */): string { return el.innerHTML; }
   getTemplateContent(el: any /** TODO #9100 */): Node {
@@ -327,7 +328,7 @@ export class BrowserDomAdapter extends GenericBrowserDomAdapter {
   isCommentNode(node: Node): boolean { return node.nodeType === Node.COMMENT_NODE; }
   isElementNode(node: Node): boolean { return node.nodeType === Node.ELEMENT_NODE; }
   hasShadowRoot(node: any /** TODO #9100 */): boolean {
-    return node instanceof HTMLElement && isPresent(node.shadowRoot);
+    return node instanceof HTMLElement && node.shadowRoot !== undefined && node.shadowRoot !== null;
   }
   isShadowRoot(node: any /** TODO #9100 */): boolean { return node instanceof DocumentFragment; }
   importIntoDoc(node: Node): any {
@@ -341,13 +342,13 @@ export class BrowserDomAdapter extends GenericBrowserDomAdapter {
   getHref(el: Element): string { return (<any>el).href; }
   getEventKey(event: any /** TODO #9100 */): string {
     var key = event.key;
-    if (isBlank(key)) {
+    if (key === undefined || key === null) {
       key = event.keyIdentifier;
       // keyIdentifier is defined in the old draft of DOM Level 3 Events implemented by Chrome and
       // Safari
       // cf
       // http://www.w3.org/TR/2007/WD-DOM-Level-3-Events-20071221/events.html#Events-KeyboardEvents-Interfaces
-      if (isBlank(key)) {
+      if (key === undefined || key === null) {
         return 'Unidentified';
       }
       if (key.startsWith('U+')) {
@@ -378,7 +379,7 @@ export class BrowserDomAdapter extends GenericBrowserDomAdapter {
   getLocation(): Location { return window.location; }
   getBaseHref(): string {
     var href = getBaseElementHref();
-    if (isBlank(href)) {
+    if (href === undefined || href === null) {
       return null;
     }
     return relativePath(href);
@@ -398,11 +399,14 @@ export class BrowserDomAdapter extends GenericBrowserDomAdapter {
     return window.requestAnimationFrame(callback);
   }
   cancelAnimationFrame(id: number) { window.cancelAnimationFrame(id); }
-  supportsWebAnimation(): boolean { return isFunction((<any>Element).prototype['animate']); }
+  supportsWebAnimation(): boolean {
+    return typeof(<any>Element).prototype['animate'] === 'function';
+  }
   performanceNow(): number {
     // performance.now() is not available in all browsers, see
     // http://caniuse.com/#search=performance.now
-    if (isPresent(window.performance) && isPresent(window.performance.now)) {
+    if (window.performance !== undefined && window.performance !== null &&
+        window.performance.now !== undefined && window.performance.now !== null) {
       return window.performance.now();
     } else {
       return DateWrapper.toMillis(DateWrapper.now());
@@ -423,9 +427,9 @@ export class BrowserDomAdapter extends GenericBrowserDomAdapter {
 
 var baseElement: any /** TODO #9100 */ = null;
 function getBaseElementHref(): string {
-  if (isBlank(baseElement)) {
+  if (baseElement === undefined || baseElement === null) {
     baseElement = document.querySelector('base');
-    if (isBlank(baseElement)) {
+    if (baseElement === undefined || baseElement === null) {
       return null;
     }
   }
@@ -435,7 +439,7 @@ function getBaseElementHref(): string {
 // based on urlUtils.js in AngularJS 1
 var urlParsingNode: any /** TODO #9100 */ = null;
 function relativePath(url: any /** TODO #9100 */): string {
-  if (isBlank(urlParsingNode)) {
+  if (urlParsingNode === undefined || urlParsingNode === null) {
     urlParsingNode = document.createElement('a');
   }
   urlParsingNode.setAttribute('href', url);

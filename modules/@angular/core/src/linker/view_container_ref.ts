@@ -133,7 +133,7 @@ export class ViewContainerRef_ implements ViewContainerRef {
   get(index: number): ViewRef { return this._element.nestedViews[index].ref; }
   get length(): number {
     var views = this._element.nestedViews;
-    return isPresent(views) ? views.length : 0;
+    return views !== undefined && views !== null ? views.length : 0;
   }
 
   get element(): ElementRef { return this._element.elementRef; }
@@ -159,7 +159,8 @@ export class ViewContainerRef_ implements ViewContainerRef {
       componentFactory: ComponentFactory<C>, index: number = -1, injector: Injector = null,
       projectableNodes: any[][] = null): ComponentRef<C> {
     var s = this._createComponentInContainerScope();
-    var contextInjector = isPresent(injector) ? injector : this._element.parentInjector;
+    var contextInjector =
+        injector !== undefined && injector !== null ? injector : this._element.parentInjector;
     var componentRef = componentFactory.create(contextInjector, projectableNodes);
     this.insert(componentRef.hostView, index);
     return wtfLeave(s, componentRef);

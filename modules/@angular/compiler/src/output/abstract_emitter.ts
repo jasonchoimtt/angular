@@ -118,7 +118,8 @@ export abstract class AbstractEmitterVisitor implements o.StatementVisitor, o.Ex
     ctx.print(`if (`);
     stmt.condition.visitExpression(this, ctx);
     ctx.print(`) {`);
-    var hasElseCase = isPresent(stmt.falseCase) && stmt.falseCase.length > 0;
+    var hasElseCase =
+        stmt.falseCase !== undefined && stmt.falseCase !== null && stmt.falseCase.length > 0;
     if (stmt.trueCase.length <= 1 && !hasElseCase) {
       ctx.print(` `);
       this.visitAllStatements(stmt.trueCase, ctx);
@@ -197,9 +198,9 @@ export abstract class AbstractEmitterVisitor implements o.StatementVisitor, o.Ex
   visitInvokeMethodExpr(expr: o.InvokeMethodExpr, ctx: EmitterVisitorContext): any {
     expr.receiver.visitExpression(this, ctx);
     var name = expr.name;
-    if (isPresent(expr.builtin)) {
+    if (expr.builtin !== undefined && expr.builtin !== null) {
       name = this.getBuiltinMethodName(expr.builtin);
-      if (isBlank(name)) {
+      if (name === undefined || name === null) {
         // some builtins just mean to skip the call.
         return null;
       }
@@ -221,7 +222,7 @@ export abstract class AbstractEmitterVisitor implements o.StatementVisitor, o.Ex
   }
   visitReadVarExpr(ast: o.ReadVarExpr, ctx: EmitterVisitorContext): any {
     var varName = ast.name;
-    if (isPresent(ast.builtin)) {
+    if (ast.builtin !== undefined && ast.builtin !== null) {
       switch (ast.builtin) {
         case o.BuiltinVar.Super:
           varName = 'super';
@@ -252,9 +253,9 @@ export abstract class AbstractEmitterVisitor implements o.StatementVisitor, o.Ex
   }
   visitLiteralExpr(ast: o.LiteralExpr, ctx: EmitterVisitorContext): any {
     var value = ast.value;
-    if (isString(value)) {
+    if (typeof value === 'string') {
       ctx.print(escapeSingleQuoteString(value, this._escapeDollarInStrings));
-    } else if (isBlank(value)) {
+    } else if (value === undefined || value === null) {
       ctx.print('null');
     } else {
       ctx.print(`${value}`);
@@ -404,7 +405,7 @@ export abstract class AbstractEmitterVisitor implements o.StatementVisitor, o.Ex
 }
 
 export function escapeSingleQuoteString(input: string, escapeDollar: boolean): any {
-  if (isBlank(input)) {
+  if (input === undefined || input === null) {
     return null;
   }
   var body = StringWrapper.replaceAllMapped(

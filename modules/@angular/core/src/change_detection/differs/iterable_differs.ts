@@ -51,7 +51,7 @@ export class IterableDiffers {
   constructor(public factories: IterableDifferFactory[]) {}
 
   static create(factories: IterableDifferFactory[], parent?: IterableDiffers): IterableDiffers {
-    if (isPresent(parent)) {
+    if (parent !== undefined && parent !== null) {
       var copied = ListWrapper.clone(parent.factories);
       factories = factories.concat(copied);
       return new IterableDiffers(factories);
@@ -82,7 +82,7 @@ export class IterableDiffers {
   static extend(factories: IterableDifferFactory[]): Provider {
     return new Provider(IterableDiffers, {
       useFactory: (parent: IterableDiffers) => {
-        if (isBlank(parent)) {
+        if (parent === undefined || parent === null) {
           // Typically would occur when calling IterableDiffers.extend inside of dependencies passed
           // to
           // bootstrap(), which would override default pipes instead of extending them.
@@ -97,11 +97,11 @@ export class IterableDiffers {
 
   find(iterable: any): IterableDifferFactory {
     var factory = this.factories.find(f => f.supports(iterable));
-    if (isPresent(factory)) {
+    if (factory !== undefined && factory !== null) {
       return factory;
     } else {
       throw new BaseException(
-          `Cannot find a differ supporting object '${iterable}' of type '${getTypeNameForDebugging(iterable)}'`);
+          `Cannot find a differ supporting object '${iterable}' of type '${ iterable['name'] || typeof iterable}'`);
     }
   }
 }

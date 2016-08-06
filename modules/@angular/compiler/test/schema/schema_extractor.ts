@@ -105,8 +105,8 @@ function extractProperties(
     } else {
       var typeCh = typeMap[typeof instance[n]];
       var descriptor = Object.getOwnPropertyDescriptor(prototype, n);
-      var isSetter = descriptor && isPresent(descriptor.set);
-      if (isString(typeCh) && !n.startsWith('webkit') && isSetter) {
+      var isSetter = descriptor && descriptor.set !== undefined && descriptor.set !== null;
+      if (typeof typeCh === 'string' && !n.startsWith('webkit') && isSetter) {
         props.push(typeCh + n);
       }
     }

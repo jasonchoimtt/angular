@@ -27,30 +27,35 @@ export class DebugContext implements RenderDebugInfo {
       private _tplCol: number) {}
 
   private get _staticNodeInfo(): StaticNodeDebugInfo {
-    return isPresent(this._nodeIndex) ? this._view.staticNodeDebugInfos[this._nodeIndex] : null;
+    return this._nodeIndex !== undefined && this._nodeIndex !== null ?
+        this._view.staticNodeDebugInfos[this._nodeIndex] :
+        null;
   }
 
   get context() { return this._view.context; }
   get component() {
     var staticNodeInfo = this._staticNodeInfo;
-    if (isPresent(staticNodeInfo) && isPresent(staticNodeInfo.componentToken)) {
+    if (staticNodeInfo !== undefined && staticNodeInfo !== null &&
+        staticNodeInfo.componentToken !== undefined && staticNodeInfo.componentToken !== null) {
       return this.injector.get(staticNodeInfo.componentToken);
     }
     return null;
   }
   get componentRenderElement() {
     var componentView = this._view;
-    while (isPresent(componentView.declarationAppElement) &&
+    while (componentView.declarationAppElement !== undefined &&
+           componentView.declarationAppElement !== null &&
            componentView.type !== ViewType.COMPONENT) {
       componentView = <DebugAppView<any>>componentView.declarationAppElement.parentView;
     }
-    return isPresent(componentView.declarationAppElement) ?
+    return componentView.declarationAppElement !== undefined &&
+            componentView.declarationAppElement !== null ?
         componentView.declarationAppElement.nativeElement :
         null;
   }
   get injector(): Injector { return this._view.injector(this._nodeIndex); }
   get renderNode(): any {
-    if (isPresent(this._nodeIndex) && this._view.allNodes) {
+    if (this._nodeIndex !== undefined && this._nodeIndex !== null && this._view.allNodes) {
       return this._view.allNodes[this._nodeIndex];
     } else {
       return null;
@@ -58,7 +63,8 @@ export class DebugContext implements RenderDebugInfo {
   }
   get providerTokens(): any[] {
     var staticNodeInfo = this._staticNodeInfo;
-    return isPresent(staticNodeInfo) ? staticNodeInfo.providerTokens : null;
+    return staticNodeInfo !== undefined && staticNodeInfo !== null ? staticNodeInfo.providerTokens :
+                                                                     null;
   }
   get source(): string {
     return `${this._view.componentType.templateUrl}:${this._tplRow}:${this._tplCol}`;
@@ -66,11 +72,11 @@ export class DebugContext implements RenderDebugInfo {
   get references(): {[key: string]: any} {
     var varValues: {[key: string]: string} = {};
     var staticNodeInfo = this._staticNodeInfo;
-    if (isPresent(staticNodeInfo)) {
+    if (staticNodeInfo !== undefined && staticNodeInfo !== null) {
       var refs = staticNodeInfo.refTokens;
       StringMapWrapper.forEach(refs, (refToken: any, refName: string) => {
         let varValue: any;
-        if (isBlank(refToken)) {
+        if (refToken === undefined || refToken === null) {
           varValue = this._view.allNodes ? this._view.allNodes[this._nodeIndex] : null;
         } else {
           varValue = this._view.injectorGet(refToken, this._nodeIndex, null);

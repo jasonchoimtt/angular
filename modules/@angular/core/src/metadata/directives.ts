@@ -493,8 +493,10 @@ export class DirectiveMetadata extends InjectableMetadata implements DirectiveMe
    *
    */
   get inputs(): string[] {
-    return isPresent(this._properties) && this._properties.length > 0 ? this._properties :
-                                                                        this._inputs;
+    return this._properties !== undefined && this._properties !== null &&
+            this._properties.length > 0 ?
+        this._properties :
+        this._inputs;
   }
   /**
    * Use `inputs` instead
@@ -551,7 +553,9 @@ export class DirectiveMetadata extends InjectableMetadata implements DirectiveMe
    *
    */
   get outputs(): string[] {
-    return isPresent(this._events) && this._events.length > 0 ? this._events : this._outputs;
+    return this._events !== undefined && this._events !== null && this._events.length > 0 ?
+        this._events :
+        this._outputs;
   }
   /**
    * Use `outputs` instead
@@ -1104,7 +1108,9 @@ export class PipeMetadata extends InjectableMetadata implements PipeMetadataType
     this._pure = pure;
   }
 
-  get pure(): boolean { return isPresent(this._pure) ? this._pure : true; }
+  get pure(): boolean {
+    return this._pure !== undefined && this._pure !== null ? this._pure : true;
+  }
 }
 
 /**

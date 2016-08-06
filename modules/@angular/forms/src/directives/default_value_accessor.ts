@@ -45,7 +45,7 @@ export class DefaultValueAccessor implements ControlValueAccessor {
   constructor(private _renderer: Renderer, private _elementRef: ElementRef) {}
 
   writeValue(value: any): void {
-    var normalizedValue = isBlank(value) ? '' : value;
+    var normalizedValue = value === undefined || value === null ? '' : value;
     this._renderer.setElementProperty(this._elementRef.nativeElement, 'value', normalizedValue);
   }
 

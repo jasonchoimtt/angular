@@ -22,7 +22,8 @@ export class AnimationGroupPlayer implements AnimationPlayer {
     var count = 0;
     var total = this._players.length;
     if (total == 0) {
-      scheduleMicroTask(() => this._onFinish());
+      Zone.current.scheduleMicroTask('scheduleMicrotask', () => this._onFinish());
+      ;
     } else {
       this._players.forEach(player => {
         player.parentPlayer = this;
@@ -38,7 +39,7 @@ export class AnimationGroupPlayer implements AnimationPlayer {
   private _onFinish() {
     if (!this._finished) {
       this._finished = true;
-      if (isBlank(this.parentPlayer)) {
+      if (this.parentPlayer === undefined || this.parentPlayer === null) {
         this.destroy();
       }
       this._subscriptions.forEach(subscription => subscription());
@@ -53,7 +54,7 @@ export class AnimationGroupPlayer implements AnimationPlayer {
   hasStarted() { return this._started; }
 
   play() {
-    if (isBlank(this.parentPlayer)) {
+    if (this.parentPlayer === undefined || this.parentPlayer === null) {
       this.init();
     }
     this._started = true;

@@ -108,14 +108,14 @@ export class ResolvedReflectiveFactory {
 export function resolveReflectiveFactory(provider: Provider): ResolvedReflectiveFactory {
   var factoryFn: Function;
   var resolvedDeps: ReflectiveDependency[];
-  if (isPresent(provider.useClass)) {
+  if (provider.useClass !== undefined && provider.useClass !== null) {
     var useClass = resolveForwardRef(provider.useClass);
     factoryFn = reflector.factory(useClass);
     resolvedDeps = _dependenciesFor(useClass);
-  } else if (isPresent(provider.useExisting)) {
+  } else if (provider.useExisting !== undefined && provider.useExisting !== null) {
     factoryFn = (aliasInstance: any) => aliasInstance;
     resolvedDeps = [ReflectiveDependency.fromKey(ReflectiveKey.get(provider.useExisting))];
-  } else if (isPresent(provider.useFactory)) {
+  } else if (provider.useFactory !== undefined && provider.useFactory !== null) {
     factoryFn = provider.useFactory;
     resolvedDeps = constructDependencies(provider.useFactory, provider.dependencies);
   } else {
@@ -159,7 +159,7 @@ export function mergeResolvedReflectiveProviders(
   for (var i = 0; i < providers.length; i++) {
     var provider = providers[i];
     var existing = normalizedProvidersMap.get(provider.key.id);
-    if (isPresent(existing)) {
+    if (existing !== undefined && existing !== null) {
       if (provider.multiProvider !== existing.multiProvider) {
         throw new MixingMultiProvidersWithRegularProvidersError(existing, provider);
       }
@@ -213,7 +213,7 @@ function _normalizeProviders(
 
 export function constructDependencies(
     typeOrFunc: any, dependencies: any[]): ReflectiveDependency[] {
-  if (isBlank(dependencies)) {
+  if (dependencies === undefined || dependencies === null) {
     return _dependenciesFor(typeOrFunc);
   } else {
     var params: any[][] = dependencies.map(t => [t]);
@@ -223,7 +223,7 @@ export function constructDependencies(
 
 function _dependenciesFor(typeOrFunc: any): ReflectiveDependency[] {
   var params = reflector.parameters(typeOrFunc);
-  if (isBlank(params)) return [];
+  if (params === undefined || params === null) return [];
   if (params.some(isBlank)) {
     throw new NoAnnotationError(typeOrFunc, params);
   }
@@ -237,7 +237,7 @@ function _extractToken(
   var token: any /** TODO #9100 */ = null;
   var optional = false;
 
-  if (!isArray(metadata)) {
+  if (!(Array.isArray(metadata))) {
     if (metadata instanceof InjectMetadata) {
       return _createDependency(metadata.token, optional, null, null, depProps);
     } else {
@@ -270,7 +270,7 @@ function _extractToken(
       lowerBoundVisibility = paramMetadata;
 
     } else if (paramMetadata instanceof DependencyMetadata) {
-      if (isPresent(paramMetadata.token)) {
+      if (paramMetadata.token !== undefined && paramMetadata.token !== null) {
         token = paramMetadata.token;
       }
       depProps.push(paramMetadata);
@@ -279,7 +279,7 @@ function _extractToken(
 
   token = resolveForwardRef(token);
 
-  if (isPresent(token)) {
+  if (token !== undefined && token !== null) {
     return _createDependency(token, optional, lowerBoundVisibility, upperBoundVisibility, depProps);
   } else {
     throw new NoAnnotationError(typeOrFunc, params);

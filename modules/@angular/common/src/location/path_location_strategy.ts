@@ -48,11 +48,11 @@ export class PathLocationStrategy extends LocationStrategy {
       @Optional() @Inject(APP_BASE_HREF) href?: string) {
     super();
 
-    if (isBlank(href)) {
+    if (href === undefined || href === null) {
       href = this._platformLocation.getBaseHrefFromDOM();
     }
 
-    if (isBlank(href)) {
+    if (href === undefined || href === null) {
       throw new BaseException(
           `No base href set. Please provide a value for the APP_BASE_HREF token or add a base element to the document.`);
     }

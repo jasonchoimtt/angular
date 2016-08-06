@@ -35,7 +35,10 @@ export class NoOpAnimationPlayer implements AnimationPlayer {
   private _subscriptions: any[] /** TODO #9100 */ = [];
   private _started = false;
   public parentPlayer: AnimationPlayer = null;
-  constructor() { scheduleMicroTask(() => this._onFinish()); }
+  constructor() {
+    Zone.current.scheduleMicroTask('scheduleMicrotask', () => this._onFinish());
+    ;
+  }
   /** @internal */
   _onFinish() {
     this._subscriptions.forEach(entry => { entry(); });

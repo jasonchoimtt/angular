@@ -185,7 +185,7 @@ export function animate(
     timing: string | number, styles: AnimationStyleMetadata | AnimationKeyframesSequenceMetadata =
                                  null): AnimationAnimateMetadata {
   var stylesEntry = styles;
-  if (isBlank(stylesEntry)) {
+  if (stylesEntry === undefined || stylesEntry === null) {
     var EMPTY_STYLE: {[key: string]: string | number} = {};
     stylesEntry = new AnimationStyleMetadata([EMPTY_STYLE], 1);
   }
@@ -329,17 +329,17 @@ export function style(
     Array<string|{[key: string]: string | number}>): AnimationStyleMetadata {
   var input: Array<{[key: string]: string | number}|string>;
   var offset: number = null;
-  if (isString(tokens)) {
+  if (typeof tokens === 'string') {
     input = [<string>tokens];
   } else {
-    if (isArray(tokens)) {
+    if (Array.isArray(tokens)) {
       input = <Array<{[key: string]: string | number}>>tokens;
     } else {
       input = [<{[key: string]: string | number}>tokens];
     }
     input.forEach(entry => {
       var entryOffset = (entry as any /** TODO #9100 */)['offset'];
-      if (isPresent(entryOffset)) {
+      if (entryOffset !== undefined && entryOffset !== null) {
         offset = offset == null ? NumberWrapper.parseFloat(entryOffset) : offset;
       }
     });
@@ -549,8 +549,9 @@ export function keyframes(steps: AnimationStyleMetadata[]): AnimationKeyframesSe
  */
 export function transition(stateChangeExpr: string, steps: AnimationMetadata | AnimationMetadata[]):
     AnimationStateTransitionMetadata {
-  var animationData = isArray(steps) ? new AnimationSequenceMetadata(<AnimationMetadata[]>steps) :
-                                       <AnimationMetadata>steps;
+  var animationData = Array.isArray(steps) ?
+      new AnimationSequenceMetadata(<AnimationMetadata[]>steps) :
+      <AnimationMetadata>steps;
   return new AnimationStateTransitionMetadata(stateChangeExpr, animationData);
 }
 

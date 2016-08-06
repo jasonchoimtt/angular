@@ -22,7 +22,8 @@ export function getPropertyInView(
   } else {
     var viewProp: o.Expression = o.THIS_EXPR;
     var currView: CompileView = callingView;
-    while (currView !== definedView && isPresent(currView.declarationElement.view)) {
+    while (currView !== definedView && currView.declarationElement.view !== undefined &&
+           currView.declarationElement.view !== null) {
       currView = currView.declarationElement.view;
       viewProp = viewProp.prop('parent');
     }
@@ -84,7 +85,7 @@ export function createPureProxy(
   view.fields.push(new o.ClassField(pureProxyProp.name, null));
   var pureProxyId =
       argCount < Identifiers.pureProxies.length ? Identifiers.pureProxies[argCount] : null;
-  if (isBlank(pureProxyId)) {
+  if (pureProxyId === undefined || pureProxyId === null) {
     throw new BaseException(`Unsupported number of argument for pure functions: ${argCount}`);
   }
   view.createMethod.addStmt(

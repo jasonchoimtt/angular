@@ -50,10 +50,11 @@ export class Testability {
       this._ngZone.onStable.subscribe({
         next: () => {
           NgZone.assertNotInAngularZone();
-          scheduleMicroTask(() => {
+          Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
             this._isZoneStable = true;
             this._runCallbacksIfReady();
           });
+          ;
         }
       });
     });
@@ -81,13 +82,14 @@ export class Testability {
   /** @internal */
   _runCallbacksIfReady(): void {
     if (this.isStable()) {
-      // Schedules the call backs in a new frame so that it is always async.
-      scheduleMicroTask(() => {
+      Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
         while (this._callbacks.length !== 0) {
           (this._callbacks.pop())(this._didWork);
         }
         this._didWork = false;
       });
+      // Schedules the call backs in a new frame so that it is always async.
+      ;
     } else {
       // Not Ready
       this._didWork = true;

@@ -39,7 +39,7 @@ export class WebWorkerRootRenderer implements RootRenderer {
     var eventName = message['eventName'];
     var target = message['eventTarget'];
     var event = deserializeGenericEvent(message['event']);
-    if (isPresent(target)) {
+    if (target !== undefined && target !== null) {
       this.globalEvents.dispatchEvent(eventNameWithTarget(target, eventName), event);
     } else {
       var element =
@@ -50,7 +50,7 @@ export class WebWorkerRootRenderer implements RootRenderer {
 
   renderComponent(componentType: RenderComponentType): Renderer {
     var result = this._componentRenderers.get(componentType.id);
-    if (isBlank(result)) {
+    if (result === undefined || result === null) {
       result = new WebWorkerRenderer(this, componentType);
       this._componentRenderers.set(componentType.id, result);
       var id = this._renderStore.allocateId();
@@ -243,11 +243,11 @@ export class NamedEventEmitter {
   private _listeners: Map<string, Function[]>;
 
   private _getListeners(eventName: string): Function[] {
-    if (isBlank(this._listeners)) {
+    if (this._listeners === undefined || this._listeners === null) {
       this._listeners = new Map<string, Function[]>();
     }
     var listeners = this._listeners.get(eventName);
-    if (isBlank(listeners)) {
+    if (listeners === undefined || listeners === null) {
       listeners = [];
       this._listeners.set(eventName, listeners);
     }

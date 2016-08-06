@@ -20,7 +20,10 @@ export function devModeEqual(a: any, b: any): boolean {
     return areIterablesEqual(a, b, devModeEqual);
 
   } else if (
-      !isListLikeIterable(a) && isJsObject(a) && !isListLikeIterable(b) && isJsObject(b)) {
+      ((!isListLikeIterable(a) && a !== null &&
+        (typeof a === 'function' || typeof a === 'object')) &&
+       !isListLikeIterable(b)) &&
+      (b !== null && (typeof b === 'function' || typeof b === 'object'))) {
     return true;
 
   } else {

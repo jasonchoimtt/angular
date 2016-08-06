@@ -17,11 +17,13 @@ import {normalizeBlank, scheduleMicroTask} from '../../src/facade/lang';
 
 // Schedules a microtasks (using a resolved promise .then())
 function microTask(fn: Function): void {
-  scheduleMicroTask(() => {
+  Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
+    Zone.current.scheduleMicroTask('scheduleMicrotask', fn);
     // We do double dispatch so that we  can wait for scheduleMicrotask in the Testability when
     // NgZone becomes stable.
-    scheduleMicroTask(fn);
+    ;
   });
+  ;
 }
 
 @Injectable()

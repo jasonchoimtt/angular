@@ -16,7 +16,10 @@ import {KeyValueDiffer, KeyValueDifferFactory} from './keyvalue_differs';
 
 export class DefaultKeyValueDifferFactory implements KeyValueDifferFactory {
   constructor() {}
-  supports(obj: any): boolean { return obj instanceof Map || isJsObject(obj); }
+  supports(obj: any): boolean {
+    return obj instanceof Map ||
+        obj !== null && (typeof obj === 'function' || typeof obj === 'object');
+  }
 
   create(cdRef: ChangeDetectorRef): KeyValueDiffer { return new DefaultKeyValueDiffer(); }
 }
@@ -75,7 +78,8 @@ export class DefaultKeyValueDiffer implements KeyValueDiffer {
   diff(map: Map<any, any>|{[k: string]: any}): any {
     if (!map) {
       map = new Map();
-    } else if (!(map instanceof Map || isJsObject(map))) {
+    } else if (!((map instanceof Map ||
+                  map !== null && (typeof map === 'function' || typeof map === 'object')))) {
       throw new BaseException(`Error trying to diff '${map}'`);
     }
 

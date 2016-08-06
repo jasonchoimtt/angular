@@ -23,8 +23,8 @@ import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 @Pipe({name: 'lowercase'})
 export class LowerCasePipe implements PipeTransform {
   transform(value: string): string {
-    if (isBlank(value)) return value;
-    if (!isString(value)) {
+    if (value === undefined || value === null) return value;
+    if (!(typeof value === 'string')) {
       throw new InvalidPipeArgumentException(LowerCasePipe, value);
     }
     return value.toLowerCase();

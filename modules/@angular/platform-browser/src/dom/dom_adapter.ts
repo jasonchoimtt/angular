@@ -19,7 +19,7 @@ export function setDOM(adapter: DomAdapter) {
 }
 
 export function setRootDomAdapter(adapter: DomAdapter) {
-  if (isBlank(_DOM)) {
+  if (_DOM === undefined || _DOM === null) {
     _DOM = adapter;
   }
 }

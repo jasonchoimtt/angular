@@ -89,7 +89,8 @@ export class NgClass implements DoCheck {
   @Input('class')
   set initialClasses(v: string) {
     this._applyInitialClasses(true);
-    this._initialClasses = isPresent(v) && isString(v) ? v.split(' ') : [];
+    this._initialClasses =
+        v !== undefined && v !== null && typeof v === 'string' ? v.split(' ') : [];
     this._applyInitialClasses(false);
     this._applyClasses(this._rawClass, false);
   }
@@ -98,14 +99,14 @@ export class NgClass implements DoCheck {
   set ngClass(v: string|string[]|Set<string>|{[key: string]: any}) {
     this._cleanupClasses(this._rawClass);
 
-    if (isString(v)) {
+    if (typeof v === 'string') {
       v = (<string>v).split(' ');
     }
 
     this._rawClass = <string[]|Set<string>>v;
     this._iterableDiffer = null;
     this._keyValueDiffer = null;
-    if (isPresent(v)) {
+    if (v !== undefined && v !== null) {
       if (isListLikeIterable(v)) {
         this._iterableDiffer = this._iterableDiffers.find(v).create(null);
       } else {
@@ -115,15 +116,15 @@ export class NgClass implements DoCheck {
   }
 
   ngDoCheck(): void {
-    if (isPresent(this._iterableDiffer)) {
+    if (this._iterableDiffer !== undefined && this._iterableDiffer !== null) {
       var changes = this._iterableDiffer.diff(this._rawClass);
-      if (isPresent(changes)) {
+      if (changes !== undefined && changes !== null) {
         this._applyIterableChanges(changes);
       }
     }
-    if (isPresent(this._keyValueDiffer)) {
+    if (this._keyValueDiffer !== undefined && this._keyValueDiffer !== null) {
       var changes = this._keyValueDiffer.diff(this._rawClass);
-      if (isPresent(changes)) {
+      if (changes !== undefined && changes !== null) {
         this._applyKeyValueChanges(changes);
       }
     }
@@ -159,15 +160,15 @@ export class NgClass implements DoCheck {
 
   private _applyClasses(
       rawClassVal: string[]|Set<string>|{[key: string]: any}, isCleanup: boolean) {
-    if (isPresent(rawClassVal)) {
-      if (isArray(rawClassVal)) {
+    if (rawClassVal !== undefined && rawClassVal !== null) {
+      if (Array.isArray(rawClassVal)) {
         (<string[]>rawClassVal).forEach(className => this._toggleClass(className, !isCleanup));
       } else if (rawClassVal instanceof Set) {
         (<Set<string>>rawClassVal).forEach(className => this._toggleClass(className, !isCleanup));
       } else {
         StringMapWrapper.forEach(
             <{[k: string]: any}>rawClassVal, (expVal: any, className: string) => {
-              if (isPresent(expVal)) this._toggleClass(className, !isCleanup);
+              if (expVal !== undefined && expVal !== null) this._toggleClass(className, !isCleanup);
             });
       }
     }

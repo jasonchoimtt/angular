@@ -45,7 +45,7 @@ export class CompileMetadataResolver {
     if (identifier.indexOf('(') >= 0) {
       // case: anonymous functions!
       let found = this._anonymousTypes.get(token);
-      if (isBlank(found)) {
+      if (found === undefined || found === null) {
         this._anonymousTypes.set(token, this._anonymousTypeIndex++);
         found = this._anonymousTypes.get(token);
       }
@@ -114,7 +114,7 @@ export class CompileMetadataResolver {
   getDirectiveMetadata(directiveType: Type, throwIfNotFound = true): cpl.CompileDirectiveMetadata {
     directiveType = resolveForwardRef(directiveType);
     var meta = this._directiveCache.get(directiveType);
-    if (isBlank(meta)) {
+    if (meta === undefined || meta === null) {
       var dirMeta = this._directiveResolver.resolve(directiveType, throwIfNotFound);
       if (!dirMeta) {
         return null;
@@ -131,7 +131,7 @@ export class CompileMetadataResolver {
         var cmpMeta = <ComponentMetadata>dirMeta;
         assertArrayOfStrings('styles', cmpMeta.styles);
         assertInterpolationSymbols('interpolation', cmpMeta.interpolation);
-        var animations = isPresent(cmpMeta.animations) ?
+        var animations = cmpMeta.animations !== undefined && cmpMeta.animations !== null ?
             cmpMeta.animations.map(e => this.getAnimationEntryMetadata(e)) :
             null;
         assertArrayOfStrings('styles', cmpMeta.styles);
@@ -147,7 +147,7 @@ export class CompileMetadataResolver {
           interpolation: cmpMeta.interpolation
         });
         changeDetectionStrategy = cmpMeta.changeDetection;
-        if (isPresent(dirMeta.viewProviders)) {
+        if (dirMeta.viewProviders !== undefined && dirMeta.viewProviders !== null) {
           viewProviders = this.getProvidersMetadata(
               verifyNonBlankProviders(directiveType, dirMeta.viewProviders, 'viewProviders'), []);
         }
@@ -187,21 +187,21 @@ export class CompileMetadataResolver {
       }
 
       var providers: Array<cpl.CompileProviderMetadata|cpl.CompileTypeMetadata|any[]> = [];
-      if (isPresent(dirMeta.providers)) {
+      if (dirMeta.providers !== undefined && dirMeta.providers !== null) {
         providers = this.getProvidersMetadata(
             verifyNonBlankProviders(directiveType, dirMeta.providers, 'providers'),
             entryComponentTypes);
       }
       var queries: cpl.CompileQueryMetadata[] = [];
       var viewQueries: cpl.CompileQueryMetadata[] = [];
-      if (isPresent(dirMeta.queries)) {
+      if (dirMeta.queries !== undefined && dirMeta.queries !== null) {
         queries = this.getQueriesMetadata(dirMeta.queries, false, directiveType);
         viewQueries = this.getQueriesMetadata(dirMeta.queries, true, directiveType);
       }
       meta = cpl.CompileDirectiveMetadata.create({
         selector: selector,
         exportAs: dirMeta.exportAs,
-        isComponent: isPresent(templateMeta),
+        isComponent: templateMeta !== undefined && templateMeta !== null,
         type: this.getTypeMetadata(directiveType, moduleUrl),
         template: templateMeta,
         changeDetection: changeDetectionStrategy,
@@ -511,7 +511,7 @@ export class CompileMetadataResolver {
   getPipeMetadata(pipeType: Type, throwIfNotFound = true): cpl.CompilePipeMetadata {
     pipeType = resolveForwardRef(pipeType);
     var meta = this._pipeCache.get(pipeType);
-    if (isBlank(meta)) {
+    if (meta === undefined || meta === null) {
       var pipeMeta = this._pipeResolver.resolve(pipeType, throwIfNotFound);
       if (!pipeMeta) {
         return null;
@@ -529,8 +529,10 @@ export class CompileMetadataResolver {
   getDependenciesMetadata(typeOrFunc: Type|Function, dependencies: any[]):
       cpl.CompileDiDependencyMetadata[] {
     let hasUnknownDeps = false;
-    let params = isPresent(dependencies) ? dependencies : this._reflector.parameters(typeOrFunc);
-    if (isBlank(params)) {
+    let params = dependencies !== undefined && dependencies !== null ?
+        dependencies :
+        this._reflector.parameters(typeOrFunc);
+    if (params === undefined || params === null) {
       params = [];
     }
     let dependenciesMetadata: cpl.CompileDiDependencyMetadata[] = params.map((param) => {
@@ -542,7 +544,7 @@ export class CompileMetadataResolver {
       let query: QueryMetadata = null;
       let viewQuery: ViewQueryMetadata = null;
       var token: any = null;
-      if (isArray(param)) {
+      if (Array.isArray(param)) {
         (<any[]>param).forEach((paramEntry) => {
           if (paramEntry instanceof HostMetadata) {
             isHost = true;
@@ -563,14 +565,14 @@ export class CompileMetadataResolver {
             }
           } else if (paramEntry instanceof InjectMetadata) {
             token = paramEntry.token;
-          } else if (isValidType(paramEntry) && isBlank(token)) {
+          } else if (isValidType(paramEntry) && token === undefined || token === null) {
             token = paramEntry;
           }
         });
       } else {
         token = param;
       }
-      if (isBlank(token)) {
+      if (token === undefined || token === null) {
         hasUnknownDeps = true;
         return null;
       }
@@ -580,8 +582,12 @@ export class CompileMetadataResolver {
         isSelf: isSelf,
         isSkipSelf: isSkipSelf,
         isOptional: isOptional,
-        query: isPresent(query) ? this.getQueryMetadata(query, null, typeOrFunc) : null,
-        viewQuery: isPresent(viewQuery) ? this.getQueryMetadata(viewQuery, null, typeOrFunc) : null,
+        query: query !== undefined && query !== null ?
+            this.getQueryMetadata(query, null, typeOrFunc) :
+            null,
+        viewQuery: viewQuery !== undefined && viewQuery !== null ?
+            this.getQueryMetadata(viewQuery, null, typeOrFunc) :
+            null,
         token: this.getTokenMetadata(token)
       });
 
@@ -601,7 +607,7 @@ export class CompileMetadataResolver {
   getTokenMetadata(token: any): cpl.CompileTokenMetadata {
     token = resolveForwardRef(token);
     var compileToken: any /** TODO #9100 */;
-    if (isString(token)) {
+    if (typeof token === 'string') {
       compileToken = new cpl.CompileTokenMetadata({value: token});
     } else {
       compileToken = new cpl.CompileTokenMetadata({
@@ -624,7 +630,7 @@ export class CompileMetadataResolver {
         provider = createProvider(provider);
       }
       let compileProvider: cpl.CompileProviderMetadata|cpl.CompileTypeMetadata|any[];
-      if (isArray(provider)) {
+      if (Array.isArray(provider)) {
         compileProvider = this.getProvidersMetadata(provider, targetEntryComponents);
       } else if (provider instanceof Provider) {
         let tokenMeta = this.getTokenMetadata(provider.token);
@@ -671,11 +677,11 @@ export class CompileMetadataResolver {
     var compileTypeMetadata: cpl.CompileTypeMetadata = null;
     var compileFactoryMetadata: cpl.CompileFactoryMetadata = null;
 
-    if (isPresent(provider.useClass)) {
+    if (provider.useClass !== undefined && provider.useClass !== null) {
       compileTypeMetadata = this.getTypeMetadata(
           provider.useClass, staticTypeModuleUrl(provider.useClass), provider.dependencies);
       compileDeps = compileTypeMetadata.diDeps;
-    } else if (isPresent(provider.useFactory)) {
+    } else if (provider.useFactory !== undefined && provider.useFactory !== null) {
       compileFactoryMetadata = this.getFactoryMetadata(
           provider.useFactory, staticTypeModuleUrl(provider.useFactory), provider.dependencies);
       compileDeps = compileFactoryMetadata.diDeps;
@@ -686,8 +692,9 @@ export class CompileMetadataResolver {
       useClass: compileTypeMetadata,
       useValue: convertToCompileValue(provider.useValue, []),
       useFactory: compileFactoryMetadata,
-      useExisting: isPresent(provider.useExisting) ? this.getTokenMetadata(provider.useExisting) :
-                                                     null,
+      useExisting: provider.useExisting !== undefined && provider.useExisting !== null ?
+          this.getTokenMetadata(provider.useExisting) :
+          null,
       deps: compileDeps,
       multi: provider.multi
     });
@@ -711,7 +718,7 @@ export class CompileMetadataResolver {
     if (q.isVarBindingQuery) {
       selectors = q.varBindings.map(varName => this.getTokenMetadata(varName));
     } else {
-      if (isBlank(q.selector)) {
+      if (q.selector === undefined || q.selector === null) {
         throw new BaseException(
             `Can't construct a query for the property "${propertyName}" of "${stringify(typeOrFunc)}" since the query selector wasn't defined.`);
       }
@@ -722,7 +729,7 @@ export class CompileMetadataResolver {
       first: q.first,
       descendants: q.descendants,
       propertyName: propertyName,
-      read: isPresent(q.read) ? this.getTokenMetadata(q.read) : null
+      read: q.read !== undefined && q.read !== null ? this.getTokenMetadata(q.read) : null
     });
   }
 }
@@ -751,7 +758,7 @@ function flattenArray(tree: any[], out: Array<any> = []): Array<any> {
   if (tree) {
     for (var i = 0; i < tree.length; i++) {
       var item = resolveForwardRef(tree[i]);
-      if (isArray(item)) {
+      if (Array.isArray(item)) {
         flattenArray(item, out);
       } else {
         out.push(item);
@@ -768,8 +775,11 @@ function verifyNonBlankProviders(
 
   flattenArray(providersTree, flat);
   for (var i = 0; i < flat.length; i++) {
-    if (isBlank(flat[i])) {
-      errMsg = flat.map(provider => isBlank(provider) ? '?' : stringify(provider)).join(', ');
+    if (flat[i] === undefined || flat[i] === null) {
+      errMsg = flat.map(
+                       provider =>
+                           provider === undefined || provider === null ? '?' : stringify(provider))
+                   .join(', ');
       throw new BaseException(
           `One or more of ${providersType} for "${stringify(directiveType)}" were not defined: [${errMsg}].`);
     }
@@ -792,11 +802,12 @@ function componentModuleUrl(
     return staticTypeModuleUrl(type);
   }
 
-  if (isPresent(cmpMetadata.moduleId)) {
+  if (cmpMetadata.moduleId !== undefined && cmpMetadata.moduleId !== null) {
     var moduleId = cmpMetadata.moduleId;
     var scheme = getUrlScheme(moduleId);
-    return isPresent(scheme) && scheme.length > 0 ? moduleId :
-                                                    `package:${moduleId}${MODULE_SUFFIX}`;
+    return scheme !== undefined && scheme !== null && scheme.length > 0 ?
+        moduleId :
+        `package:${moduleId}${MODULE_SUFFIX}`;
   }
 
   return reflector.importUri(type);

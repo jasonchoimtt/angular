@@ -32,7 +32,8 @@ export class ApplicationInitStatus {
     if (appInits) {
       for (let i = 0; i < appInits.length; i++) {
         const initResult = appInits[i]();
-        if (isPromise(initResult)) {
+        if (initResult !== undefined && initResult !== null &&
+            typeof(<any>initResult).then === 'function') {
           asyncInitPromises.push(initResult);
         }
       }

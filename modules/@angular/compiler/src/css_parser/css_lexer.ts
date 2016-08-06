@@ -194,9 +194,9 @@ export class CssScanner {
 
     var next: CssToken;
     var output = this.scan();
-    if (isPresent(output)) {
+    if (output !== undefined && output !== null) {
       // just incase the inner scan method returned an error
-      if (isPresent(output.error)) {
+      if (output.error !== undefined && output.error !== null) {
         this.setMode(mode);
         return output;
       }
@@ -204,7 +204,7 @@ export class CssScanner {
       next = output.token;
     }
 
-    if (isBlank(next)) {
+    if (next === undefined || next === null) {
       next = new CssToken(this.index, this.column, this.line, CssTokenType.EOF, 'end of file');
     }
 
@@ -221,11 +221,11 @@ export class CssScanner {
     this.setMode(mode);
 
     var error: CssScannerError = null;
-    if (!isMatchingType || (isPresent(value) && value != next.strValue)) {
-      var errorMessage = resolveEnumToken(CssTokenType, next.type) + ' does not match expected ' +
-          resolveEnumToken(CssTokenType, type) + ' value';
+    if (!isMatchingType || (value !== undefined && value !== null && value != next.strValue)) {
+      var errorMessage =
+          CssTokenType[next.type] + ' does not match expected ' + CssTokenType[type] + ' value';
 
-      if (isPresent(value)) {
+      if (value !== undefined && value !== null) {
         errorMessage += ' ("' + next.strValue + '" should match "' + value + '")';
       }
 
@@ -475,8 +475,9 @@ export class CssScanner {
     var index: number = this.index;
     var column: number = this.column;
     var line: number = this.line;
-    errorTokenValue =
-        isPresent(errorTokenValue) ? errorTokenValue : StringWrapper.fromCharCode(this.peek);
+    errorTokenValue = errorTokenValue !== undefined && errorTokenValue !== null ?
+        errorTokenValue :
+        StringWrapper.fromCharCode(this.peek);
     var invalidToken = new CssToken(index, column, line, CssTokenType.Invalid, errorTokenValue);
     var errorMessage =
         generateErrorMessage(this.input, message, errorTokenValue, index, line, column);

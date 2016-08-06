@@ -29,7 +29,8 @@ export class AnimationSequencePlayer implements AnimationPlayer {
 
     if (this._players.length == 0) {
       this._activePlayer = new NoOpAnimationPlayer();
-      scheduleMicroTask(() => this._onFinish());
+      Zone.current.scheduleMicroTask('scheduleMicrotask', () => this._onFinish());
+      ;
     } else if (this._currentIndex >= this._players.length) {
       this._activePlayer = new NoOpAnimationPlayer();
       this._onFinish();
@@ -47,7 +48,7 @@ export class AnimationSequencePlayer implements AnimationPlayer {
   private _onFinish() {
     if (!this._finished) {
       this._finished = true;
-      if (isBlank(this.parentPlayer)) {
+      if (this.parentPlayer === undefined || this.parentPlayer === null) {
         this.destroy();
       }
       this._subscriptions.forEach(subscription => subscription());
@@ -62,7 +63,7 @@ export class AnimationSequencePlayer implements AnimationPlayer {
   hasStarted() { return this._started; }
 
   play(): void {
-    if (isBlank(this.parentPlayer)) {
+    if (this.parentPlayer === undefined || this.parentPlayer === null) {
       this.init();
     }
     this._started = true;

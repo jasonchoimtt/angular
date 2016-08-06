@@ -59,7 +59,7 @@ function _parseAnimationDeclarationStates(
   var styleValues: {[key: string]: string | number}[] = [];
   stateMetadata.styles.styles.forEach(stylesEntry => {
     // TODO (matsko): change this when we get CSS class integration support
-    if (isStringMap(stylesEntry)) {
+    if (typeof stylesEntry === 'object' && stylesEntry !== null) {
       styleValues.push(<{[key: string]: string | number}>stylesEntry);
     } else {
       errors.push(new AnimationParseError(
@@ -102,7 +102,7 @@ function _parseAnimationTransitionExpr(
     eventStr: string, errors: AnimationParseError[]): AnimationStateTransitionExpression[] {
   var expressions: any[] /** TODO #9100 */ = [];
   var match = eventStr.match(/^(\*|[-\w]+)\s*(<?[=-]>)\s*(\*|[-\w]+)$/);
-  if (isBlank(match) || match.length < 4) {
+  if (match === undefined || match === null || match.length < 4) {
     errors.push(new AnimationParseError(`the provided ${eventStr} is not of a supported format`));
     return expressions;
   }
@@ -122,7 +122,7 @@ function _parseAnimationTransitionExpr(
 function _fetchSylesFromState(stateName: string, stateStyles: {[key: string]: AnimationStylesAst}):
     CompileAnimationStyleMetadata {
   var entry = stateStyles[stateName];
-  if (isPresent(entry)) {
+  if (entry !== undefined && entry !== null) {
     var styles = <{[key: string]: string | number}[]>entry.styles;
     return new CompileAnimationStyleMetadata(0, styles);
   }
@@ -131,8 +131,9 @@ function _fetchSylesFromState(stateName: string, stateStyles: {[key: string]: An
 
 function _normalizeAnimationEntry(entry: CompileAnimationMetadata | CompileAnimationMetadata[]):
     CompileAnimationMetadata {
-  return isArray(entry) ? new CompileAnimationSequenceMetadata(<CompileAnimationMetadata[]>entry) :
-                          <CompileAnimationMetadata>entry;
+  return Array.isArray(entry) ?
+      new CompileAnimationSequenceMetadata(<CompileAnimationMetadata[]>entry) :
+      <CompileAnimationMetadata>entry;
 }
 
 function _normalizeStyleMetadata(
@@ -140,7 +141,7 @@ function _normalizeStyleMetadata(
     errors: AnimationParseError[]): Array<{[key: string]: string | number}> {
   var normalizedStyles: any[] /** TODO #9100 */ = [];
   entry.styles.forEach(styleEntry => {
-    if (isString(styleEntry)) {
+    if (typeof styleEntry === 'string') {
       ListWrapper.addAll(
           normalizedStyles, _resolveStylesFromState(<string>styleEntry, stateStyles, errors));
     } else {
@@ -159,10 +160,10 @@ function _normalizeStyleSteps(
 
 function _mergeAnimationStyles(
     stylesList: any[], newItem: {[key: string]: string | number} | string) {
-  if (isStringMap(newItem) && stylesList.length > 0) {
+  if (typeof newItem === 'object' && newItem !== null && stylesList.length > 0) {
     var lastIndex = stylesList.length - 1;
     var lastItem = stylesList[lastIndex];
-    if (isStringMap(lastItem)) {
+    if (typeof lastItem === 'object' && lastItem !== null) {
       stylesList[lastIndex] = StringMapWrapper.merge(
           <{[key: string]: string | number}>lastItem, <{[key: string]: string | number}>newItem);
       return;
@@ -189,7 +190,7 @@ function _normalizeStyleStepEntry(
       // or when the first style step is run. We want to concatenate all subsequent
       // style steps together into a single style step such that we have the correct
       // starting keyframe data to pass into the animation player.
-      if (isBlank(combinedStyles)) {
+      if (combinedStyles === undefined || combinedStyles === null) {
         combinedStyles = [];
       }
       _normalizeStyleMetadata(<CompileAnimationStyleMetadata>step, stateStyles, errors)
@@ -199,7 +200,7 @@ function _normalizeStyleStepEntry(
       // before we go on an process the animate, sequence or group metadata steps.
       // This will ensure that the AST will have the previous styles painted on
       // screen before any further animations that use the styles take place.
-      if (isPresent(combinedStyles)) {
+      if (combinedStyles !== undefined && combinedStyles !== null) {
         newSteps.push(new CompileAnimationStyleMetadata(0, combinedStyles));
         combinedStyles = null;
       }
@@ -227,7 +228,7 @@ function _normalizeStyleStepEntry(
   });
 
   // this happens when only styles were animated within the sequence
-  if (isPresent(combinedStyles)) {
+  if (combinedStyles !== undefined && combinedStyles !== null) {
     newSteps.push(new CompileAnimationStyleMetadata(0, combinedStyles));
   }
 
@@ -244,12 +245,12 @@ function _resolveStylesFromState(
   } else {
     var normalizedStateName = stateName.substring(1);
     var value = stateStyles[normalizedStateName];
-    if (isBlank(value)) {
+    if (value === undefined || value === null) {
       errors.push(new AnimationParseError(
           `Unable to apply styles due to missing a state: "${normalizedStateName}"`));
     } else {
       value.styles.forEach(stylesEntry => {
-        if (isStringMap(stylesEntry)) {
+        if (typeof stylesEntry === 'object' && stylesEntry !== null) {
           styles.push(<{[key: string]: string | number}>stylesEntry);
         }
       });
@@ -268,7 +269,8 @@ function _parseAnimationKeyframes(
     errors: AnimationParseError[]): AnimationKeyframeAst[] {
   var totalEntries = keyframeSequence.steps.length;
   var totalOffsets = 0;
-  keyframeSequence.steps.forEach(step => totalOffsets += (isPresent(step.offset) ? 1 : 0));
+  keyframeSequence.steps.forEach(
+      step => totalOffsets += (step.offset !== undefined && step.offset !== null ? 1 : 0));
 
   if (totalOffsets > 0 && totalOffsets < totalEntries) {
     errors.push(new AnimationParseError(
@@ -295,7 +297,7 @@ function _parseAnimationKeyframes(
           });
     });
 
-    if (isPresent(offset)) {
+    if (offset !== undefined && offset !== null) {
       doSortKeyframes = doSortKeyframes || (offset < lastOffset);
     } else {
       offset = index == limit ? _TERMINAL_KEYFRAME : (margin * index);
@@ -331,7 +333,7 @@ function _parseAnimationKeyframes(
 
     StringMapWrapper.forEach(
         styles, (value: any /** TODO #9100 */, prop: any /** TODO #9100 */) => {
-          if (isBlank(firstKeyframeStyles[prop])) {
+          if (firstKeyframeStyles[prop] === undefined || firstKeyframeStyles[prop] === null) {
             firstKeyframeStyles[prop] = FILL_STYLE_FLAG;
           }
         });
@@ -343,7 +345,7 @@ function _parseAnimationKeyframes(
 
     StringMapWrapper.forEach(
         styles, (value: any /** TODO #9100 */, prop: any /** TODO #9100 */) => {
-          if (isBlank(lastKeyframeStyles[prop])) {
+          if (lastKeyframeStyles[prop] === undefined || lastKeyframeStyles[prop] === null) {
             lastKeyframeStyles[prop] = value;
           }
         });
@@ -381,7 +383,7 @@ function _parseTransitionAnimation(
       }
 
       var innerAst = _parseTransitionAnimation(entry, time, collectedStyles, stateStyles, errors);
-      if (isPresent(previousStyles)) {
+      if (previousStyles !== undefined && previousStyles !== null) {
         if (entry instanceof CompileAnimationWithStepsMetadata) {
           let startingStyles = new AnimationStylesAst(previousStyles);
           steps.push(new AnimationStepAst(startingStyles, [], 0, 0, ''));
@@ -398,7 +400,7 @@ function _parseTransitionAnimation(
       maxDuration = Math.max(astDuration, maxDuration);
       steps.push(innerAst);
     });
-    if (isPresent(previousStyles)) {
+    if (previousStyles !== undefined && previousStyles !== null) {
       let startingStyles = new AnimationStylesAst(previousStyles);
       steps.push(new AnimationStepAst(startingStyles, [], 0, 0, ''));
     }
@@ -469,7 +471,7 @@ function _parseTimeExpression(
   var duration: number;
   var delay: number = 0;
   var easing: string = null;
-  if (isString(exp)) {
+  if (typeof exp === 'string') {
     const matches = exp.match(regex);
     if (matches === null) {
       errors.push(new AnimationParseError(`The provided timing value "${exp}" is invalid.`));
@@ -485,16 +487,16 @@ function _parseTimeExpression(
 
     var delayMatch = matches[3];
     var delayUnit = matches[4];
-    if (isPresent(delayMatch)) {
+    if (delayMatch !== undefined && delayMatch !== null) {
       var delayVal: number = NumberWrapper.parseFloat(delayMatch);
-      if (isPresent(delayUnit) && delayUnit == 's') {
+      if (delayUnit !== undefined && delayUnit !== null && delayUnit == 's') {
         delayVal *= _ONE_SECOND;
       }
       delay = Math.floor(delayVal);
     }
 
     var easingVal = matches[5];
-    if (isPresent(easingVal)) {
+    if (easingVal !== undefined && easingVal !== null) {
       easing = easingVal;
     }
   } else {
@@ -516,7 +518,7 @@ function _createStartKeyframeFromEndKeyframe(
       var resultIndex = collectedStyles.indexOfAtOrBeforeTime(prop, startTime);
       var resultEntry: any /** TODO #9100 */, nextEntry: any /** TODO #9100 */,
           value: any /** TODO #9100 */;
-      if (isPresent(resultIndex)) {
+      if (resultIndex !== undefined && resultIndex !== null) {
         resultEntry = collectedStyles.getByIndex(prop, resultIndex);
         value = resultEntry.value;
         nextEntry = collectedStyles.getByIndex(prop, resultIndex + 1);
@@ -527,7 +529,7 @@ function _createStartKeyframeFromEndKeyframe(
         value = FILL_STYLE_FLAG;
       }
 
-      if (isPresent(nextEntry) && !nextEntry.matches(endTime, val)) {
+      if (nextEntry !== undefined && nextEntry !== null && !nextEntry.matches(endTime, val)) {
         errors.push(new AnimationParseError(
             `The animated CSS property "${prop}" unexpectedly changes between steps "${resultEntry.time}ms" and "${endTime}ms" at "${nextEntry.time}ms"`));
       }

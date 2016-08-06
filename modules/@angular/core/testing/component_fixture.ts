@@ -91,10 +91,7 @@ export class ComponentFixture<T> {
           this._isStable = true;
           // Check whether there is a pending whenStable() completer to resolve.
           if (this._promise !== null) {
-            // If so check whether there are no pending macrotasks before resolving.
-            // Do this check in the next tick so that ngZone gets a chance to update the state of
-            // pending macrotasks.
-            scheduleMicroTask(() => {
+            Zone.current.scheduleMicroTask('scheduleMicrotask', () => {
               if (!this.ngZone.hasPendingMacrotasks) {
                 if (this._promise !== null) {
                   this._resolve(true);
@@ -103,6 +100,10 @@ export class ComponentFixture<T> {
                 }
               }
             });
+            // If so check whether there are no pending macrotasks before resolving.
+            // Do this check in the next tick so that ngZone gets a chance to update the state of
+            // pending macrotasks.
+            ;
           }
         }
       });

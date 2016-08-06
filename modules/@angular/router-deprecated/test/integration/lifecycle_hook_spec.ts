@@ -384,8 +384,9 @@ class B {
 
 
 function logHook(name: string, next: ComponentInstruction, prev: ComponentInstruction) {
-  var message = name + ': ' + (isPresent(prev) ? ('/' + prev.urlPath) : 'null') + ' -> ' +
-      (isPresent(next) ? ('/' + next.urlPath) : 'null');
+  var message = name + ': ' +
+      (prev !== undefined && prev !== null ? ('/' + prev.urlPath) : 'null') + ' -> ' +
+      (next !== undefined && next !== null ? ('/' + next.urlPath) : 'null');
   log.push(message);
   eventBus.emit(message);
 }

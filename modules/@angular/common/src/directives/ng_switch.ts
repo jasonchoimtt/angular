@@ -98,9 +98,10 @@ export class NgSwitch {
     // Add the ViewContainers matching the value (with a fallback to default)
     this._useDefault = false;
     var views = this._valueViews.get(value);
-    if (isBlank(views)) {
+    if (views === undefined || views === null) {
       this._useDefault = true;
-      views = normalizeBlank(this._valueViews.get(_CASE_DEFAULT));
+      const obj = this._valueViews.get(_CASE_DEFAULT);
+      views = obj === undefined ? null : obj;
     }
     this._activateViews(views);
 
@@ -143,7 +144,7 @@ export class NgSwitch {
   /** @internal */
   _activateViews(views: SwitchView[]): void {
     // TODO(vicb): assert(this._activeViews.length === 0);
-    if (isPresent(views)) {
+    if (views !== undefined && views !== null) {
       for (var i = 0; i < views.length; i++) {
         views[i].create();
       }
@@ -154,7 +155,7 @@ export class NgSwitch {
   /** @internal */
   _registerView(value: any, view: SwitchView): void {
     var views = this._valueViews.get(value);
-    if (isBlank(views)) {
+    if (views === undefined || views === null) {
       views = [];
       this._valueViews.set(value, views);
     }

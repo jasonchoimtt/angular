@@ -21,7 +21,7 @@ export function debugOutputAstAsTypeScript(ast: o.Statement | o.Expression | o.T
   var converter = new _TsEmitterVisitor(_debugModuleUrl);
   var ctx = EmitterVisitorContext.createRoot([]);
   var asts: any[];
-  if (isArray(ast)) {
+  if (Array.isArray(ast)) {
     asts = <any[]>ast;
   } else {
     asts = [ast];
@@ -64,7 +64,7 @@ class _TsEmitterVisitor extends AbstractEmitterVisitor implements o.TypeVisitor 
   importsWithPrefixes = new Map<string, string>();
 
   visitType(t: o.Type, ctx: EmitterVisitorContext, defaultType: string = 'any') {
-    if (isPresent(t)) {
+    if (t !== undefined && t !== null) {
       t.visitType(this, ctx);
     } else {
       ctx.print(defaultType);
@@ -108,14 +108,14 @@ class _TsEmitterVisitor extends AbstractEmitterVisitor implements o.TypeVisitor 
       ctx.print(`export `);
     }
     ctx.print(`class ${stmt.name}`);
-    if (isPresent(stmt.parent)) {
+    if (stmt.parent !== undefined && stmt.parent !== null) {
       ctx.print(` extends `);
       stmt.parent.visitExpression(this, ctx);
     }
     ctx.println(` {`);
     ctx.incIndent();
     stmt.fields.forEach((field) => this._visitClassField(field, ctx));
-    if (isPresent(stmt.constructorMethod)) {
+    if (stmt.constructorMethod !== undefined && stmt.constructorMethod !== null) {
       this._visitClassConstructor(stmt, ctx);
     }
     stmt.getters.forEach((getter) => this._visitClassGetter(getter, ctx));
@@ -295,19 +295,20 @@ class _TsEmitterVisitor extends AbstractEmitterVisitor implements o.TypeVisitor 
 
   private _visitIdentifier(
       value: CompileIdentifierMetadata, typeParams: o.Type[], ctx: EmitterVisitorContext): void {
-    if (isBlank(value.name)) {
+    if (value.name === undefined || value.name === null) {
       throw new BaseException(`Internal error: unknown identifier ${value}`);
     }
-    if (isPresent(value.moduleUrl) && value.moduleUrl != this._moduleUrl) {
+    if (value.moduleUrl !== undefined && value.moduleUrl !== null &&
+        value.moduleUrl != this._moduleUrl) {
       var prefix = this.importsWithPrefixes.get(value.moduleUrl);
-      if (isBlank(prefix)) {
+      if (prefix === undefined || prefix === null) {
         prefix = `import${this.importsWithPrefixes.size}`;
         this.importsWithPrefixes.set(value.moduleUrl, prefix);
       }
       ctx.print(`${prefix}.`);
     }
     ctx.print(value.name);
-    if (isPresent(typeParams) && typeParams.length > 0) {
+    if (typeParams !== undefined && typeParams !== null && typeParams.length > 0) {
       ctx.print(`<`);
       this.visitAllObjects(
           (type: any /** TODO #9100 */) => type.visitType(this, ctx), typeParams, ctx, ',');

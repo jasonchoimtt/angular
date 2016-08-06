@@ -43,7 +43,7 @@ import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 @Pipe({name: 'replace'})
 export class ReplacePipe implements PipeTransform {
   transform(value: any, pattern: string|RegExp, replacement: Function|string): any {
-    if (isBlank(value)) {
+    if (value === undefined || value === null) {
       return value;
     }
 
@@ -60,8 +60,8 @@ export class ReplacePipe implements PipeTransform {
       throw new InvalidPipeArgumentException(ReplacePipe, replacement);
     }
 
-    if (isFunction(replacement)) {
-      const rgxPattern = isString(pattern) ? new RegExp(pattern, 'g') : pattern;
+    if (typeof replacement === 'function') {
+      const rgxPattern = typeof pattern === 'string' ? new RegExp(pattern, 'g') : pattern;
 
       return StringWrapper.replaceAllMapped(
           input, rgxPattern, <(m: string[]) => string>replacement);
@@ -75,13 +75,15 @@ export class ReplacePipe implements PipeTransform {
     return StringWrapper.replace(input, <string>pattern, <string>replacement);
   }
 
-  private _supportedInput(input: any): boolean { return isString(input) || isNumber(input); }
+  private _supportedInput(input: any): boolean {
+    return typeof input === 'string' || typeof input === 'number';
+  }
 
   private _supportedPattern(pattern: any): boolean {
-    return isString(pattern) || pattern instanceof RegExp;
+    return typeof pattern === 'string' || pattern instanceof RegExp;
   }
 
   private _supportedReplacement(replacement: any): boolean {
-    return isString(replacement) || isFunction(replacement);
+    return typeof replacement === 'string' || typeof replacement === 'function';
   }
 }

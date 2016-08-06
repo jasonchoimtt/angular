@@ -47,16 +47,19 @@ export class MockDirectiveResolver extends DirectiveResolver {
     const viewProviderOverrides = this._viewProviderOverrides.get(type);
 
     let providers = metadata.providers;
-    if (isPresent(providerOverrides)) {
-      const originalViewProviders: any[] = isPresent(metadata.providers) ? metadata.providers : [];
+    if (providerOverrides !== undefined && providerOverrides !== null) {
+      const originalViewProviders: any[] =
+          metadata.providers !== undefined && metadata.providers !== null ? metadata.providers : [];
       providers = originalViewProviders.concat(providerOverrides);
     }
 
     if (metadata instanceof ComponentMetadata) {
       let viewProviders = metadata.viewProviders;
-      if (isPresent(viewProviderOverrides)) {
+      if (viewProviderOverrides !== undefined && viewProviderOverrides !== null) {
         const originalViewProviders: any[] =
-            isPresent(metadata.viewProviders) ? metadata.viewProviders : [];
+            metadata.viewProviders !== undefined && metadata.viewProviders !== null ?
+            metadata.viewProviders :
+            [];
         viewProviders = originalViewProviders.concat(viewProviderOverrides);
       }
 
@@ -66,7 +69,7 @@ export class MockDirectiveResolver extends DirectiveResolver {
       }
 
       const directives: any[] = [];
-      if (isPresent(view.directives)) {
+      if (view.directives !== undefined && view.directives !== null) {
         flattenArray(view.directives, directives);
       }
       let animations = view.animations;
@@ -74,18 +77,19 @@ export class MockDirectiveResolver extends DirectiveResolver {
       const directiveOverrides = this._directiveOverrides.get(type);
 
       const inlineAnimations = this._animations.get(type);
-      if (isPresent(inlineAnimations)) {
+      if (inlineAnimations !== undefined && inlineAnimations !== null) {
         animations = inlineAnimations;
       }
 
       let inlineTemplate = this._inlineTemplates.get(type);
-      if (isPresent(inlineTemplate)) {
+      if (inlineTemplate !== undefined && inlineTemplate !== null) {
         templateUrl = null;
       } else {
         inlineTemplate = view.template;
       }
 
-      if (isPresent(directiveOverrides) && isPresent(view.directives)) {
+      if (directiveOverrides !== undefined && directiveOverrides !== null &&
+          view.directives !== undefined && view.directives !== null) {
         directiveOverrides.forEach((to, from) => {
           var srcIndex = directives.indexOf(from);
           if (srcIndex == -1) {
@@ -186,10 +190,10 @@ export class MockDirectiveResolver extends DirectiveResolver {
 }
 
 function flattenArray(tree: any[], out: Array<Type|any[]>): void {
-  if (isBlank(tree)) return;
+  if (tree === undefined || tree === null) return;
   for (var i = 0; i < tree.length; i++) {
     var item = resolveForwardRef(tree[i]);
-    if (isArray(item)) {
+    if (Array.isArray(item)) {
       flattenArray(item, out);
     } else {
       out.push(item);

@@ -26,7 +26,9 @@ class MyVisitor implements CssAstVisitor {
    * @internal
    */
   _capture(method: string, ast: CssAst, context: any) {
-    this.captures[method] = isPresent(this.captures[method]) ? this.captures[method] : [];
+    this.captures[method] = this.captures[method] !== undefined && this.captures[method] !== null ?
+        this.captures[method] :
+        [];
     this.captures[method].push([ast, context]);
   }
 

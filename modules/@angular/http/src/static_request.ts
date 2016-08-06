@@ -78,7 +78,7 @@ export class Request extends Body {
     // TODO: assert that url is present
     let url = requestOptions.url;
     this.url = requestOptions.url;
-    if (isPresent(requestOptions.search)) {
+    if (requestOptions.search !== undefined && requestOptions.search !== null) {
       let search = requestOptions.search.toString();
       if (search.length > 0) {
         let prefix = '?';

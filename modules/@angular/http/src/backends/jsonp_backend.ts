@@ -90,7 +90,7 @@ export class JSONPConnection_ extends JSONPConnection {
         if (!this._finished) {
           let responseOptions =
               new ResponseOptions({body: JSONP_ERR_NO_CALLBACK, type: ResponseType.Error, url});
-          if (isPresent(baseResponseOptions)) {
+          if (baseResponseOptions !== undefined && baseResponseOptions !== null) {
             responseOptions = baseResponseOptions.merge(responseOptions);
           }
           responseObserver.error(new Response(responseOptions));
@@ -98,7 +98,7 @@ export class JSONPConnection_ extends JSONPConnection {
         }
 
         let responseOptions = new ResponseOptions({body: this._responseData, url});
-        if (isPresent(this.baseResponseOptions)) {
+        if (this.baseResponseOptions !== undefined && this.baseResponseOptions !== null) {
           responseOptions = this.baseResponseOptions.merge(responseOptions);
         }
 
@@ -111,7 +111,7 @@ export class JSONPConnection_ extends JSONPConnection {
         this.readyState = ReadyState.Done;
         _dom.cleanup(script);
         let responseOptions = new ResponseOptions({body: error.message, type: ResponseType.Error});
-        if (isPresent(baseResponseOptions)) {
+        if (baseResponseOptions !== undefined && baseResponseOptions !== null) {
           responseOptions = baseResponseOptions.merge(responseOptions);
         }
         responseObserver.error(new Response(responseOptions));
@@ -126,7 +126,7 @@ export class JSONPConnection_ extends JSONPConnection {
         this.readyState = ReadyState.Cancelled;
         script.removeEventListener('load', onLoad);
         script.removeEventListener('error', onError);
-        if (isPresent(script)) {
+        if (script !== undefined && script !== null) {
           this._dom.cleanup(script);
         }
 

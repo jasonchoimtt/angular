@@ -97,7 +97,7 @@ export class DatePipe implements PipeTransform {
 
 
   transform(value: any, pattern: string = 'mediumDate'): string {
-    if (isBlank(value)) return null;
+    if (value === undefined || value === null) return null;
 
     if (!this.supports(value)) {
       throw new InvalidPipeArgumentException(DatePipe, value);
@@ -105,7 +105,7 @@ export class DatePipe implements PipeTransform {
 
     if (NumberWrapper.isNumeric(value)) {
       value = DateWrapper.fromMillis(NumberWrapper.parseInt(value, 10));
-    } else if (isString(value)) {
+    } else if (typeof value === 'string') {
       value = DateWrapper.fromISOString(value);
     }
     if (StringMapWrapper.contains(DatePipe._ALIASES, pattern)) {
@@ -115,11 +115,14 @@ export class DatePipe implements PipeTransform {
   }
 
   private supports(obj: any): boolean {
-    if (isDate(obj) || NumberWrapper.isNumeric(obj)) {
+    if (obj instanceof Date && !isNaN(obj.valueOf()) || NumberWrapper.isNumeric(obj)) {
       return true;
     }
-    if (isString(obj) && isDate(DateWrapper.fromISOString(obj))) {
-      return true;
+    if (typeof obj === 'string') {
+      const date = DateWrapper.fromISOString(obj);
+      if (date instanceof Date && !isNaN(date.valueOf())) {
+        return true;
+      }
     }
     return false;
   }

@@ -134,14 +134,14 @@ export function isStringMap(obj: any): obj is Object {
 
 const STRING_MAP_PROTO = Object.getPrototypeOf({});
 export function isStrictStringMap(obj: any): boolean {
-  return isStringMap(obj) && Object.getPrototypeOf(obj) === STRING_MAP_PROTO;
+  return typeof obj === 'object' && obj !== null && Object.getPrototypeOf(obj) === STRING_MAP_PROTO;
 }
 
 /** @inline */
 export function isPromise(obj: any): boolean {
   // allow any Promise/A+ compliant thenable.
   // It's up to the caller to ensure that obj.then conforms to the spec
-  return obj !== undefined && obj !== null && typeof (<any>obj).then === 'function';
+  return obj !== undefined && obj !== null && typeof(<any>obj).then === 'function';
 }
 
 /** @inline */
@@ -395,7 +395,7 @@ export function setValueOnPath(global: any, path: string, value: any) {
   var obj: any = global;
   while (parts.length > 1) {
     var name = parts.shift();
-    if (obj.hasOwnProperty(name) && isPresent(obj[name])) {
+    if (obj.hasOwnProperty(name) && obj[name] !== undefined && obj[name] !== null) {
       obj = obj[name];
     } else {
       obj = obj[name] = {};
@@ -411,8 +411,9 @@ export function setValueOnPath(global: any, path: string, value: any) {
 declare var Symbol: any;
 var _symbolIterator: any = null;
 export function getSymbolIterator(): string|symbol {
-  if (isBlank(_symbolIterator)) {
-    if (isPresent((<any>globalScope).Symbol) && isPresent(Symbol.iterator)) {
+  if (_symbolIterator === undefined || _symbolIterator === null) {
+    if ((<any>globalScope).Symbol !== undefined && (<any>globalScope).Symbol !== null &&
+        Symbol.iterator !== undefined && Symbol.iterator !== null) {
       _symbolIterator = Symbol.iterator;
     } else {
       // es6-shim specific logic

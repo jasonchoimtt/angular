@@ -82,10 +82,14 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
     if (this._isRootNode(parent)) {
       // store appElement as root node only for ViewContainers
       if (this.view.viewType !== ViewType.COMPONENT) {
-        this.view.rootNodesOrAppElements.push(isPresent(vcAppEl) ? vcAppEl : node.renderNode);
+        this.view.rootNodesOrAppElements.push(
+            vcAppEl !== undefined && vcAppEl !== null ? vcAppEl : node.renderNode);
       }
-    } else if (isPresent(parent.component) && isPresent(ngContentIndex)) {
-      parent.addContentNode(ngContentIndex, isPresent(vcAppEl) ? vcAppEl : node.renderNode);
+    } else if (
+        parent.component !== undefined && parent.component !== null &&
+        ngContentIndex !== undefined && ngContentIndex !== null) {
+      parent.addContentNode(
+          ngContentIndex, vcAppEl !== undefined && vcAppEl !== null ? vcAppEl : node.renderNode);
     }
   }
 
@@ -99,7 +103,7 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
         return o.NULL_EXPR;
       }
     } else {
-      return isPresent(parent.component) &&
+      return parent.component !== undefined && parent.component !== null &&
               parent.component.template.encapsulation !== ViewEncapsulation.Native ?
           o.NULL_EXPR :
           parent.renderNode;
@@ -157,7 +161,8 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
         this.view.rootNodesOrAppElements.push(nodesExpression);
       }
     } else {
-      if (isPresent(parent.component) && isPresent(ast.ngContentIndex)) {
+      if (parent.component !== undefined && parent.component !== null &&
+          ast.ngContentIndex !== undefined && ast.ngContentIndex !== null) {
         parent.addContentNode(ast.ngContentIndex, nodesExpression);
       }
     }
@@ -206,7 +211,7 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
         ast.hasViewContainer, false, ast.references);
     this.view.nodes.push(compileElement);
     var compViewExpr: o.ReadVarExpr = null;
-    if (isPresent(component)) {
+    if (component !== undefined && component !== null) {
       let nestedComponentIdentifier =
           new CompileIdentifierMetadata({name: getViewFactoryName(component, 0)});
       this.targetDependencies.push(
@@ -233,7 +238,7 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
     templateVisitAll(this, ast.children, compileElement);
     compileElement.afterChildren(this.view.nodes.length - nodeIndex - 1);
 
-    if (isPresent(compViewExpr)) {
+    if (compViewExpr !== undefined && compViewExpr !== null) {
       var codeGenContentNodes: o.Expression;
       if (this.view.component.type.isHost) {
         codeGenContentNodes = ViewProperties.projectableNodes;
@@ -352,7 +357,9 @@ function _mergeHtmlAndDirectiveAttrs(
   directives.forEach(directiveMeta => {
     StringMapWrapper.forEach(directiveMeta.hostAttributes, (value: string, name: string) => {
       var prevValue = result[name];
-      result[name] = isPresent(prevValue) ? mergeAttributeValue(name, prevValue, value) : value;
+      result[name] = prevValue !== undefined && prevValue !== null ?
+          mergeAttributeValue(name, prevValue, value) :
+          value;
     });
   });
   return mapToKeyValueArray(result);
@@ -415,15 +422,17 @@ function createStaticNodeDebugInfo(node: CompileNode): o.Expression {
   var providerTokens: o.Expression[] = [];
   var componentToken: o.Expression = o.NULL_EXPR;
   var varTokenEntries: any[] = [];
-  if (isPresent(compileElement)) {
+  if (compileElement !== undefined && compileElement !== null) {
     providerTokens = compileElement.getProviderTokens();
-    if (isPresent(compileElement.component)) {
+    if (compileElement.component !== undefined && compileElement.component !== null) {
       componentToken = createDiTokenExpression(identifierToken(compileElement.component.type));
     }
     StringMapWrapper.forEach(
         compileElement.referenceTokens, (token: CompileTokenMetadata, varName: string) => {
-          varTokenEntries.push(
-              [varName, isPresent(token) ? createDiTokenExpression(token) : o.NULL_EXPR]);
+          varTokenEntries.push([
+            varName,
+            token !== undefined && token !== null ? createDiTokenExpression(token) : o.NULL_EXPR
+          ]);
         });
   }
   return o.importExpr(Identifiers.StaticNodeDebugInfo)

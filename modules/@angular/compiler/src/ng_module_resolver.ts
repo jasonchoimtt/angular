@@ -27,7 +27,7 @@ export class NgModuleResolver {
     const ngModuleMeta: NgModuleMetadata =
         this._reflector.annotations(type).find(_isNgModuleMetadata);
 
-    if (isPresent(ngModuleMeta)) {
+    if (ngModuleMeta !== undefined && ngModuleMeta !== null) {
       return ngModuleMeta;
     } else {
       if (throwIfNotFound) {

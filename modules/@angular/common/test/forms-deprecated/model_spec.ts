@@ -17,7 +17,8 @@ export function main() {
   function asyncValidator(expected: any /** TODO #9100 */, timeouts = {}) {
     return (c: any /** TODO #9100 */) => {
       return new Promise((resolve) => {
-        var t = isPresent((timeouts as any /** TODO #9100 */)[c.value]) ?
+        var t = (timeouts as any /** TODO #9100 */)[c.value] !== undefined &&
+                (timeouts as any /** TODO #9100 */)[c.value] !== null ?
             (timeouts as any /** TODO #9100 */)[c.value] :
             0;
         var res = c.value != expected ? {'async': true} : null;

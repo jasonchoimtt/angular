@@ -14,9 +14,9 @@ export class TouchMap {
   keys: {[key: string]: boolean} = {};
 
   constructor(map: {[key: string]: any}) {
-    if (isPresent(map)) {
+    if (map !== undefined && map !== null) {
       StringMapWrapper.forEach(map, (value: any /** TODO #9100 */, key: any /** TODO #9100 */) => {
-        this.map[key] = isPresent(value) ? value.toString() : null;
+        this.map[key] = value !== undefined && value !== null ? value.toString() : null;
         this.keys[key] = true;
       });
     }
@@ -37,7 +37,7 @@ export class TouchMap {
 
 
 export function normalizeString(obj: any): string {
-  if (isBlank(obj)) {
+  if (obj === undefined || obj === null) {
     return null;
   } else {
     return obj.toString();

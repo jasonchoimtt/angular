@@ -148,7 +148,7 @@ export class DynamicLoaderCmp {
   constructor(private _dynamicComponentLoader: DynamicComponentLoader) {}
 
   onSomeAction(): Promise<any> {
-    if (isPresent(this._componentRef)) {
+    if (this._componentRef !== undefined && this._componentRef !== null) {
       this._componentRef.destroy();
       this._componentRef = null;
     }

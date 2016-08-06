@@ -33,11 +33,11 @@ class MockBrowserJsonp extends BrowserJsonp {
   removeEventListener(type: string, cb: Function) { this.callbacks.delete(type); }
 
   dispatchEvent(type: string, argument?: any) {
-    if (isBlank(argument)) {
+    if (argument === undefined || argument === null) {
       argument = {};
     }
     let cb = this.callbacks.get(type);
-    if (isPresent(cb)) {
+    if (cb !== undefined && cb !== null) {
       cb(argument);
     }
   }

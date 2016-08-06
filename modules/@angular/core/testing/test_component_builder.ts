@@ -122,7 +122,7 @@ export class TestComponentBuilder {
     this.createAsync(rootComponentType)
         .then((_result) => { result = _result; }, (_error) => { error = _error; });
     tick();
-    if (isPresent(error)) {
+    if (error !== undefined && error !== null) {
       throw error;
     }
     return result;

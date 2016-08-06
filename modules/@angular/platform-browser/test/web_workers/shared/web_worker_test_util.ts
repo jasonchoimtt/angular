@@ -47,12 +47,12 @@ export function expectBrokerCall(
     handler?: (..._: any[]) => Promise<any>| void): void {
   broker.spy('runOnService').andCallFake((args: UiArguments, returnType: Type) => {
     expect(args.method).toEqual(methodName);
-    if (isPresent(vals)) {
+    if (vals !== undefined && vals !== null) {
       expect(args.args.length).toEqual(vals.length);
       ListWrapper.forEachWithIndex(vals, (v, i) => { expect(v).toEqual(args.args[i].value); });
     }
     var promise: any /** TODO #9100 */ = null;
-    if (isPresent(handler)) {
+    if (handler !== undefined && handler !== null) {
       let givenValues = args.args.map((arg) => arg.value);
       if (givenValues.length > 0) {
         promise = handler(givenValues);

@@ -41,12 +41,12 @@ function declareTests({useJit}: {useJit: boolean}) {
         (tcb: TestComponentBuilder, tpl: string,
          animationEntry: AnimationEntryMetadata | AnimationEntryMetadata[],
          callback: (fixture: any) => void = null, failure: (fixture: any) => void = null) => {
-          var entries = isArray(animationEntry) ? <AnimationEntryMetadata[]>animationEntry :
-                                                  [<AnimationEntryMetadata>animationEntry];
+          var entries = Array.isArray(animationEntry) ? <AnimationEntryMetadata[]>animationEntry :
+                                                        [<AnimationEntryMetadata>animationEntry];
           tcb = tcb.overrideTemplate(DummyIfCmp, tpl);
           tcb = tcb.overrideAnimations(DummyIfCmp, entries);
           var promise = tcb.createAsync(DummyIfCmp).then((root) => { callback(root); });
-          if (isPresent(failure)) {
+          if (failure !== undefined && failure !== null) {
             promise.catch(<any>failure);
           }
           tick();
@@ -252,7 +252,7 @@ function declareTests({useJit}: {useJit: boolean}) {
         var assertPlaying = (player: MockAnimationDriver, isPlaying: any /** TODO #9100 */) => {
           var method = 'play';
           var lastEntry = player.log.length > 0 ? player.log[player.log.length - 1] : null;
-          if (isPresent(lastEntry)) {
+          if (lastEntry !== undefined && lastEntry !== null) {
             if (isPlaying) {
               expect(lastEntry).toEqual(method);
             } else {

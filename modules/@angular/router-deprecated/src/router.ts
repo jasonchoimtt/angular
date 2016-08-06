@@ -83,16 +83,16 @@ export class Router {
    * You probably don't need to use this unless you're writing a reusable component.
    */
   registerPrimaryOutlet(outlet: RouterOutlet): Promise<any> {
-    if (isPresent(outlet.name)) {
+    if (outlet.name !== undefined && outlet.name !== null) {
       throw new BaseException(`registerPrimaryOutlet expects to be called with an unnamed outlet.`);
     }
 
-    if (isPresent(this._outlet)) {
+    if (this._outlet !== undefined && this._outlet !== null) {
       throw new BaseException(`Primary outlet is already registered.`);
     }
 
     this._outlet = outlet;
-    if (isPresent(this.currentInstruction)) {
+    if (this.currentInstruction !== undefined && this.currentInstruction !== null) {
       return this.commit(this.currentInstruction, false);
     }
     return _resolveToTrue;
@@ -104,7 +104,7 @@ export class Router {
    * You probably don't need to use this unless you're writing a custom outlet implementation.
    */
   unregisterPrimaryOutlet(outlet: RouterOutlet): void {
-    if (isPresent(outlet.name)) {
+    if (outlet.name !== undefined && outlet.name !== null) {
       throw new BaseException(`registerPrimaryOutlet expects to be called with an unnamed outlet.`);
     }
     this._outlet = null;
@@ -118,7 +118,7 @@ export class Router {
    */
   registerAuxOutlet(outlet: RouterOutlet): Promise<any> {
     var outletName = outlet.name;
-    if (isBlank(outletName)) {
+    if (outletName === undefined || outletName === null) {
       throw new BaseException(`registerAuxOutlet expects to be called with an outlet with a name.`);
     }
 
@@ -127,10 +127,11 @@ export class Router {
     this._auxRouters.set(outletName, router);
     router._outlet = outlet;
 
-    var auxInstruction: any /** TODO #9100 */;
-    if (isPresent(this.currentInstruction) &&
-        isPresent(auxInstruction = this.currentInstruction.auxInstruction[outletName])) {
-      return router.commit(auxInstruction);
+    if (this.currentInstruction !== undefined && this.currentInstruction !== null) {
+      var auxInstruction = this.currentInstruction.auxInstruction[outletName];
+      if (auxInstruction !== undefined && auxInstruction !== null) {
+        return router.commit(auxInstruction);
+      }
     }
     return _resolveToTrue;
   }
@@ -144,12 +145,13 @@ export class Router {
     var router: Router = this;
     var currentInstruction = this.currentInstruction;
 
-    if (isBlank(currentInstruction)) {
+    if (currentInstruction === undefined || currentInstruction === null) {
       return false;
     }
 
     // `instruction` corresponds to the root router
-    while (isPresent(router.parent) && isPresent(instruction.child)) {
+    while (router.parent !== undefined && router.parent !== null &&
+           instruction.child !== undefined && instruction.child !== null) {
       router = router.parent;
       instruction = instruction.child;
     }
@@ -158,11 +160,12 @@ export class Router {
 
     // check the instructions in depth
     do {
-      if (isBlank(instruction.component) || isBlank(currentInstruction.component) ||
+      if (instruction.component === undefined || instruction.component === null ||
+          currentInstruction.component === undefined || currentInstruction.component === null ||
           currentInstruction.component.routeName != instruction.component.routeName) {
         return false;
       }
-      if (isPresent(instruction.component.params)) {
+      if (instruction.component.params !== undefined && instruction.component.params !== null) {
         StringMapWrapper.forEach(
             instruction.component.params,
             (value: any /** TODO #9100 */, key: any /** TODO #9100 */) => {
@@ -173,11 +176,13 @@ export class Router {
       }
       currentInstruction = currentInstruction.child;
       instruction = instruction.child;
-    } while (isPresent(currentInstruction) && isPresent(instruction) &&
+    } while (currentInstruction !== undefined && currentInstruction !== null &&
+             instruction !== undefined && instruction !== null &&
              !(instruction instanceof DefaultInstruction) && reason);
 
     // ignore DefaultInstruction
-    return reason && (isBlank(instruction) || instruction instanceof DefaultInstruction);
+    return reason && (instruction === undefined || instruction === null ||
+                      instruction instanceof DefaultInstruction);
   }
 
 
@@ -230,7 +235,7 @@ export class Router {
       this.lastNavigationAttempt = url;
       this._startNavigating();
       return this._afterPromiseFinishNavigating(this.recognize(url).then((instruction) => {
-        if (isBlank(instruction)) {
+        if (instruction === undefined || instruction === null) {
           return false;
         }
         return this._navigate(instruction, _skipLocationChange);
@@ -245,7 +250,7 @@ export class Router {
    */
   navigateByInstruction(instruction: Instruction, _skipLocationChange: boolean = false):
       Promise<any> {
-    if (isBlank(instruction)) {
+    if (instruction === undefined || instruction === null) {
       return _resolveToFalse;
     }
     return this._currentNavigation = this._currentNavigation.then((_) => {
@@ -259,11 +264,11 @@ export class Router {
     return instruction.resolveComponent().then((_) => {
       var unsettledInstructions: Array<Promise<any>> = [];
 
-      if (isPresent(instruction.component)) {
+      if (instruction.component !== undefined && instruction.component !== null) {
         instruction.component.reuse = false;
       }
 
-      if (isPresent(instruction.child)) {
+      if (instruction.child !== undefined && instruction.child !== null) {
         unsettledInstructions.push(this._settleInstruction(instruction.child));
       }
 
@@ -313,15 +318,16 @@ export class Router {
    */
   /** @internal */
   _routerCanReuse(instruction: Instruction): Promise<any> {
-    if (isBlank(this._outlet)) {
+    if (this._outlet === undefined || this._outlet === null) {
       return _resolveToFalse;
     }
-    if (isBlank(instruction.component)) {
+    if (instruction.component === undefined || instruction.component === null) {
       return _resolveToTrue;
     }
     return this._outlet.routerCanReuse(instruction.component).then((result) => {
       instruction.component.reuse = result;
-      if (result && isPresent(this._childRouter) && isPresent(instruction.child)) {
+      if (result && this._childRouter !== undefined && this._childRouter !== null &&
+          instruction.child !== undefined && instruction.child !== null) {
         return this._childRouter._routerCanReuse(instruction.child);
       }
     });
@@ -332,17 +338,18 @@ export class Router {
   }
 
   private _routerCanDeactivate(instruction: Instruction): Promise<boolean> {
-    if (isBlank(this._outlet)) {
+    if (this._outlet === undefined || this._outlet === null) {
       return _resolveToTrue;
     }
     var next: Promise<boolean>;
     var childInstruction: Instruction = null;
     var reuse: boolean = false;
     var componentInstruction: ComponentInstruction = null;
-    if (isPresent(instruction)) {
+    if (instruction !== undefined && instruction !== null) {
       childInstruction = instruction.child;
       componentInstruction = instruction.component;
-      reuse = isBlank(instruction.component) || instruction.component.reuse;
+      reuse = instruction.component === undefined || instruction.component === null ||
+          instruction.component.reuse;
     }
     if (reuse) {
       next = _resolveToTrue;
@@ -354,7 +361,7 @@ export class Router {
       if (result == false) {
         return false;
       }
-      if (isPresent(this._childRouter)) {
+      if (this._childRouter !== undefined && this._childRouter !== null) {
         // TODO: ideally, this closure would map to async-await in Dart.
         // For now, casting to any to suppress an error.
         return <any>this._childRouter._routerCanDeactivate(childInstruction);
@@ -370,7 +377,8 @@ export class Router {
     this.currentInstruction = instruction;
 
     var next: Promise<any> = _resolveToTrue;
-    if (isPresent(this._outlet) && isPresent(instruction.component)) {
+    if (this._outlet !== undefined && this._outlet !== null &&
+        instruction.component !== undefined && instruction.component !== null) {
       var componentInstruction = instruction.component;
       if (componentInstruction.reuse) {
         next = this._outlet.reuse(componentInstruction);
@@ -378,9 +386,9 @@ export class Router {
         next =
             this.deactivate(instruction).then((_) => this._outlet.activate(componentInstruction));
       }
-      if (isPresent(instruction.child)) {
+      if (instruction.child !== undefined && instruction.child !== null) {
         next = next.then((_) => {
-          if (isPresent(this._childRouter)) {
+          if (this._childRouter !== undefined && this._childRouter !== null) {
             return this._childRouter.commit(instruction.child);
           }
         });
@@ -389,7 +397,8 @@ export class Router {
 
     var promises: Promise<any>[] = [];
     this._auxRouters.forEach((router, name) => {
-      if (isPresent(instruction.auxInstruction[name])) {
+      if (instruction.auxInstruction[name] !== undefined &&
+          instruction.auxInstruction[name] !== null) {
         promises.push(router.commit(instruction.auxInstruction[name]));
       }
     });
@@ -419,15 +428,15 @@ export class Router {
   deactivate(instruction: Instruction): Promise<any> {
     var childInstruction: Instruction = null;
     var componentInstruction: ComponentInstruction = null;
-    if (isPresent(instruction)) {
+    if (instruction !== undefined && instruction !== null) {
       childInstruction = instruction.child;
       componentInstruction = instruction.component;
     }
     var next: Promise<any> = _resolveToTrue;
-    if (isPresent(this._childRouter)) {
+    if (this._childRouter !== undefined && this._childRouter !== null) {
       next = this._childRouter.deactivate(childInstruction);
     }
-    if (isPresent(this._outlet)) {
+    if (this._outlet !== undefined && this._outlet !== null) {
       next = next.then((_) => this._outlet.deactivate(componentInstruction));
     }
 
@@ -448,7 +457,8 @@ export class Router {
   private _getAncestorInstructions(): Instruction[] {
     var ancestorInstructions: Instruction[] = [this.currentInstruction];
     var ancestorRouter: Router = this;
-    while (isPresent(ancestorRouter = ancestorRouter.parent)) {
+    while ((ancestorRouter = ancestorRouter.parent) ||
+           ancestorRouter !== undefined && ancestorRouter !== null) {
       ancestorInstructions.unshift(ancestorRouter.currentInstruction);
     }
     return ancestorInstructions;
@@ -460,7 +470,7 @@ export class Router {
    * router has yet to successfully navigate.
    */
   renavigate(): Promise<any> {
-    if (isBlank(this.lastNavigationAttempt)) {
+    if (this.lastNavigationAttempt === undefined || this.lastNavigationAttempt === null) {
       return this._currentNavigation;
     }
     return this.navigateByUrl(this.lastNavigationAttempt);
@@ -492,33 +502,36 @@ export class RootRouter extends Router {
     this._locationSub = this._location.subscribe((change) => {
       // we call recognize ourselves
       this.recognize(change['url']).then((instruction) => {
-        if (isPresent(instruction)) {
-          this.navigateByInstruction(instruction, isPresent(change['pop'])).then((_) => {
-            // this is a popstate event; no need to change the URL
-            if (isPresent(change['pop']) && change['type'] != 'hashchange') {
-              return;
-            }
-            var emitPath = instruction.toUrlPath();
-            var emitQuery = instruction.toUrlQuery();
-            if (emitPath.length > 0 && emitPath[0] != '/') {
-              emitPath = '/' + emitPath;
-            }
+        if (instruction !== undefined && instruction !== null) {
+          this.navigateByInstruction(
+                  instruction, change['pop'] !== undefined && change['pop'] !== null)
+              .then((_) => {
+                // this is a popstate event; no need to change the URL
+                if (change['pop'] !== undefined && change['pop'] !== null &&
+                    change['type'] != 'hashchange') {
+                  return;
+                }
+                var emitPath = instruction.toUrlPath();
+                var emitQuery = instruction.toUrlQuery();
+                if (emitPath.length > 0 && emitPath[0] != '/') {
+                  emitPath = '/' + emitPath;
+                }
 
-            // We've opted to use pushstate and popState APIs regardless of whether you
-            // an app uses HashLocationStrategy or PathLocationStrategy.
-            // However, apps that are migrating might have hash links that operate outside
-            // angular to which routing must respond.
-            // Therefore we know that all hashchange events occur outside Angular.
-            // To support these cases where we respond to hashchanges and redirect as a
-            // result, we need to replace the top item on the stack.
-            if (change['type'] == 'hashchange') {
-              if (instruction.toRootUrl() != this._location.path()) {
-                this._location.replaceState(emitPath, emitQuery);
-              }
-            } else {
-              this._location.go(emitPath, emitQuery);
-            }
-          });
+                // We've opted to use pushstate and popState APIs regardless of whether you
+                // an app uses HashLocationStrategy or PathLocationStrategy.
+                // However, apps that are migrating might have hash links that operate outside
+                // angular to which routing must respond.
+                // Therefore we know that all hashchange events occur outside Angular.
+                // To support these cases where we respond to hashchanges and redirect as a
+                // result, we need to replace the top item on the stack.
+                if (change['type'] == 'hashchange') {
+                  if (instruction.toRootUrl() != this._location.path()) {
+                    this._location.replaceState(emitPath, emitQuery);
+                  }
+                } else {
+                  this._location.go(emitPath, emitQuery);
+                }
+              });
         } else {
           this._emitNavigationFail(change['url']);
         }
@@ -549,7 +562,7 @@ export class RootRouter extends Router {
   ngOnDestroy() { this.dispose(); }
 
   dispose(): void {
-    if (isPresent(this._locationSub)) {
+    if (this._locationSub !== undefined && this._locationSub !== null) {
       (<any>this._locationSub).unsubscribe();
       this._locationSub = null;
     }
@@ -579,12 +592,13 @@ class ChildRouter extends Router {
 function canActivateOne(
     nextInstruction: Instruction, prevInstruction: Instruction): Promise<boolean> {
   var next = _resolveToTrue;
-  if (isBlank(nextInstruction.component)) {
+  if (nextInstruction.component === undefined || nextInstruction.component === null) {
     return next;
   }
-  if (isPresent(nextInstruction.child)) {
+  if (nextInstruction.child !== undefined && nextInstruction.child !== null) {
     next = canActivateOne(
-        nextInstruction.child, isPresent(prevInstruction) ? prevInstruction.child : null);
+        nextInstruction.child,
+        prevInstruction !== undefined && prevInstruction !== null ? prevInstruction.child : null);
   }
   return next.then<boolean>((result: boolean): boolean => {
     if (result == false) {
@@ -594,9 +608,11 @@ function canActivateOne(
       return true;
     }
     var hook = getCanActivateHook(nextInstruction.component.componentType);
-    if (isPresent(hook)) {
+    if (hook !== undefined && hook !== null) {
       return hook(
-          nextInstruction.component, isPresent(prevInstruction) ? prevInstruction.component : null);
+          nextInstruction.component, prevInstruction !== undefined && prevInstruction !== null ?
+              prevInstruction.component :
+              null);
     }
     return true;
   });

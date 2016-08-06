@@ -230,7 +230,7 @@ export class RuntimeCompiler implements Compiler {
 
   private _createCompiledHostTemplate(compType: Type): CompiledTemplate {
     var compiledTemplate = this._compiledHostTemplateCache.get(compType);
-    if (isBlank(compiledTemplate)) {
+    if (compiledTemplate === undefined || compiledTemplate === null) {
       var compMeta = this._metadataResolver.getDirectiveMetadata(compType);
       assertComponent(compMeta);
       var hostMeta = createHostComponentMeta(compMeta);
@@ -245,7 +245,7 @@ export class RuntimeCompiler implements Compiler {
   private _createCompiledTemplate(
       compMeta: CompileDirectiveMetadata, ngModule: CompileNgModuleMetadata): CompiledTemplate {
     var compiledTemplate = this._compiledTemplateCache.get(compMeta.type.runtime);
-    if (isBlank(compiledTemplate)) {
+    if (compiledTemplate === undefined || compiledTemplate === null) {
       assertComponent(compMeta);
       compiledTemplate = new CompiledTemplate(
           false, compMeta.selector, compMeta.type, ngModule.transitiveModule.directives,
@@ -421,7 +421,7 @@ class ModuleBoundCompiler implements Compiler, ComponentResolver {
   get _injector(): Injector { return this._delegate.injector; }
 
   resolveComponent(component: Type|string): Promise<ComponentFactory<any>> {
-    if (isString(component)) {
+    if (typeof component === 'string') {
       if (this._parentComponentResolver) {
         return this._parentComponentResolver.resolveComponent(component);
       } else {

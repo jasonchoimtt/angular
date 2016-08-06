@@ -111,8 +111,9 @@ export function main() {
       var reject: (error: any) => void;
       var promise: Promise<any>;
       var ref: SpyChangeDetectorRef;
+      const obj = getDOM();
       // adds longer timers for passing tests in IE
-      var timer = (isPresent(getDOM()) && browserDetection.isIE) ? 50 : 10;
+      var timer = (obj !== undefined && obj !== null && browserDetection.isIE) ? 50 : 10;
 
       beforeEach(() => {
         promise = new Promise((res, rej) => {

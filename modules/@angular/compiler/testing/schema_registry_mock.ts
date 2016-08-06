@@ -18,7 +18,7 @@ export class MockSchemaRegistry implements ElementSchemaRegistry {
 
   hasProperty(tagName: string, property: string, schemas: SchemaMetadata[]): boolean {
     var result = this.existingProperties[property];
-    return isPresent(result) ? result : true;
+    return result !== undefined && result !== null ? result : true;
   }
 
   securityContext(tagName: string, property: string): SecurityContext {
@@ -27,7 +27,7 @@ export class MockSchemaRegistry implements ElementSchemaRegistry {
 
   getMappedPropName(attrName: string): string {
     var result = this.attrPropMapping[attrName];
-    return isPresent(result) ? result : attrName;
+    return result !== undefined && result !== null ? result : attrName;
   }
 
   getDefaultComponentElementName(): string { return 'ng-component'; }

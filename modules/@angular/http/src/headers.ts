@@ -50,7 +50,7 @@ export class Headers {
 
     this._headersMap = new Map<string, string[]>();
 
-    if (isBlank(headers)) {
+    if (headers === undefined || headers === null) {
       return;
     }
 

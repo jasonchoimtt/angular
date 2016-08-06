@@ -39,7 +39,7 @@ export function main() {
     });
 
     function emitStmt(stmt: o.Statement, exportedVars: string[] = null): string {
-      if (isBlank(exportedVars)) {
+      if (exportedVars === undefined || exportedVars === null) {
         exportedVars = [];
       }
       return emitter.emitStatements(someModuleUrl, [stmt], exportedVars);

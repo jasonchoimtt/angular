@@ -26,7 +26,7 @@ export abstract class Body {
    * Attempts to return body as parsed `JSON` object, or raises an exception.
    */
   json(): any {
-    if (isString(this._body)) {
+    if (typeof this._body === 'string') {
       return Json.parse(<string>this._body);
     }
 
@@ -49,7 +49,8 @@ export abstract class Body {
       return String.fromCharCode.apply(null, new Uint16Array(<ArrayBuffer>this._body));
     }
 
-    if (isJsObject(this._body)) {
+    if (this._body !== null &&
+        (typeof this._body === 'function' || typeof this._body === 'object')) {
       return Json.stringify(this._body);
     }
 

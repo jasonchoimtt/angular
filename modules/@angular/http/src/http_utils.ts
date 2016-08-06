@@ -12,7 +12,7 @@ import {isString} from '../src/facade/lang';
 import {RequestMethod} from './enums';
 
 export function normalizeMethodName(method: string | RequestMethod): RequestMethod {
-  if (isString(method)) {
+  if (typeof method === 'string') {
     var originalMethod = method;
     method = (<string>method)
                  .replace(

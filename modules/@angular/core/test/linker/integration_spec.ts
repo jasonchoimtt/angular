@@ -1794,7 +1794,8 @@ function declareTests({useJit}: {useJit: boolean}) {
                      fixture.detectChanges();
 
                      var el = getDOM().querySelector(fixture.debugElement.nativeElement, 'span');
-                     expect(isBlank(el.title) || el.title == '').toBeTruthy();
+                     expect(el.title === undefined || el.title === null || el.title == '')
+                         .toBeTruthy();
 
                      async.done();
 
@@ -2630,7 +2631,7 @@ class SomeImperativeViewport {
   }
 
   set someImpvp(value: boolean) {
-    if (isPresent(this.view)) {
+    if (this.view !== undefined && this.view !== null) {
       this.vc.clear();
       this.view = null;
     }

@@ -45,21 +45,21 @@ export function main() {
 
   function checkInterpolation(exp: string, expected?: string) {
     var ast = parseInterpolation(exp);
-    if (isBlank(expected)) expected = exp;
+    if (expected === undefined || expected === null) expected = exp;
     expect(unparse(ast)).toEqual(expected);
     validate(ast);
   }
 
   function checkBinding(exp: string, expected?: string) {
     var ast = parseBinding(exp);
-    if (isBlank(expected)) expected = exp;
+    if (expected === undefined || expected === null) expected = exp;
     expect(unparse(ast)).toEqual(expected);
     validate(ast);
   }
 
   function checkAction(exp: string, expected?: string) {
     var ast = parseAction(exp);
-    if (isBlank(expected)) expected = exp;
+    if (expected === undefined || expected === null) expected = exp;
     expect(unparse(ast)).toEqual(expected);
     validate(ast);
   }
@@ -313,16 +313,22 @@ export function main() {
       function keyValues(templateBindings: any[]) {
         return templateBindings.map(binding => {
           if (binding.keyIsVar) {
-            return 'let ' + binding.key + (isBlank(binding.name) ? '=null' : '=' + binding.name);
+            return 'let ' + binding.key + (binding.name === undefined || binding.name === null ?
+                                               '=null' :
+                                               '=' + binding.name);
           } else {
-            return binding.key + (isBlank(binding.expression) ? '' : `=${binding.expression}`);
+            return binding.key + (binding.expression === undefined || binding.expression === null ?
+                                      '' :
+                                      `=${binding.expression}`);
           }
         });
       }
 
       function exprSources(templateBindings: any[]) {
         return templateBindings.map(
-            binding => isPresent(binding.expression) ? binding.expression.source : null);
+            binding => binding.expression !== undefined && binding.expression !== null ?
+                binding.expression.source :
+                null);
       }
 
       it('should parse an empty string', () => { expect(parseTemplateBindings('')).toEqual([]); });

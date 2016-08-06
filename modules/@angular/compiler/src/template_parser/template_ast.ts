@@ -82,7 +82,7 @@ export class BoundEventAst implements TemplateAst {
     return visitor.visitEvent(this, context);
   }
   get fullName() {
-    if (isPresent(this.target)) {
+    if (this.target !== undefined && this.target !== null) {
       return `${this.target}:${this.name}`;
     } else {
       return this.name;
@@ -260,7 +260,7 @@ export function templateVisitAll(
   var result: any[] = [];
   asts.forEach(ast => {
     var astResult = ast.visit(visitor, context);
-    if (isPresent(astResult)) {
+    if (astResult !== undefined && astResult !== null) {
       result.push(astResult);
     }
   });

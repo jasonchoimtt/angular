@@ -10,7 +10,8 @@ import {AUTO_STYLE, BaseException} from '@angular/core';
 
 import {AnimationKeyframe, AnimationPlayer, AnimationStyles, NoOpAnimationPlayer} from '../../core_private';
 import {StringMapWrapper} from '../facade/collection';
-import {StringWrapper, isNumber, isBlank, isPresent} from '../facade/lang';
+import {StringWrapper, isBlank, isNumber, isPresent} from '../facade/lang';
+
 import {AnimationDriver} from './animation_driver';
 import {DomAnimatePlayer} from './dom_animate_player';
 import {dashCaseToCamelCase} from './util';
@@ -22,7 +23,8 @@ export class WebAnimationsDriver implements AnimationDriver {
       duration: number, delay: number, easing: string): WebAnimationsPlayer {
     var formattedSteps: {[key: string]: string | number}[] = [];
     var startingStyleLookup: {[key: string]: string | number} = {};
-    if (isPresent(startingStyles) && startingStyles.styles.length > 0) {
+    if (startingStyles !== undefined && startingStyles !== null &&
+        startingStyles.styles.length > 0) {
       startingStyleLookup = _populateStyles(element, startingStyles, {});
       startingStyleLookup['offset'] = 0;
       formattedSteps.push(startingStyleLookup);
@@ -72,7 +74,7 @@ function _populateStyles(
     });
   });
   StringMapWrapper.forEach(defaultStyles, (value: string, prop: string) => {
-    if (isBlank(data[prop])) {
+    if (data[prop] === undefined || data[prop] === null) {
       data[prop] = value;
     }
   });
@@ -83,7 +85,7 @@ function _resolveStyleUnit(
     val: string | number, userProvidedProp: string, formattedProp: string): string {
   var unit = '';
   if (_isPixelDimensionStyle(formattedProp) && val != 0 && val != '0') {
-    if (isNumber(val)) {
+    if (typeof val === 'number') {
       unit = 'px';
     } else if (_findDimensionalSuffix(val.toString()).length == 0) {
       throw new BaseException(

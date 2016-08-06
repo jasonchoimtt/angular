@@ -94,12 +94,12 @@ export class NgPlural {
 
   /** @internal */
   _clearViews() {
-    if (isPresent(this._activeView)) this._activeView.destroy();
+    if (this._activeView !== undefined && this._activeView !== null) this._activeView.destroy();
   }
 
   /** @internal */
   _activateView(view: SwitchView) {
-    if (isBlank(view)) return;
+    if (view === undefined || view === null) return;
     this._activeView = view;
     this._activeView.create();
   }

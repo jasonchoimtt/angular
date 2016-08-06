@@ -80,7 +80,7 @@ export class BrowserGetTestability implements GetTestability {
       return null;
     }
     var t = registry.getTestability(elem);
-    if (isPresent(t)) {
+    if (t !== undefined && t !== null) {
       return t;
     } else if (!findInAncestors) {
       return null;

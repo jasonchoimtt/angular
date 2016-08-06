@@ -21,7 +21,7 @@ export enum TypeModifier {
 
 export abstract class Type {
   constructor(public modifiers: TypeModifier[] = null) {
-    if (isBlank(modifiers)) {
+    if (modifiers === undefined || modifiers === null) {
       this.modifiers = [];
     }
   }
@@ -198,7 +198,7 @@ export class ReadVarExpr extends Expression {
 
   constructor(name: string|BuiltinVar, type: Type = null) {
     super(type);
-    if (isString(name)) {
+    if (typeof name === 'string') {
       this.name = name;
       this.builtin = null;
     } else {
@@ -217,7 +217,7 @@ export class ReadVarExpr extends Expression {
 export class WriteVarExpr extends Expression {
   public value: Expression;
   constructor(public name: string, value: Expression, type: Type = null) {
-    super(isPresent(type) ? type : value.type);
+    super(type !== undefined && type !== null ? type : value.type);
     this.value = value;
   }
 
@@ -235,7 +235,7 @@ export class WriteKeyExpr extends Expression {
   public value: Expression;
   constructor(
       public receiver: Expression, public index: Expression, value: Expression, type: Type = null) {
-    super(isPresent(type) ? type : value.type);
+    super(type !== undefined && type !== null ? type : value.type);
     this.value = value;
   }
   visitExpression(visitor: ExpressionVisitor, context: any): any {
@@ -248,7 +248,7 @@ export class WritePropExpr extends Expression {
   public value: Expression;
   constructor(
       public receiver: Expression, public name: string, value: Expression, type: Type = null) {
-    super(isPresent(type) ? type : value.type);
+    super(type !== undefined && type !== null ? type : value.type);
     this.value = value;
   }
   visitExpression(visitor: ExpressionVisitor, context: any): any {
@@ -269,7 +269,7 @@ export class InvokeMethodExpr extends Expression {
       public receiver: Expression, method: string|BuiltinMethod, public args: Expression[],
       type: Type = null) {
     super(type);
-    if (isString(method)) {
+    if (typeof method === 'string') {
       this.name = method;
       this.builtin = null;
     } else {
@@ -324,7 +324,7 @@ export class ConditionalExpr extends Expression {
   constructor(
       public condition: Expression, trueCase: Expression, public falseCase: Expression = null,
       type: Type = null) {
-    super(isPresent(type) ? type : trueCase.type);
+    super(type !== undefined && type !== null ? type : trueCase.type);
     this.trueCase = trueCase;
   }
   visitExpression(visitor: ExpressionVisitor, context: any): any {
@@ -371,7 +371,7 @@ export class BinaryOperatorExpr extends Expression {
   public lhs: Expression;
   constructor(
       public operator: BinaryOperator, lhs: Expression, public rhs: Expression, type: Type = null) {
-    super(isPresent(type) ? type : lhs.type);
+    super(type !== undefined && type !== null ? type : lhs.type);
     this.lhs = lhs;
   }
   visitExpression(visitor: ExpressionVisitor, context: any): any {
@@ -420,7 +420,7 @@ export class LiteralMapExpr extends Expression {
   public valueType: Type = null;
   constructor(public entries: Array<Array<string|Expression>>, type: MapType = null) {
     super(type);
-    if (isPresent(type)) {
+    if (type !== undefined && type !== null) {
       this.valueType = type.valueType;
     }
   }
@@ -464,7 +464,7 @@ export enum StmtModifier {
 
 export abstract class Statement {
   constructor(public modifiers: StmtModifier[] = null) {
-    if (isBlank(modifiers)) {
+    if (modifiers === undefined || modifiers === null) {
       this.modifiers = [];
     }
   }
@@ -481,7 +481,7 @@ export class DeclareVarStmt extends Statement {
       public name: string, public value: Expression, type: Type = null,
       modifiers: StmtModifier[] = null) {
     super(modifiers);
-    this.type = isPresent(type) ? type : value.type;
+    this.type = type !== undefined && type !== null ? type : value.type;
   }
 
   visitStatement(visitor: StatementVisitor, context: any): any {
@@ -519,7 +519,7 @@ export class ReturnStatement extends Statement {
 
 export class AbstractClassPart {
   constructor(public type: Type = null, public modifiers: StmtModifier[]) {
-    if (isBlank(modifiers)) {
+    if (modifiers === undefined || modifiers === null) {
       this.modifiers = [];
     }
   }
@@ -627,7 +627,7 @@ export class ExpressionTransformer implements StatementVisitor, ExpressionVisito
         expr.value.visitExpression(this, context));
   }
   visitInvokeMethodExpr(ast: InvokeMethodExpr, context: any): any {
-    var method = isPresent(ast.builtin) ? ast.builtin : ast.name;
+    var method = ast.builtin !== undefined && ast.builtin !== null ? ast.builtin : ast.name;
     return new InvokeMethodExpr(
         ast.receiver.visitExpression(this, context), method,
         this.visitAllExpressions(ast.args, context), ast.type);
@@ -876,7 +876,7 @@ export function importExpr(id: CompileIdentifierMetadata, typeParams: Type[] = n
 export function importType(
     id: CompileIdentifierMetadata, typeParams: Type[] = null,
     typeModifiers: TypeModifier[] = null): ExternalType {
-  return isPresent(id) ? new ExternalType(id, typeParams, typeModifiers) : null;
+  return id !== undefined && id !== null ? new ExternalType(id, typeParams, typeModifiers) : null;
 }
 
 export function literalArr(values: Expression[], type: Type = null): LiteralArrayExpr {

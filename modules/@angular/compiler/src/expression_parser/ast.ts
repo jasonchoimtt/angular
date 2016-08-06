@@ -196,7 +196,7 @@ export class ASTWithSource extends AST {
   constructor(
       public ast: AST, public source: string, public location: string,
       public errors: ParserError[]) {
-    super(new ParseSpan(0, isBlank(source) ? 0 : source.length));
+    super(new ParseSpan(0, source === undefined || source === null ? 0 : source.length));
   }
   visit(visitor: AstVisitor, context: any = null): any { return this.ast.visit(visitor, context); }
   toString(): string { return `${this.source} in ${this.location}`; }

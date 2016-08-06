@@ -135,40 +135,5 @@ export function main() {
       });
     });
 
-    describe('resolveEnumToken', () => {
-      it('should resolve a token given an enum and index values', () => {
-        var token = UsefulEnum.MyToken;
-        expect(resolveEnumToken(UsefulEnum, token)).toEqual('MyToken');
-
-        token = UsefulEnum.MyOtherToken;
-        expect(resolveEnumToken(UsefulEnum, token)).toEqual('MyOtherToken');
-      });
-    });
-
-    describe('hasConstructor', () => {
-      it('should be true when the type matches',
-         () => { expect(hasConstructor(new MySuperclass(), MySuperclass)).toEqual(true); });
-
-      it('should be false for subtypes',
-         () => { expect(hasConstructor(new MySubclass(), MySuperclass)).toEqual(false); });
-    });
-  });
-  describe('isPromise', () => {
-    it('should be true for native Promises',
-       () => expect(isPromise(Promise.resolve(true))).toEqual(true));
-
-    it('should be true for thenables',
-       () => expect(isPromise({then: function() {}})).toEqual(true));
-
-    it('should be false if "then" is not a function',
-       () => expect(isPromise({then: 0})).toEqual(false));
-
-    it('should be false if the argument has no "then" function',
-       () => expect(isPromise({})).toEqual(false));
-
-    it('should be false if the argument is undefined or null', () => {
-      expect(isPromise(undefined)).toEqual(false);
-      expect(isPromise(null)).toEqual(false);
-    });
   });
 }

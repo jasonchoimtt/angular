@@ -245,7 +245,7 @@ class _Scanner {
       this.advance();
       str += two;
     }
-    if (isPresent(threeCode) && this.peek == threeCode) {
+    if (threeCode !== undefined && threeCode !== null && this.peek == threeCode) {
       this.advance();
       str += three;
     }

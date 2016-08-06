@@ -22,8 +22,8 @@ import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 @Pipe({name: 'uppercase'})
 export class UpperCasePipe implements PipeTransform {
   transform(value: string): string {
-    if (isBlank(value)) return value;
-    if (!isString(value)) {
+    if (value === undefined || value === null) return value;
+    if (!(typeof value === 'string')) {
       throw new InvalidPipeArgumentException(UpperCasePipe, value);
     }
     return value.toUpperCase();

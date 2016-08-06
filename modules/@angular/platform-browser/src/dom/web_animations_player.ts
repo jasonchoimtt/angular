@@ -34,7 +34,7 @@ export class WebAnimationsPlayer implements AnimationPlayer {
   private _onFinish() {
     if (!this._finished) {
       this._finished = true;
-      if (isBlank(this.parentPlayer)) {
+      if (this.parentPlayer === undefined || this.parentPlayer === null) {
         this.destroy();
       }
       this._subscriptions.forEach(fn => fn());

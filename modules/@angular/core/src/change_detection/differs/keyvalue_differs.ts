@@ -41,7 +41,7 @@ export class KeyValueDiffers {
   constructor(public factories: KeyValueDifferFactory[]) {}
 
   static create(factories: KeyValueDifferFactory[], parent?: KeyValueDiffers): KeyValueDiffers {
-    if (isPresent(parent)) {
+    if (parent !== undefined && parent !== null) {
       var copied = ListWrapper.clone(parent.factories);
       factories = factories.concat(copied);
       return new KeyValueDiffers(factories);
@@ -72,7 +72,7 @@ export class KeyValueDiffers {
   static extend(factories: KeyValueDifferFactory[]): Provider {
     return new Provider(KeyValueDiffers, {
       useFactory: (parent: KeyValueDiffers) => {
-        if (isBlank(parent)) {
+        if (parent === undefined || parent === null) {
           // Typically would occur when calling KeyValueDiffers.extend inside of dependencies passed
           // to
           // bootstrap(), which would override default pipes instead of extending them.
@@ -87,7 +87,7 @@ export class KeyValueDiffers {
 
   find(kv: Object): KeyValueDifferFactory {
     var factory = this.factories.find(f => f.supports(kv));
-    if (isPresent(factory)) {
+    if (factory !== undefined && factory !== null) {
       return factory;
     } else {
       throw new BaseException(`Cannot find a differ supporting object '${kv}'`);

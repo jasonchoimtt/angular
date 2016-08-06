@@ -56,7 +56,7 @@ function addTarget(e: Event, serializedEvent: {[key: string]: any}): {[key: stri
   if (NODES_WITH_VALUE.has((<HTMLElement>e.target).tagName.toLowerCase())) {
     var target = <HTMLInputElement>e.target;
     serializedEvent['target'] = {'value': target.value};
-    if (isPresent(target.files)) {
+    if (target.files !== undefined && target.files !== null) {
       serializedEvent['target']['files'] = target.files;
     }
   }

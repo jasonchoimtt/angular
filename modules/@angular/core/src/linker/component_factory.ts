@@ -100,7 +100,7 @@ export class ComponentFactory<C> {
       injector: Injector, projectableNodes: any[][] = null,
       rootSelectorOrNode: string|any = null): ComponentRef<C> {
     var vu: ViewUtils = injector.get(ViewUtils);
-    if (isBlank(projectableNodes)) {
+    if (projectableNodes === undefined || projectableNodes === null) {
       projectableNodes = [];
     }
     // Note: Host views don't need a declarationAppElement!
