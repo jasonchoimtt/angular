@@ -35,9 +35,8 @@ export function controlPath(name: string, parent: ControlContainer): string[] {
 }
 
 export function setUpControl(control: FormControl, dir: NgControl): void {
-  if (control === undefined || control === null) _throwError(dir, 'Cannot find control with');
-  if (dir.valueAccessor === undefined || dir.valueAccessor === null)
-    _throwError(dir, 'No value accessor for form control with');
+  if (!control) _throwError(dir, 'Cannot find control with');
+  if (!dir.valueAccessor) _throwError(dir, 'No value accessor for form control with');
 
   control.validator = Validators.compose([control.validator, dir.validator]);
   control.asyncValidator = Validators.composeAsync([control.asyncValidator, dir.asyncValidator]);
@@ -82,16 +81,12 @@ function _throwError(dir: AbstractControlDirective, message: string): void {
 }
 
 export function composeValidators(validators: /* Array<Validator|Function> */ any[]): ValidatorFn {
-  return validators !== undefined && validators !== null ?
-      Validators.compose(validators.map(normalizeValidator)) :
-      null;
+  return validators ? Validators.compose(validators.map(normalizeValidator)) : null;
 }
 
 export function composeAsyncValidators(validators: /* Array<Validator|Function> */ any[]):
     AsyncValidatorFn {
-  return validators !== undefined && validators !== null ?
-      Validators.composeAsync(validators.map(normalizeAsyncValidator)) :
-      null;
+  return validators ? Validators.composeAsync(validators.map(normalizeAsyncValidator)) : null;
 }
 
 export function isPropertyUpdated(changes: {[key: string]: any}, viewModel: any): boolean {
@@ -105,7 +100,7 @@ export function isPropertyUpdated(changes: {[key: string]: any}, viewModel: any)
 // TODO: vsavkin remove it once https://github.com/angular/angular/issues/3011 is implemented
 export function selectValueAccessor(
     dir: NgControl, valueAccessors: ControlValueAccessor[]): ControlValueAccessor {
-  if (valueAccessors === undefined || valueAccessors === null) return null;
+  if (!valueAccessors) return null;
 
   var defaultAccessor: ControlValueAccessor;
   var builtinAccessor: ControlValueAccessor;
@@ -119,20 +114,20 @@ export function selectValueAccessor(
         v.constructor === SelectControlValueAccessor ||
         v.constructor === SelectMultipleControlValueAccessor ||
         v.constructor === RadioControlValueAccessor) {
-      if (builtinAccessor !== undefined && builtinAccessor !== null)
+      if (builtinAccessor)
         _throwError(dir, 'More than one built-in value accessor matches form control with');
       builtinAccessor = v;
 
     } else {
-      if (customAccessor !== undefined && customAccessor !== null)
+      if (customAccessor)
         _throwError(dir, 'More than one custom value accessor matches form control with');
       customAccessor = v;
     }
   });
 
-  if (customAccessor !== undefined && customAccessor !== null) return customAccessor;
-  if (builtinAccessor !== undefined && builtinAccessor !== null) return builtinAccessor;
-  if (defaultAccessor !== undefined && defaultAccessor !== null) return defaultAccessor;
+  if (customAccessor) return customAccessor;
+  if (builtinAccessor) return builtinAccessor;
+  if (defaultAccessor) return defaultAccessor;
 
   _throwError(dir, 'No valid value accessor for form control with');
   return null;

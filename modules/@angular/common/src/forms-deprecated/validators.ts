@@ -71,7 +71,7 @@ export class Validators {
   static minLength(minLength: number): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} => {
       const obj = Validators.required(control);
-      if (obj !== undefined && obj !== null) return null;
+      if (obj) return null;
       var v: string = control.value;
       return v.length < minLength ?
           {'minlength': {'requiredLength': minLength, 'actualLength': v.length}} :
@@ -85,7 +85,7 @@ export class Validators {
   static maxLength(maxLength: number): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} => {
       const obj = Validators.required(control);
-      if (obj !== undefined && obj !== null) return null;
+      if (obj) return null;
       var v: string = control.value;
       return v.length > maxLength ?
           {'maxlength': {'requiredLength': maxLength, 'actualLength': v.length}} :
@@ -99,7 +99,7 @@ export class Validators {
   static pattern(pattern: string): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} => {
       const obj = Validators.required(control);
-      if (obj !== undefined && obj !== null) return null;
+      if (obj) return null;
       let regex = new RegExp(`^${pattern}$`);
       let v: string = control.value;
       return regex.test(v) ? null :
@@ -117,7 +117,7 @@ export class Validators {
    * of the individual error maps.
    */
   static compose(validators: ValidatorFn[]): ValidatorFn {
-    if (validators === undefined || validators === null) return null;
+    if (!validators) return null;
     var presentValidators = validators.filter(isPresent);
     if (presentValidators.length == 0) return null;
 
@@ -127,7 +127,7 @@ export class Validators {
   }
 
   static composeAsync(validators: AsyncValidatorFn[]): AsyncValidatorFn {
-    if (validators === undefined || validators === null) return null;
+    if (!validators) return null;
     var presentValidators = validators.filter(isPresent);
     if (presentValidators.length == 0) return null;
 
@@ -155,7 +155,7 @@ function _executeAsyncValidators(control: AbstractControl, validators: AsyncVali
 function _mergeErrors(arrayOfErrors: any[]): {[key: string]: any} {
   var res: {[key: string]: any} =
       arrayOfErrors.reduce((res: {[key: string]: any}, errors: {[key: string]: any}) => {
-        return errors !== undefined && errors !== null ? StringMapWrapper.merge(res, errors) : res;
+        return errors ? StringMapWrapper.merge(res, errors) : res;
       }, {});
   return StringMapWrapper.isEmpty(res) ? null : res;
 }

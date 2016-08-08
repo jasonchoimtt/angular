@@ -71,7 +71,7 @@ export abstract class AppView<T> {
       this.animationPlayers.findAllPlayersByElement(element).forEach(player => player.destroy());
     } else {
       var player = this.animationPlayers.find(element, animationName);
-      if (player !== undefined && player !== null) {
+      if (player) {
         player.destroy();
       }
     }
@@ -166,7 +166,7 @@ export abstract class AppView<T> {
   destroy() {
     if (this._hasExternalHostElement) {
       this.renderer.detachView(this.flatRootNodes);
-    } else if (this.viewContainerElement !== undefined && this.viewContainerElement !== null) {
+    } else if (this.viewContainerElement) {
       this.viewContainerElement.detachView(this.viewContainerElement.nestedViews.indexOf(this));
     }
     this._destroyRecurse();
@@ -232,9 +232,7 @@ export abstract class AppView<T> {
   get changeDetectorRef(): ChangeDetectorRef { return this.ref; }
 
   get parent(): AppView<any> {
-    return this.declarationAppElement !== undefined && this.declarationAppElement !== null ?
-        this.declarationAppElement.parentView :
-        null;
+    return this.declarationAppElement ? this.declarationAppElement.parentView : null;
   }
 
   get flatRootNodes(): any[] { return flattenNestedViewRenderNodes(this.rootNodesOrAppElements); }
@@ -308,13 +306,13 @@ export abstract class AppView<T> {
 
   markPathToRootAsCheckOnce(): void {
     let c: AppView<any> = this;
-    while (c !== undefined && c !== null && c.cdMode !== ChangeDetectorStatus.Detached) {
+    while (c && c.cdMode !== ChangeDetectorStatus.Detached) {
       if (c.cdMode === ChangeDetectorStatus.Checked) {
         c.cdMode = ChangeDetectorStatus.CheckOnce;
       }
       let parentEl =
           c.type === ViewType.COMPONENT ? c.declarationAppElement : c.viewContainerElement;
-      c = parentEl !== undefined && parentEl !== null ? parentEl.parentView : null;
+      c = parentEl ? parentEl.parentView : null;
     }
   }
 
@@ -395,7 +393,7 @@ export class DebugAppView<T> extends AppView<T> {
       if (!(e instanceof ExpressionChangedAfterItHasBeenCheckedException)) {
         this.cdMode = ChangeDetectorStatus.Errored;
       }
-      if (this._currentDebugContext !== undefined && this._currentDebugContext !== null) {
+      if (this._currentDebugContext) {
         throw new ViewWrappedException(e, stack, this._currentDebugContext);
       }
     }
@@ -420,7 +418,7 @@ function _findLastRenderNode(node: any): any {
   if (node instanceof AppElement) {
     var appEl = <AppElement>node;
     lastNode = appEl.nativeElement;
-    if (appEl.nestedViews !== undefined && appEl.nestedViews !== null) {
+    if (appEl.nestedViews) {
       // Note: Views might have no root nodes at all!
       for (var i = appEl.nestedViews.length - 1; i >= 0; i--) {
         var nestedView = appEl.nestedViews[i];

@@ -190,7 +190,7 @@ export class MockDirectiveResolver extends DirectiveResolver {
 }
 
 function flattenArray(tree: any[], out: Array<Type|any[]>): void {
-  if (tree === undefined || tree === null) return;
+  if (!tree) return;
   for (var i = 0; i < tree.length; i++) {
     var item = resolveForwardRef(tree[i]);
     if (Array.isArray(item)) {

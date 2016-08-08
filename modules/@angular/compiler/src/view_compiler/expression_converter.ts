@@ -213,7 +213,7 @@ class _AstToIrVisitor implements cdAst.AstVisitor {
       let receiver = this.visit(ast.receiver, _Mode.Expression);
       if (receiver === this._implicitReceiver) {
         var varExpr = this._nameResolver.getLocal(ast.name);
-        if (varExpr !== undefined && varExpr !== null) {
+        if (varExpr) {
           result = varExpr.callFn(args);
         }
       }
@@ -249,7 +249,7 @@ class _AstToIrVisitor implements cdAst.AstVisitor {
     let receiver: o.Expression = this.visit(ast.receiver, _Mode.Expression);
     if (receiver === this._implicitReceiver) {
       var varExpr = this._nameResolver.getLocal(ast.name);
-      if (varExpr !== undefined && varExpr !== null) {
+      if (varExpr) {
         throw new BaseException('Cannot assign to a reference or variable!');
       }
     }

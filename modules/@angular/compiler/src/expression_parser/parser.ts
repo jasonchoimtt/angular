@@ -74,7 +74,7 @@ export class Parser {
     // our lexer or parser for that, so we check for that ahead of time.
     var quote = this._parseQuote(input, location);
 
-    if (quote !== undefined && quote !== null) {
+    if (quote) {
       return quote;
     }
 

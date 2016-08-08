@@ -21,33 +21,19 @@ import {AbstractControl} from '../model';
 export abstract class AbstractControlDirective {
   get control(): AbstractControl { return unimplemented(); }
 
-  get value(): any {
-    return this.control !== undefined && this.control !== null ? this.control.value : null;
-  }
+  get value(): any { return this.control ? this.control.value : null; }
 
-  get valid(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.valid : null;
-  }
+  get valid(): boolean { return this.control ? this.control.valid : null; }
 
-  get errors(): {[key: string]: any} {
-    return this.control !== undefined && this.control !== null ? this.control.errors : null;
-  }
+  get errors(): {[key: string]: any} { return this.control ? this.control.errors : null; }
 
-  get pristine(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.pristine : null;
-  }
+  get pristine(): boolean { return this.control ? this.control.pristine : null; }
 
-  get dirty(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.dirty : null;
-  }
+  get dirty(): boolean { return this.control ? this.control.dirty : null; }
 
-  get touched(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.touched : null;
-  }
+  get touched(): boolean { return this.control ? this.control.touched : null; }
 
-  get untouched(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.untouched : null;
-  }
+  get untouched(): boolean { return this.control ? this.control.untouched : null; }
 
   get path(): string[] { return null; }
 }

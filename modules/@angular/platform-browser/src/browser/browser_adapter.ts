@@ -405,8 +405,8 @@ export class BrowserDomAdapter extends GenericBrowserDomAdapter {
   performanceNow(): number {
     // performance.now() is not available in all browsers, see
     // http://caniuse.com/#search=performance.now
-    if (window.performance !== undefined && window.performance !== null &&
-        window.performance.now !== undefined && window.performance.now !== null) {
+    if (window.performance && window.performance.now !== undefined &&
+        window.performance.now !== null) {
       return window.performance.now();
     } else {
       return DateWrapper.toMillis(DateWrapper.now());

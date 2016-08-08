@@ -18,7 +18,7 @@ export function interpretStatements(statements: o.Statement[], resultVar: string
   var ctx = new _ExecutionContext(null, null, null, new Map<string, any>());
   var visitor = new StatementInterpreter();
   var result = visitor.visitAllStatements(stmtsWithReturn, ctx);
-  return result !== undefined && result !== null ? result.value : null;
+  return result ? result.value : null;
 }
 
 function _executeFunctionStatements(
@@ -29,7 +29,7 @@ function _executeFunctionStatements(
     childCtx.vars.set(varNames[i], varValues[i]);
   }
   var result = visitor.visitAllStatements(statements, childCtx);
-  return result !== undefined && result !== null ? result.value : null;
+  return result ? result.value : null;
 }
 
 class _ExecutionContext {
@@ -195,7 +195,7 @@ class StatementInterpreter implements o.StatementVisitor, o.ExpressionVisitor {
     var condition = stmt.condition.visitExpression(this, ctx);
     if (condition) {
       return this.visitAllStatements(stmt.trueCase, ctx);
-    } else if (stmt.falseCase !== undefined && stmt.falseCase !== null) {
+    } else if (stmt.falseCase) {
       return this.visitAllStatements(stmt.falseCase, ctx);
     }
     return null;
@@ -224,7 +224,7 @@ class StatementInterpreter implements o.StatementVisitor, o.ExpressionVisitor {
   visitConditionalExpr(ast: o.ConditionalExpr, ctx: _ExecutionContext): any {
     if (ast.condition.visitExpression(this, ctx)) {
       return ast.trueCase.visitExpression(this, ctx);
-    } else if (ast.falseCase !== undefined && ast.falseCase !== null) {
+    } else if (ast.falseCase) {
       return ast.falseCase.visitExpression(this, ctx);
     }
     return null;

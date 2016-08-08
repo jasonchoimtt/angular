@@ -141,7 +141,7 @@ export class NgSelectMultipleOption implements OnDestroy {
   constructor(
       private _element: ElementRef, private _renderer: Renderer,
       @Optional() @Host() private _select: SelectMultipleControlValueAccessor) {
-    if (this._select !== undefined && this._select !== null) {
+    if (this._select) {
       this.id = this._select._registerOption(this);
     }
   }
@@ -156,7 +156,7 @@ export class NgSelectMultipleOption implements OnDestroy {
 
   @Input('value')
   set value(value: any) {
-    if (this._select !== undefined && this._select !== null) {
+    if (this._select) {
       this._value = value;
       this._setElementValue(_buildValueString(this.id, value));
       this._select.writeValue(this._select.value);
@@ -176,7 +176,7 @@ export class NgSelectMultipleOption implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this._select !== undefined && this._select !== null) {
+    if (this._select) {
       this._select._optionMap.delete(this.id);
       this._select.writeValue(this._select.value);
     }

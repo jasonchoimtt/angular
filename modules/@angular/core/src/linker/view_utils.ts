@@ -58,7 +58,7 @@ function _flattenNestedViewRenderNodes(nodes: any[], renderNodes: any[]): any[] 
     if (node instanceof AppElement) {
       var appEl = <AppElement>node;
       renderNodes.push(appEl.nativeElement);
-      if (appEl.nestedViews !== undefined && appEl.nestedViews !== null) {
+      if (appEl.nestedViews) {
         for (var k = 0; k < appEl.nestedViews.length; k++) {
           _flattenNestedViewRenderNodes(appEl.nestedViews[k].rootNodesOrAppElements, renderNodes);
         }
@@ -74,7 +74,7 @@ const EMPTY_ARR: any[] = [];
 
 export function ensureSlotCount(projectableNodes: any[][], expectedSlotCount: number): any[][] {
   var res: any[][];
-  if (projectableNodes === undefined || projectableNodes === null) {
+  if (!projectableNodes) {
     res = EMPTY_ARR;
   } else if (projectableNodes.length < expectedSlotCount) {
     var givenSlotCount = projectableNodes.length;

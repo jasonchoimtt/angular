@@ -149,16 +149,14 @@ class _InjectorBuilder {
 
   private _getProviderValue(provider: CompileProviderMetadata): o.Expression {
     var result: o.Expression;
-    if (provider.useExisting !== undefined && provider.useExisting !== null) {
+    if (provider.useExisting) {
       result = this._getDependency(new CompileDiDependencyMetadata({token: provider.useExisting}));
-    } else if (provider.useFactory !== undefined && provider.useFactory !== null) {
-      var deps = provider.deps !== undefined && provider.deps !== null ? provider.deps :
-                                                                         provider.useFactory.diDeps;
+    } else if (provider.useFactory) {
+      var deps = provider.deps ? provider.deps : provider.useFactory.diDeps;
       var depsExpr = deps.map((dep) => this._getDependency(dep));
       result = o.importExpr(provider.useFactory).callFn(depsExpr);
-    } else if (provider.useClass !== undefined && provider.useClass !== null) {
-      var deps = provider.deps !== undefined && provider.deps !== null ? provider.deps :
-                                                                         provider.useClass.diDeps;
+    } else if (provider.useClass) {
+      var deps = provider.deps ? provider.deps : provider.useClass.diDeps;
       var depsExpr = deps.map((dep) => this._getDependency(dep));
       result =
           o.importExpr(provider.useClass).instantiate(depsExpr, o.importType(provider.useClass));
@@ -181,7 +179,7 @@ class _InjectorBuilder {
       resolvedProviderValueExpr = providerValueExpressions[0];
       type = providerValueExpressions[0].type;
     }
-    if (type === undefined || type === null) {
+    if (!type) {
       type = o.DYNAMIC_TYPE;
     }
     if (isEager) {
@@ -213,11 +211,11 @@ class _InjectorBuilder {
            dep.token.equalsTo(identifierToken(Identifiers.ComponentFactoryResolver)))) {
         result = o.THIS_EXPR;
       }
-      if (result === undefined || result === null) {
+      if (!result) {
         result = this._instances.get(dep.token);
       }
     }
-    if (result === undefined || result === null) {
+    if (!result) {
       var args = [createDiTokenExpression(dep.token)];
       if (dep.isOptional) {
         args.push(o.NULL_EXPR);

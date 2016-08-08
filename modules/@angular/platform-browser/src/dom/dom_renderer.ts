@@ -98,7 +98,7 @@ export class DomRenderer implements Renderer {
     if (this._contentAttr !== undefined && this._contentAttr !== null) {
       getDOM().setAttribute(el, this._contentAttr, '');
     }
-    if (parent !== undefined && parent !== null) {
+    if (parent) {
       getDOM().appendChild(parent, el);
     }
     return el;
@@ -242,7 +242,7 @@ function moveNodesAfterSibling(sibling: any /** TODO #9100 */, nodes: any /** TO
   var parent = getDOM().parentElement(sibling);
   if (nodes.length > 0 && parent !== undefined && parent !== null) {
     var nextSibling = getDOM().nextSibling(sibling);
-    if (nextSibling !== undefined && nextSibling !== null) {
+    if (nextSibling) {
       for (var i = 0; i < nodes.length; i++) {
         getDOM().insertBefore(nextSibling, nodes[i]);
       }

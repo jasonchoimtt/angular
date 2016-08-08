@@ -320,7 +320,7 @@ class _AnimationBuilder implements AnimationAstVisitor {
     StringMapWrapper.forEach(
         context.stateMap.states, (value: {[key: string]: string}, stateName: string) => {
           var variableValue = EMPTY_MAP;
-          if (value !== undefined && value !== null) {
+          if (value) {
             let styleMap: any[] = [];
             StringMapWrapper.forEach(value, (value: string, key: string) => {
               styleMap.push([key, o.literal(value)]);
@@ -347,7 +347,7 @@ class _AnimationBuilderStateMap {
   get states() { return this._states; }
   registerState(name: string, value: {[prop: string]: string | number} = null): void {
     var existingEntry = this._states[name];
-    if (existingEntry === undefined || existingEntry === null) {
+    if (!existingEntry) {
       this._states[name] = value;
     }
   }

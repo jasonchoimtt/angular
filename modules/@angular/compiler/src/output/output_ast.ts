@@ -21,7 +21,7 @@ export enum TypeModifier {
 
 export abstract class Type {
   constructor(public modifiers: TypeModifier[] = null) {
-    if (modifiers === undefined || modifiers === null) {
+    if (!modifiers) {
       this.modifiers = [];
     }
   }
@@ -217,7 +217,7 @@ export class ReadVarExpr extends Expression {
 export class WriteVarExpr extends Expression {
   public value: Expression;
   constructor(public name: string, value: Expression, type: Type = null) {
-    super(type !== undefined && type !== null ? type : value.type);
+    super(type ? type : value.type);
     this.value = value;
   }
 
@@ -235,7 +235,7 @@ export class WriteKeyExpr extends Expression {
   public value: Expression;
   constructor(
       public receiver: Expression, public index: Expression, value: Expression, type: Type = null) {
-    super(type !== undefined && type !== null ? type : value.type);
+    super(type ? type : value.type);
     this.value = value;
   }
   visitExpression(visitor: ExpressionVisitor, context: any): any {
@@ -248,7 +248,7 @@ export class WritePropExpr extends Expression {
   public value: Expression;
   constructor(
       public receiver: Expression, public name: string, value: Expression, type: Type = null) {
-    super(type !== undefined && type !== null ? type : value.type);
+    super(type ? type : value.type);
     this.value = value;
   }
   visitExpression(visitor: ExpressionVisitor, context: any): any {
@@ -324,7 +324,7 @@ export class ConditionalExpr extends Expression {
   constructor(
       public condition: Expression, trueCase: Expression, public falseCase: Expression = null,
       type: Type = null) {
-    super(type !== undefined && type !== null ? type : trueCase.type);
+    super(type ? type : trueCase.type);
     this.trueCase = trueCase;
   }
   visitExpression(visitor: ExpressionVisitor, context: any): any {
@@ -371,7 +371,7 @@ export class BinaryOperatorExpr extends Expression {
   public lhs: Expression;
   constructor(
       public operator: BinaryOperator, lhs: Expression, public rhs: Expression, type: Type = null) {
-    super(type !== undefined && type !== null ? type : lhs.type);
+    super(type ? type : lhs.type);
     this.lhs = lhs;
   }
   visitExpression(visitor: ExpressionVisitor, context: any): any {
@@ -420,7 +420,7 @@ export class LiteralMapExpr extends Expression {
   public valueType: Type = null;
   constructor(public entries: Array<Array<string|Expression>>, type: MapType = null) {
     super(type);
-    if (type !== undefined && type !== null) {
+    if (type) {
       this.valueType = type.valueType;
     }
   }
@@ -464,7 +464,7 @@ export enum StmtModifier {
 
 export abstract class Statement {
   constructor(public modifiers: StmtModifier[] = null) {
-    if (modifiers === undefined || modifiers === null) {
+    if (!modifiers) {
       this.modifiers = [];
     }
   }
@@ -481,7 +481,7 @@ export class DeclareVarStmt extends Statement {
       public name: string, public value: Expression, type: Type = null,
       modifiers: StmtModifier[] = null) {
     super(modifiers);
-    this.type = type !== undefined && type !== null ? type : value.type;
+    this.type = type ? type : value.type;
   }
 
   visitStatement(visitor: StatementVisitor, context: any): any {
@@ -519,7 +519,7 @@ export class ReturnStatement extends Statement {
 
 export class AbstractClassPart {
   constructor(public type: Type = null, public modifiers: StmtModifier[]) {
-    if (modifiers === undefined || modifiers === null) {
+    if (!modifiers) {
       this.modifiers = [];
     }
   }
@@ -876,7 +876,7 @@ export function importExpr(id: CompileIdentifierMetadata, typeParams: Type[] = n
 export function importType(
     id: CompileIdentifierMetadata, typeParams: Type[] = null,
     typeModifiers: TypeModifier[] = null): ExternalType {
-  return id !== undefined && id !== null ? new ExternalType(id, typeParams, typeModifiers) : null;
+  return id ? new ExternalType(id, typeParams, typeModifiers) : null;
 }
 
 export function literalArr(values: Expression[], type: Type = null): LiteralArrayExpr {

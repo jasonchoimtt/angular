@@ -232,7 +232,7 @@ export class MockBackend implements ConnectionBackend {
    * against the framework itself, not by end-users.
    */
   createConnection(req: Request): MockConnection {
-    if (req === undefined || req === null || !(req instanceof Request)) {
+    if (!req || !(req instanceof Request)) {
       throw new BaseException(`createConnection requires an instance of Request, got ${req}`);
     }
     let connection = new MockConnection(req);

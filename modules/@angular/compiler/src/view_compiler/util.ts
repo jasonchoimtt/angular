@@ -85,7 +85,7 @@ export function createPureProxy(
   view.fields.push(new o.ClassField(pureProxyProp.name, null));
   var pureProxyId =
       argCount < Identifiers.pureProxies.length ? Identifiers.pureProxies[argCount] : null;
-  if (pureProxyId === undefined || pureProxyId === null) {
+  if (!pureProxyId) {
     throw new BaseException(`Unsupported number of argument for pure functions: ${argCount}`);
   }
   view.createMethod.addStmt(

@@ -90,7 +90,7 @@ export class JSONPConnection_ extends JSONPConnection {
         if (!this._finished) {
           let responseOptions =
               new ResponseOptions({body: JSONP_ERR_NO_CALLBACK, type: ResponseType.Error, url});
-          if (baseResponseOptions !== undefined && baseResponseOptions !== null) {
+          if (baseResponseOptions) {
             responseOptions = baseResponseOptions.merge(responseOptions);
           }
           responseObserver.error(new Response(responseOptions));
@@ -98,7 +98,7 @@ export class JSONPConnection_ extends JSONPConnection {
         }
 
         let responseOptions = new ResponseOptions({body: this._responseData, url});
-        if (this.baseResponseOptions !== undefined && this.baseResponseOptions !== null) {
+        if (this.baseResponseOptions) {
           responseOptions = this.baseResponseOptions.merge(responseOptions);
         }
 
@@ -111,7 +111,7 @@ export class JSONPConnection_ extends JSONPConnection {
         this.readyState = ReadyState.Done;
         _dom.cleanup(script);
         let responseOptions = new ResponseOptions({body: error.message, type: ResponseType.Error});
-        if (baseResponseOptions !== undefined && baseResponseOptions !== null) {
+        if (baseResponseOptions) {
           responseOptions = baseResponseOptions.merge(responseOptions);
         }
         responseObserver.error(new Response(responseOptions));

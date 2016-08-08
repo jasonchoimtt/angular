@@ -33,7 +33,7 @@ export class CompileQuery {
   addValue(value: o.Expression, view: CompileView) {
     var currentView = view;
     var elPath: CompileElement[] = [];
-    while (currentView !== undefined && currentView !== null && currentView !== this.view) {
+    while (currentView && currentView !== this.view) {
       var parentEl = currentView.declarationElement;
       elPath.unshift(parentEl);
       currentView = parentEl.view;
@@ -67,7 +67,7 @@ export class CompileQuery {
   afterChildren(targetStaticMethod: any /** TODO #9100 */, targetDynamicMethod: CompileMethod) {
     var values = createQueryValues(this._values);
     var updateStmts = [this.queryList.callMethod('reset', [o.literalArr(values)]).toStmt()];
-    if (this.ownerDirectiveExpression !== undefined && this.ownerDirectiveExpression !== null) {
+    if (this.ownerDirectiveExpression) {
       var valueExpr = this.meta.first ? this.queryList.prop('first') : this.queryList;
       updateStmts.push(
           this.ownerDirectiveExpression.prop(this.meta.propertyName).set(valueExpr).toStmt());
@@ -129,7 +129,7 @@ export function addQueryToTokenMap(
     map: CompileIdentifierMap<CompileTokenMetadata, CompileQuery[]>, query: CompileQuery) {
   query.meta.selectors.forEach((selector) => {
     var entry = map.get(selector);
-    if (entry === undefined || entry === null) {
+    if (!entry) {
       entry = [];
       map.add(selector, entry);
     }

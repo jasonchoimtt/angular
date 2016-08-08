@@ -17,7 +17,7 @@ export class MockDomAnimatePlayer implements DomAnimatePlayer {
 
   /** @internal */
   _capture(method: string, data: any): void {
-    if (this.captures[method] === undefined || this.captures[method] === null) {
+    if (!this.captures[method]) {
       this.captures[method] = [];
     }
     this.captures[method].push(data);

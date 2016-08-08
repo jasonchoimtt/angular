@@ -127,9 +127,7 @@ export class CssParser {
   }
 
   /** @internal */
-  _getSourceContent(): string {
-    return this._scanner !== undefined && this._scanner !== null ? this._scanner.input : '';
-  }
+  _getSourceContent(): string { return this._scanner ? this._scanner.input : ''; }
 
   /** @internal */
   _extractSourceContent(start: number, end: number): string {
@@ -143,7 +141,7 @@ export class CssParser {
       startLoc = start.location.start;
     } else {
       var token = start;
-      if (token === undefined || token === null) {
+      if (!token) {
         // the data here is invalid, however, if and when this does
         // occur, any other errors associated with this will be collected
         token = this._lastToken;
@@ -331,7 +329,7 @@ export class CssParser {
     var ruleAst: CssRuleAst;
     var span: ParseSourceSpan;
     var startSelector = selectors[0];
-    if (block !== undefined && block !== null) {
+    if (block) {
       var span = this._generateSourceSpan(startSelector, block);
       ruleAst = new CssSelectorRuleAst(span, selectors, block);
     } else {
@@ -379,7 +377,7 @@ export class CssParser {
     var output = this._scanner.scan();
     var token = output.token;
     var error = output.error;
-    if (error !== undefined && error !== null) {
+    if (error) {
       this._error(error.rawMessage, token);
     }
     this._lastToken = token;
@@ -394,7 +392,7 @@ export class CssParser {
     var output = this._scanner.consume(type, value);
     var token = output.token;
     var error = output.error;
-    if (error !== undefined && error !== null) {
+    if (error) {
       this._error(error.rawMessage, token);
     }
     this._lastToken = token;
@@ -603,8 +601,7 @@ export class CssParser {
               let index = lastOperatorToken.index;
               let line = lastOperatorToken.line;
               let column = lastOperatorToken.column;
-              if (deepToken !== undefined && deepToken !== null &&
-                  deepToken.strValue.toLowerCase() == 'deep' &&
+              if (deepToken && deepToken.strValue.toLowerCase() == 'deep' &&
                   deepSlash.strValue == SLASH_CHARACTER) {
                 token = new CssToken(
                     lastOperatorToken.index, lastOperatorToken.column, lastOperatorToken.line,
@@ -639,7 +636,7 @@ export class CssParser {
       // so long as there is an operator then we can have an
       // ending value that is beyond the selector value ...
       // otherwise it's just a bunch of trailing whitespace
-      if (operator !== undefined && operator !== null) {
+      if (operator) {
         end = operator.index;
       }
     }
@@ -667,7 +664,7 @@ export class CssParser {
       startTokenOrAst = startTokenOrAst || pseudoSelectors[0];
       endTokenOrAst = pseudoSelectors[pseudoSelectors.length - 1];
     }
-    if (operator !== undefined && operator !== null) {
+    if (operator) {
       startTokenOrAst = startTokenOrAst || operator;
       endTokenOrAst = operator;
     }
@@ -705,7 +702,7 @@ export class CssParser {
     var previous: CssToken;
     while (!characterContainsDelimiter(this._scanner.peek, delimiters)) {
       var token: CssToken;
-      if (previous !== undefined && previous !== null && previous.type == CssTokenType.Identifier &&
+      if (previous && previous.type == CssTokenType.Identifier &&
           this._scanner.peek == chars.$LPAREN) {
         token = this._consume(CssTokenType.Character, '(');
         tokens.push(token);

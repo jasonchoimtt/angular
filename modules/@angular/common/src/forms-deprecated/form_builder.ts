@@ -69,13 +69,11 @@ export class FormBuilder {
    */
   group(controlsConfig: {[key: string]: any}, extra: {[key: string]: any} = null): ControlGroup {
     var controls = this._reduceControls(controlsConfig);
-    var optionals = <{[key: string]: boolean}>(
-        extra !== undefined && extra !== null ? StringMapWrapper.get(extra, 'optionals') : null);
-    var validator: ValidatorFn =
-        extra !== undefined && extra !== null ? StringMapWrapper.get(extra, 'validator') : null;
-    var asyncValidator: AsyncValidatorFn = extra !== undefined && extra !== null ?
-        StringMapWrapper.get(extra, 'asyncValidator') :
-        null;
+    var optionals =
+        <{[key: string]: boolean}>(extra ? StringMapWrapper.get(extra, 'optionals') : null);
+    var validator: ValidatorFn = extra ? StringMapWrapper.get(extra, 'validator') : null;
+    var asyncValidator: AsyncValidatorFn =
+        extra ? StringMapWrapper.get(extra, 'asyncValidator') : null;
     return new ControlGroup(controls, optionals, validator, asyncValidator);
   }
   /**

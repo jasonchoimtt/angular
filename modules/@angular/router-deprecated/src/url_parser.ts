@@ -12,7 +12,7 @@ import {isBlank, isPresent} from '../src/facade/lang';
 
 export function convertUrlParamsToArray(urlParams: {[key: string]: any}): string[] {
   var paramsArray: any[] /** TODO #9100 */ = [];
-  if (urlParams === undefined || urlParams === null) {
+  if (!urlParams) {
     return [];
   }
   StringMapWrapper.forEach(
@@ -57,9 +57,7 @@ export class Url {
   }
 
   /** @internal */
-  _childString(): string {
-    return this.child !== undefined && this.child !== null ? ('/' + this.child.toString()) : '';
-  }
+  _childString(): string { return this.child ? ('/' + this.child.toString()) : ''; }
 }
 
 export class RootUrl extends Url {
@@ -75,7 +73,7 @@ export class RootUrl extends Url {
   segmentToString(): string { return this.path + this._queryParamsToString(); }
 
   private _queryParamsToString(): string {
-    if (this.params === undefined || this.params === null) {
+    if (!this.params) {
       return '';
     }
 

@@ -78,7 +78,7 @@ export class RequestOptions {
       {method, headers, body, url, search, withCredentials,
        responseType}: RequestOptionsArgs = {}) {
     this.method = method !== undefined && method !== null ? normalizeMethodName(method) : null;
-    this.headers = headers !== undefined && headers !== null ? headers : null;
+    this.headers = headers ? headers : null;
     this.body = body !== undefined && body !== null ? body : null;
     this.url = url !== undefined && url !== null ? url : null;
     this.search = search !== undefined && search !== null ?
@@ -117,33 +117,23 @@ export class RequestOptions {
    */
   merge(options?: RequestOptionsArgs): RequestOptions {
     return new RequestOptions({
-      method: options !== undefined && options !== null && options.method !== undefined &&
-              options.method !== null ?
-          options.method :
-          this.method,
-      headers: options !== undefined && options !== null && options.headers !== undefined &&
-              options.headers !== null ?
+      method: options && options.method !== undefined && options.method !== null ? options.method :
+                                                                                   this.method,
+      headers: options && options.headers !== undefined && options.headers !== null ?
           options.headers :
           this.headers,
-      body: options !== undefined && options !== null && options.body !== undefined &&
-              options.body !== null ?
-          options.body :
-          this.body,
-      url: options !== undefined && options !== null && options.url !== undefined &&
-              options.url !== null ?
-          options.url :
-          this.url,
-      search: options !== undefined && options !== null && options.search !== undefined &&
-              options.search !== null ?
+      body: options && options.body !== undefined && options.body !== null ? options.body :
+                                                                             this.body,
+      url: options && options.url !== undefined && options.url !== null ? options.url : this.url,
+      search: options && options.search !== undefined && options.search !== null ?
           (typeof options.search === 'string' ? new URLSearchParams(<string>(options.search)) :
                                                 (<URLSearchParams>(options.search)).clone()) :
           this.search,
-      withCredentials: options !== undefined && options !== null &&
-              options.withCredentials !== undefined && options.withCredentials !== null ?
+      withCredentials:
+          options && options.withCredentials !== undefined && options.withCredentials !== null ?
           options.withCredentials :
           this.withCredentials,
-      responseType: options !== undefined && options !== null &&
-              options.responseType !== undefined && options.responseType !== null ?
+      responseType: options && options.responseType !== undefined && options.responseType !== null ?
           options.responseType :
           this.responseType
     });

@@ -18,7 +18,7 @@ export abstract class AbstractJsEmitterVisitor extends AbstractEmitterVisitor {
     ctx.pushClass(stmt);
     this._visitClassConstructor(stmt, ctx);
 
-    if (stmt.parent !== undefined && stmt.parent !== null) {
+    if (stmt.parent) {
       ctx.print(`${stmt.name}.prototype = Object.create(`);
       stmt.parent.visitExpression(this, ctx);
       ctx.println(`.prototype);`);
@@ -31,12 +31,12 @@ export abstract class AbstractJsEmitterVisitor extends AbstractEmitterVisitor {
 
   private _visitClassConstructor(stmt: o.ClassStmt, ctx: EmitterVisitorContext) {
     ctx.print(`function ${stmt.name}(`);
-    if (stmt.constructorMethod !== undefined && stmt.constructorMethod !== null) {
+    if (stmt.constructorMethod) {
       this._visitParams(stmt.constructorMethod.params, ctx);
     }
     ctx.println(`) {`);
     ctx.incIndent();
-    if (stmt.constructorMethod !== undefined && stmt.constructorMethod !== null) {
+    if (stmt.constructorMethod) {
       if (stmt.constructorMethod.body.length > 0) {
         ctx.println(`var self = this;`);
         this.visitAllStatements(stmt.constructorMethod.body, ctx);

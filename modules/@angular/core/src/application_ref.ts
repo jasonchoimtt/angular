@@ -77,13 +77,13 @@ export function isDevMode(): boolean {
  * @experimental APIs related to application bootstrap are currently under review.
  */
 export function createPlatform(injector: Injector): PlatformRef {
-  if (_platform !== undefined && _platform !== null && !_platform.disposed) {
+  if (_platform && !_platform.disposed) {
     throw new BaseException(
         'There can be only one platform. Destroy the previous one to create a new one.');
   }
   _platform = injector.get(PlatformRef);
   const inits: Function[] = <Function[]>injector.get(PLATFORM_INITIALIZER, null);
-  if (inits !== undefined && inits !== null) inits.forEach(init => init());
+  if (inits) inits.forEach(init => init());
   return _platform;
 }
 
@@ -124,10 +124,10 @@ export function createPlatformFactory(
  */
 export function assertPlatform(requiredToken: any): PlatformRef {
   var platform = getPlatform();
-  if (platform === undefined || platform === null) {
+  if (!platform) {
     throw new BaseException('No platform exists!');
   }
-  if (platform !== undefined && platform !== null) {
+  if (platform) {
     const obj = platform.injector.get(requiredToken, null);
     if (obj === undefined || obj === null) {
       throw new BaseException(
@@ -152,7 +152,7 @@ export function disposePlatform(): void {
  * @experimental APIs related to application bootstrap are currently under review.
  */
 export function destroyPlatform(): void {
-  if (_platform !== undefined && _platform !== null && !_platform.destroyed) {
+  if (_platform && !_platform.destroyed) {
     _platform.destroy();
   }
 }
@@ -163,7 +163,7 @@ export function destroyPlatform(): void {
  * @experimental APIs related to application bootstrap are currently under review.
  */
 export function getPlatform(): PlatformRef {
-  return _platform !== undefined && _platform !== null && !_platform.disposed ? _platform : null;
+  return _platform && !_platform.disposed ? _platform : null;
 }
 
 /**

@@ -121,12 +121,12 @@ export class CssSelector {
     if (this.element !== undefined && this.element !== null) {
       res += this.element;
     }
-    if (this.classNames !== undefined && this.classNames !== null) {
+    if (this.classNames) {
       for (var i = 0; i < this.classNames.length; i++) {
         res += '.' + this.classNames[i];
       }
     }
-    if (this.attrs !== undefined && this.attrs !== null) {
+    if (this.attrs) {
       for (var i = 0; i < this.attrs.length;) {
         var attrName = this.attrs[i++];
         var attrValue = this.attrs[i++];
@@ -194,7 +194,7 @@ export class SelectorMatcher {
       }
     }
 
-    if (classNames !== undefined && classNames !== null) {
+    if (classNames) {
       for (var index = 0; index < classNames.length; index++) {
         var isTerminal = attrs.length === 0 && index === classNames.length - 1;
         var className = classNames[index];
@@ -206,7 +206,7 @@ export class SelectorMatcher {
       }
     }
 
-    if (attrs !== undefined && attrs !== null) {
+    if (attrs) {
       for (var index = 0; index < attrs.length;) {
         var isTerminal = index === attrs.length - 2;
         var attrName = attrs[index++];
@@ -272,7 +272,7 @@ export class SelectorMatcher {
     result = this._matchPartial(this._elementPartialMap, element, cssSelector, matchedCallback) ||
         result;
 
-    if (classNames !== undefined && classNames !== null) {
+    if (classNames) {
       for (var index = 0; index < classNames.length; index++) {
         var className = classNames[index];
         result =
@@ -283,7 +283,7 @@ export class SelectorMatcher {
       }
     }
 
-    if (attrs !== undefined && attrs !== null) {
+    if (attrs) {
       for (var index = 0; index < attrs.length;) {
         var attrName = attrs[index++];
         var attrValue = attrs[index++];
@@ -372,16 +372,13 @@ export class SelectorContext {
 
   finalize(cssSelector: CssSelector, callback: (c: CssSelector, a: any) => void): boolean {
     var result = true;
-    if (this.notSelectors.length > 0 &&
-        (this.listContext === undefined || this.listContext === null ||
-         !this.listContext.alreadyMatched)) {
+    if (this.notSelectors.length > 0 && (!this.listContext || !this.listContext.alreadyMatched)) {
       var notMatcher = SelectorMatcher.createNotMatcher(this.notSelectors);
       result = !notMatcher.match(cssSelector, null);
     }
     if (result && callback !== undefined && callback !== null &&
-        (this.listContext === undefined || this.listContext === null ||
-         !this.listContext.alreadyMatched)) {
-      if (this.listContext !== undefined && this.listContext !== null) {
+        (!this.listContext || !this.listContext.alreadyMatched)) {
+      if (this.listContext) {
         this.listContext.alreadyMatched = true;
       }
       callback(this.selector, this.cbContext);

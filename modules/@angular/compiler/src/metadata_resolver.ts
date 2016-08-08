@@ -201,7 +201,7 @@ export class CompileMetadataResolver {
       meta = cpl.CompileDirectiveMetadata.create({
         selector: selector,
         exportAs: dirMeta.exportAs,
-        isComponent: templateMeta !== undefined && templateMeta !== null,
+        isComponent: !!templateMeta,
         type: this.getTypeMetadata(directiveType, moduleUrl),
         template: templateMeta,
         changeDetection: changeDetectionStrategy,
@@ -529,9 +529,7 @@ export class CompileMetadataResolver {
   getDependenciesMetadata(typeOrFunc: Type|Function, dependencies: any[]):
       cpl.CompileDiDependencyMetadata[] {
     let hasUnknownDeps = false;
-    let params = dependencies !== undefined && dependencies !== null ?
-        dependencies :
-        this._reflector.parameters(typeOrFunc);
+    let params = dependencies ? dependencies : this._reflector.parameters(typeOrFunc);
     if (params === undefined || params === null) {
       params = [];
     }

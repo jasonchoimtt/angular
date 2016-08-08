@@ -146,9 +146,8 @@ export class RouteRegistry {
   private _recognize(parsedUrl: Url, ancestorInstructions: Instruction[], _aux = false):
       Promise<Instruction> {
     var parentInstruction = ListWrapper.last(ancestorInstructions);
-    var parentComponent = parentInstruction !== undefined && parentInstruction !== null ?
-        parentInstruction.component.componentType :
-        this._rootComponent;
+    var parentComponent =
+        parentInstruction ? parentInstruction.component.componentType : this._rootComponent;
 
     var rules = this._rules.get(parentComponent);
     if (rules === undefined || rules === null) {
@@ -170,8 +169,7 @@ export class RouteRegistry {
 
             var instruction = new ResolvedInstruction(candidate.instruction, null, auxInstructions);
 
-            if (candidate.instruction === undefined || candidate.instruction === null ||
-                candidate.instruction.terminal) {
+            if (!candidate.instruction || candidate.instruction.terminal) {
               return instruction;
             }
 
@@ -201,8 +199,7 @@ export class RouteRegistry {
           }
         }));
 
-    if ((parsedUrl === undefined || parsedUrl === null || parsedUrl.path == '') &&
-        possibleMatches.length == 0) {
+    if ((!parsedUrl || parsedUrl.path == '') && possibleMatches.length == 0) {
       return Promise.resolve(this.generateDefault(parentComponent));
     }
 
@@ -309,7 +306,7 @@ export class RouteRegistry {
     // we don't clone the first (root) element
     for (var i = ancestorInstructions.length - 1; i >= 0; i--) {
       let ancestorInstruction = ancestorInstructions[i];
-      if (ancestorInstruction === undefined || ancestorInstruction === null) {
+      if (!ancestorInstruction) {
         break;
       }
       generatedInstruction = ancestorInstruction.replaceChild(generatedInstruction);
@@ -333,14 +330,14 @@ export class RouteRegistry {
     let auxInstructions: {[key: string]: Instruction} = {};
 
     let parentInstruction: Instruction = ListWrapper.last(ancestorInstructions);
-    if (parentInstruction !== undefined && parentInstruction !== null &&
-        parentInstruction.component !== undefined && parentInstruction.component !== null) {
+    if (parentInstruction && parentInstruction.component !== undefined &&
+        parentInstruction.component !== null) {
       parentComponentType = parentInstruction.component.componentType;
     }
 
     if (linkParams.length == 0) {
       let defaultInstruction = this.generateDefault(parentComponentType);
-      if (defaultInstruction === undefined || defaultInstruction === null) {
+      if (!defaultInstruction) {
         throw new BaseException(
             `Link "${ListWrapper.toJSON(_originalLink)}" does not resolve to a terminal instruction.`);
       }
@@ -349,7 +346,7 @@ export class RouteRegistry {
 
     // for non-aux routes, we want to reuse the predecessor's existing primary and aux routes
     // and only override routes for which the given link DSL provides
-    if (prevInstruction !== undefined && prevInstruction !== null && !_aux) {
+    if (prevInstruction && !_aux) {
       auxInstructions = StringMapWrapper.merge(prevInstruction.auxInstruction, auxInstructions);
       componentInstruction = prevInstruction.component;
     }
@@ -447,7 +444,7 @@ export class RouteRegistry {
   }
 
   public generateDefault(componentCursor: Type): Instruction {
-    if (componentCursor === undefined || componentCursor === null) {
+    if (!componentCursor) {
       return null;
     }
 
@@ -496,8 +493,7 @@ function splitAndFlattenLinkParams(linkParams: any[]): any[] {
  * Given a list of instructions, returns the most specific instruction
  */
 function mostSpecific(instructions: Instruction[]): Instruction {
-  instructions =
-      instructions.filter((instruction) => instruction !== undefined && instruction !== null);
+  instructions = instructions.filter((instruction) => !!instruction);
   if (instructions.length == 0) {
     return null;
   }

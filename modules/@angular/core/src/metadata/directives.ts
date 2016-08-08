@@ -493,10 +493,7 @@ export class DirectiveMetadata extends InjectableMetadata implements DirectiveMe
    *
    */
   get inputs(): string[] {
-    return this._properties !== undefined && this._properties !== null &&
-            this._properties.length > 0 ?
-        this._properties :
-        this._inputs;
+    return this._properties && this._properties.length > 0 ? this._properties : this._inputs;
   }
   /**
    * Use `inputs` instead
@@ -553,9 +550,7 @@ export class DirectiveMetadata extends InjectableMetadata implements DirectiveMe
    *
    */
   get outputs(): string[] {
-    return this._events !== undefined && this._events !== null && this._events.length > 0 ?
-        this._events :
-        this._outputs;
+    return this._events && this._events.length > 0 ? this._events : this._outputs;
   }
   /**
    * Use `outputs` instead

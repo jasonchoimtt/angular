@@ -41,7 +41,7 @@ export class KeyValueDiffers {
   constructor(public factories: KeyValueDifferFactory[]) {}
 
   static create(factories: KeyValueDifferFactory[], parent?: KeyValueDiffers): KeyValueDiffers {
-    if (parent !== undefined && parent !== null) {
+    if (parent) {
       var copied = ListWrapper.clone(parent.factories);
       factories = factories.concat(copied);
       return new KeyValueDiffers(factories);
@@ -72,7 +72,7 @@ export class KeyValueDiffers {
   static extend(factories: KeyValueDifferFactory[]): Provider {
     return new Provider(KeyValueDiffers, {
       useFactory: (parent: KeyValueDiffers) => {
-        if (parent === undefined || parent === null) {
+        if (!parent) {
           // Typically would occur when calling KeyValueDiffers.extend inside of dependencies passed
           // to
           // bootstrap(), which would override default pipes instead of extending them.

@@ -133,7 +133,7 @@ export class Parse5DomAdapter extends DomAdapter {
   }
   on(el: any /** TODO #9100 */, evt: any /** TODO #9100 */, listener: any /** TODO #9100 */) {
     var listenersMap: {[k: /*any*/ string]: any} = el._eventListenersMap;
-    if (listenersMap === undefined || listenersMap === null) {
+    if (!listenersMap) {
       var listenersMap: {[k: /*any*/ string]: any} = StringMapWrapper.create();
       el._eventListenersMap = listenersMap;
     }

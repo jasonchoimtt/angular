@@ -50,7 +50,7 @@ export class AppElement {
 
   mapNestedViews(nestedViewClass: any, callback: Function): any[] {
     var result: any[] /** TODO #9100 */ = [];
-    if (this.nestedViews !== undefined && this.nestedViews !== null) {
+    if (this.nestedViews) {
       this.nestedViews.forEach((nestedView) => {
         if (nestedView.clazz === nestedViewClass) {
           result.push(callback(nestedView));

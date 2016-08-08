@@ -53,13 +53,11 @@ export class CompileEventListener {
   addAction(
       hostEvent: BoundEventAst, directive: CompileDirectiveMetadata,
       directiveInstance: o.Expression) {
-    if (directive !== undefined && directive !== null && directive.isComponent) {
+    if (directive && directive.isComponent) {
       this._hasComponentHostListener = true;
     }
     this._method.resetDebugInfo(this.compileElement.nodeIndex, hostEvent);
-    var context = directiveInstance !== undefined && directiveInstance !== null ?
-        directiveInstance :
-        this.compileElement.view.componentContext;
+    var context = directiveInstance ? directiveInstance : this.compileElement.view.componentContext;
     var actionStmts = convertCdStatementToIr(this.compileElement.view, context, hostEvent.handler);
     var lastIndex = actionStmts.length - 1;
     if (lastIndex >= 0) {
@@ -67,7 +65,7 @@ export class CompileEventListener {
       var returnExpr = convertStmtIntoExpression(lastStatement);
       var preventDefaultVar = o.variable(`pd_${this._actionResultExprs.length}`);
       this._actionResultExprs.push(preventDefaultVar);
-      if (returnExpr !== undefined && returnExpr !== null) {
+      if (returnExpr) {
         // Note: We need to cast the result of the method call to dynamic,
         // as it might be a void method!
         actionStmts[lastIndex] =

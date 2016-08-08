@@ -245,7 +245,7 @@ export class DomElementSchemaRegistry extends ElementSchemaRegistry {
       var type = <{[property: string]: string}>{};
       typeName.split(',').forEach(tag => this.schema[tag] = type);
       var superType = this.schema[typeParts[1]];
-      if (superType !== undefined && superType !== null) {
+      if (superType) {
         StringMapWrapper.forEach(
             superType, (v: any /** TODO #9100 */, k: any /** TODO #9100 */) => type[k] = v);
       }
@@ -281,7 +281,7 @@ export class DomElementSchemaRegistry extends ElementSchemaRegistry {
       }
     }
     var elementProperties = this.schema[tagName.toLowerCase()];
-    if (elementProperties === undefined || elementProperties === null) {
+    if (!elementProperties) {
       elementProperties = this.schema['unknown'];
     }
     return elementProperties[propName] !== undefined && elementProperties[propName] !== null;

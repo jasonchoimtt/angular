@@ -143,7 +143,7 @@ export class TemplateParser {
       return new TemplateParseResult(result, errors);
     }
 
-    if (this.transforms !== undefined && this.transforms !== null) {
+    if (this.transforms) {
       this.transforms.forEach(
           (transform: TemplateAstVisitor) => { result = templateVisitAll(transform, result); });
     }
@@ -187,8 +187,7 @@ class TemplateParseVisitor implements html.Visitor {
 
     const tempMeta = providerViewContext.component.template;
 
-    if (tempMeta !== undefined && tempMeta !== null && tempMeta.interpolation !== undefined &&
-        tempMeta.interpolation !== null) {
+    if (tempMeta && tempMeta.interpolation !== undefined && tempMeta.interpolation !== null) {
       this._interpolationConfig = {
         start: tempMeta.interpolation[0],
         end: tempMeta.interpolation[1]
@@ -224,8 +223,7 @@ class TemplateParseVisitor implements html.Visitor {
       const ast = this._exprParser.parseInterpolation(value, sourceInfo, this._interpolationConfig);
       if (ast) this._reportParserErors(ast.errors, sourceSpan);
       this._checkPipes(ast, sourceSpan);
-      if (ast !== undefined && ast !== null &&
-          (<Interpolation>ast.ast).expressions.length > MAX_INTERPOLATION_VALUES) {
+      if (ast && (<Interpolation>ast.ast).expressions.length > MAX_INTERPOLATION_VALUES) {
         throw new BaseException(
             `Only support at most ${MAX_INTERPOLATION_VALUES} interpolation values!`);
       }
@@ -275,7 +273,7 @@ class TemplateParseVisitor implements html.Visitor {
       const bindingsResult = this._exprParser.parseTemplateBindings(value, sourceInfo);
       this._reportParserErors(bindingsResult.errors, sourceSpan);
       bindingsResult.templateBindings.forEach((binding) => {
-        if (binding.expression !== undefined && binding.expression !== null) {
+        if (binding.expression) {
           this._checkPipes(binding.expression, sourceSpan);
         }
       });
@@ -289,7 +287,7 @@ class TemplateParseVisitor implements html.Visitor {
   }
 
   private _checkPipes(ast: ASTWithSource, sourceSpan: ParseSourceSpan) {
-    if (ast !== undefined && ast !== null) {
+    if (ast) {
       const collector = new PipeCollector();
       ast.visit(collector);
       collector.pipes.forEach((pipeName) => {
@@ -307,7 +305,7 @@ class TemplateParseVisitor implements html.Visitor {
   visitText(text: html.Text, parent: ElementContext): any {
     const ngContentIndex = parent.findNgContentIndex(TEXT_CSS_SELECTOR);
     const expr = this._parseInterpolation(text.value, text.sourceSpan);
-    if (expr !== undefined && expr !== null) {
+    if (expr) {
       return new BoundTextAst(expr, ngContentIndex, text.sourceSpan);
     } else {
       return new TextAst(text.value, ngContentIndex, text.sourceSpan);
@@ -404,8 +402,7 @@ class TemplateParseVisitor implements html.Visitor {
     let parsedElement: TemplateAst;
 
     if (preparsedElement.type === PreparsedElementType.NG_CONTENT) {
-      if (element.children !== undefined && element.children !== null &&
-          element.children.length > 0) {
+      if (element.children && element.children.length > 0) {
         this._reportError(
             `<ng-content> element cannot have content. <ng-content> must be immediately followed by </ng-content>`,
             element.sourceSpan);
@@ -474,7 +471,7 @@ class TemplateParseVisitor implements html.Visitor {
         const binding = bindings[i];
         if (binding.keyIsVar) {
           targetVars.push(new VariableAst(binding.key, binding.name, attr.sourceSpan));
-        } else if (binding.expression !== undefined && binding.expression !== null) {
+        } else if (binding.expression) {
           this._parsePropertyAst(
               binding.key, binding.expression, attr.sourceSpan, targetMatchableAttrs, targetProps);
         } else {
@@ -632,7 +629,7 @@ class TemplateParseVisitor implements html.Visitor {
       name: string, value: string, sourceSpan: ParseSourceSpan, targetMatchableAttrs: string[][],
       targetProps: BoundElementOrDirectiveProperty[]): boolean {
     const expr = this._parseInterpolation(value, sourceSpan);
-    if (expr !== undefined && expr !== null) {
+    if (expr) {
       this._parsePropertyAst(name, expr, sourceSpan, targetMatchableAttrs, targetProps);
       return true;
     }
@@ -723,7 +720,7 @@ class TemplateParseVisitor implements html.Visitor {
               `There is no directive with "exportAs" set to "${elOrDirRef.value}"`,
               elOrDirRef.sourceSpan);
         }
-      } else if (component === undefined || component === null) {
+      } else if (!component) {
         let refToken: CompileTokenMetadata = null;
         if (isTemplateElement) {
           refToken = identifierToken(Identifiers.TemplateRef);
@@ -737,7 +734,7 @@ class TemplateParseVisitor implements html.Visitor {
   private _createDirectiveHostPropertyAsts(
       elementName: string, hostProps: {[key: string]: string}, sourceSpan: ParseSourceSpan,
       targetPropertyAsts: BoundElementPropertyAst[]) {
-    if (hostProps !== undefined && hostProps !== null) {
+    if (hostProps) {
       StringMapWrapper.forEach(hostProps, (expression: string, propName: string) => {
         const exprAst = this._parseBinding(expression, sourceSpan);
         targetPropertyAsts.push(
@@ -749,7 +746,7 @@ class TemplateParseVisitor implements html.Visitor {
   private _createDirectiveHostEventAsts(
       hostListeners: {[key: string]: string}, sourceSpan: ParseSourceSpan,
       targetEventAsts: BoundEventAst[]) {
-    if (hostListeners !== undefined && hostListeners !== null) {
+    if (hostListeners) {
       StringMapWrapper.forEach(hostListeners, (expression: string, propName: string) => {
         this._parseEvent(propName, expression, sourceSpan, [], targetEventAsts);
       });
@@ -759,7 +756,7 @@ class TemplateParseVisitor implements html.Visitor {
   private _createDirectivePropertyAsts(
       directiveProperties: {[key: string]: string}, boundProps: BoundElementOrDirectiveProperty[],
       targetBoundDirectiveProps: BoundDirectivePropertyAst[]) {
-    if (directiveProperties !== undefined && directiveProperties !== null) {
+    if (directiveProperties) {
       const boundPropsByName = new Map<string, BoundElementOrDirectiveProperty>();
       boundProps.forEach(boundProp => {
         const prevValue = boundPropsByName.get(boundProp.name);

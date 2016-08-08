@@ -35,29 +35,10 @@ export class NgControlStatus {
 
   constructor(@Self() cd: NgControl) { this._cd = cd; }
 
-  get ngClassUntouched(): boolean {
-    return this._cd.control !== undefined && this._cd.control !== null ?
-        this._cd.control.untouched :
-        false;
-  }
-  get ngClassTouched(): boolean {
-    return this._cd.control !== undefined && this._cd.control !== null ? this._cd.control.touched :
-                                                                         false;
-  }
-  get ngClassPristine(): boolean {
-    return this._cd.control !== undefined && this._cd.control !== null ? this._cd.control.pristine :
-                                                                         false;
-  }
-  get ngClassDirty(): boolean {
-    return this._cd.control !== undefined && this._cd.control !== null ? this._cd.control.dirty :
-                                                                         false;
-  }
-  get ngClassValid(): boolean {
-    return this._cd.control !== undefined && this._cd.control !== null ? this._cd.control.valid :
-                                                                         false;
-  }
-  get ngClassInvalid(): boolean {
-    return this._cd.control !== undefined && this._cd.control !== null ? !this._cd.control.valid :
-                                                                         false;
-  }
+  get ngClassUntouched(): boolean { return this._cd.control ? this._cd.control.untouched : false; }
+  get ngClassTouched(): boolean { return this._cd.control ? this._cd.control.touched : false; }
+  get ngClassPristine(): boolean { return this._cd.control ? this._cd.control.pristine : false; }
+  get ngClassDirty(): boolean { return this._cd.control ? this._cd.control.dirty : false; }
+  get ngClassValid(): boolean { return this._cd.control ? this._cd.control.valid : false; }
+  get ngClassInvalid(): boolean { return this._cd.control ? !this._cd.control.valid : false; }
 }

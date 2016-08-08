@@ -64,7 +64,7 @@ class _TsEmitterVisitor extends AbstractEmitterVisitor implements o.TypeVisitor 
   importsWithPrefixes = new Map<string, string>();
 
   visitType(t: o.Type, ctx: EmitterVisitorContext, defaultType: string = 'any') {
-    if (t !== undefined && t !== null) {
+    if (t) {
       t.visitType(this, ctx);
     } else {
       ctx.print(defaultType);
@@ -108,14 +108,14 @@ class _TsEmitterVisitor extends AbstractEmitterVisitor implements o.TypeVisitor 
       ctx.print(`export `);
     }
     ctx.print(`class ${stmt.name}`);
-    if (stmt.parent !== undefined && stmt.parent !== null) {
+    if (stmt.parent) {
       ctx.print(` extends `);
       stmt.parent.visitExpression(this, ctx);
     }
     ctx.println(` {`);
     ctx.incIndent();
     stmt.fields.forEach((field) => this._visitClassField(field, ctx));
-    if (stmt.constructorMethod !== undefined && stmt.constructorMethod !== null) {
+    if (stmt.constructorMethod) {
       this._visitClassConstructor(stmt, ctx);
     }
     stmt.getters.forEach((getter) => this._visitClassGetter(getter, ctx));
@@ -308,7 +308,7 @@ class _TsEmitterVisitor extends AbstractEmitterVisitor implements o.TypeVisitor 
       ctx.print(`${prefix}.`);
     }
     ctx.print(value.name);
-    if (typeParams !== undefined && typeParams !== null && typeParams.length > 0) {
+    if (typeParams && typeParams.length > 0) {
       ctx.print(`<`);
       this.visitAllObjects(
           (type: any /** TODO #9100 */) => type.visitType(this, ctx), typeParams, ctx, ',');

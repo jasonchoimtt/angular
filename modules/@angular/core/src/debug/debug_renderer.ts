@@ -59,7 +59,7 @@ export class DebugDomRenderer implements Renderer {
 
   projectNodes(parentElement: any, nodes: any[]) {
     var debugParent = getDebugNode(parentElement);
-    if (debugParent !== undefined && debugParent !== null && debugParent instanceof DebugElement) {
+    if (debugParent && debugParent instanceof DebugElement) {
       let debugElement = debugParent;
       nodes.forEach((node) => { debugElement.addChild(getDebugNode(node)); });
     }
@@ -68,7 +68,7 @@ export class DebugDomRenderer implements Renderer {
 
   attachViewAfter(node: any, viewRootNodes: any[]) {
     var debugNode = getDebugNode(node);
-    if (debugNode !== undefined && debugNode !== null) {
+    if (debugNode) {
       var debugParent = debugNode.parent;
       if (viewRootNodes.length > 0 && debugParent !== undefined && debugParent !== null) {
         var debugViewRootNodes: DebugNode[] = [];
@@ -82,8 +82,7 @@ export class DebugDomRenderer implements Renderer {
   detachView(viewRootNodes: any[]) {
     viewRootNodes.forEach((node) => {
       var debugNode = getDebugNode(node);
-      if (debugNode !== undefined && debugNode !== null && debugNode.parent !== undefined &&
-          debugNode.parent !== null) {
+      if (debugNode && debugNode.parent !== undefined && debugNode.parent !== null) {
         debugNode.parent.removeChild(debugNode);
       }
     });
@@ -97,7 +96,7 @@ export class DebugDomRenderer implements Renderer {
 
   listen(renderElement: any, name: string, callback: Function): Function {
     var debugEl = getDebugNode(renderElement);
-    if (debugEl !== undefined && debugEl !== null) {
+    if (debugEl) {
       debugEl.listeners.push(new EventListener(name, callback));
     }
     return this._delegate.listen(renderElement, name, callback);
@@ -109,7 +108,7 @@ export class DebugDomRenderer implements Renderer {
 
   setElementProperty(renderElement: any, propertyName: string, propertyValue: any) {
     var debugEl = getDebugNode(renderElement);
-    if (debugEl !== undefined && debugEl !== null && debugEl instanceof DebugElement) {
+    if (debugEl && debugEl instanceof DebugElement) {
       debugEl.properties[propertyName] = propertyValue;
     }
     this._delegate.setElementProperty(renderElement, propertyName, propertyValue);
@@ -117,7 +116,7 @@ export class DebugDomRenderer implements Renderer {
 
   setElementAttribute(renderElement: any, attributeName: string, attributeValue: string) {
     var debugEl = getDebugNode(renderElement);
-    if (debugEl !== undefined && debugEl !== null && debugEl instanceof DebugElement) {
+    if (debugEl && debugEl instanceof DebugElement) {
       debugEl.attributes[attributeName] = attributeValue;
     }
     this._delegate.setElementAttribute(renderElement, attributeName, attributeValue);
@@ -129,7 +128,7 @@ export class DebugDomRenderer implements Renderer {
 
   setElementClass(renderElement: any, className: string, isAdd: boolean) {
     var debugEl = getDebugNode(renderElement);
-    if (debugEl !== undefined && debugEl !== null && debugEl instanceof DebugElement) {
+    if (debugEl && debugEl instanceof DebugElement) {
       debugEl.classes[className] = isAdd;
     }
     this._delegate.setElementClass(renderElement, className, isAdd);
@@ -137,7 +136,7 @@ export class DebugDomRenderer implements Renderer {
 
   setElementStyle(renderElement: any, styleName: string, styleValue: string) {
     var debugEl = getDebugNode(renderElement);
-    if (debugEl !== undefined && debugEl !== null && debugEl instanceof DebugElement) {
+    if (debugEl && debugEl instanceof DebugElement) {
       debugEl.styles[styleName] = styleValue;
     }
     this._delegate.setElementStyle(renderElement, styleName, styleValue);

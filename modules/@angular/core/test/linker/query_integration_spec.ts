@@ -840,21 +840,15 @@ class NeedsContentChild implements AfterContentInit, AfterContentChecked {
   @ContentChild(TextDirective)
   set child(value) {
     this._child = value;
-    this.logs.push(['setter', value !== undefined && value !== null ? value.text : null]);
+    this.logs.push(['setter', value ? value.text : null]);
   }
 
   get child() { return this._child; }
   logs: any[] /** TODO #9100 */ = [];
 
-  ngAfterContentInit() {
-    this.logs.push(
-        ['init', this.child !== undefined && this.child !== null ? this.child.text : null]);
-  }
+  ngAfterContentInit() { this.logs.push(['init', this.child ? this.child.text : null]); }
 
-  ngAfterContentChecked() {
-    this.logs.push(
-        ['check', this.child !== undefined && this.child !== null ? this.child.text : null]);
-  }
+  ngAfterContentChecked() { this.logs.push(['check', this.child ? this.child.text : null]); }
 }
 
 @Component({
@@ -874,21 +868,15 @@ class NeedsViewChild implements AfterViewInit,
   @ViewChild(TextDirective)
   set child(value) {
     this._child = value;
-    this.logs.push(['setter', value !== undefined && value !== null ? value.text : null]);
+    this.logs.push(['setter', value ? value.text : null]);
   }
 
   get child() { return this._child; }
   logs: any[] /** TODO #9100 */ = [];
 
-  ngAfterViewInit() {
-    this.logs.push(
-        ['init', this.child !== undefined && this.child !== null ? this.child.text : null]);
-  }
+  ngAfterViewInit() { this.logs.push(['init', this.child ? this.child.text : null]); }
 
-  ngAfterViewChecked() {
-    this.logs.push(
-        ['check', this.child !== undefined && this.child !== null ? this.child.text : null]);
-  }
+  ngAfterViewChecked() { this.logs.push(['check', this.child ? this.child.text : null]); }
 }
 
 @Component({

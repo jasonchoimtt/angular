@@ -118,8 +118,7 @@ export abstract class AbstractEmitterVisitor implements o.StatementVisitor, o.Ex
     ctx.print(`if (`);
     stmt.condition.visitExpression(this, ctx);
     ctx.print(`) {`);
-    var hasElseCase =
-        stmt.falseCase !== undefined && stmt.falseCase !== null && stmt.falseCase.length > 0;
+    var hasElseCase = stmt.falseCase && stmt.falseCase.length > 0;
     if (stmt.trueCase.length <= 1 && !hasElseCase) {
       ctx.print(` `);
       this.visitAllStatements(stmt.trueCase, ctx);

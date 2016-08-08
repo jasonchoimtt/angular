@@ -129,20 +129,16 @@ export abstract class Instruction {
       public component: ComponentInstruction, public child: Instruction,
       public auxInstruction: {[key: string]: Instruction}) {}
 
-  get urlPath(): string {
-    return this.component !== undefined && this.component !== null ? this.component.urlPath : '';
-  }
+  get urlPath(): string { return this.component ? this.component.urlPath : ''; }
 
-  get urlParams(): string[] {
-    return this.component !== undefined && this.component !== null ? this.component.urlParams : [];
-  }
+  get urlParams(): string[] { return this.component ? this.component.urlParams : []; }
 
   get specificity(): string {
     var total = '';
-    if (this.component !== undefined && this.component !== null) {
+    if (this.component) {
       total += this.component.specificity;
     }
-    if (this.child !== undefined && this.child !== null) {
+    if (this.child) {
       total += this.child.specificity;
     }
     return total;
@@ -157,8 +153,7 @@ export abstract class Instruction {
 
   /** @internal */
   _toNonRootUrl(): string {
-    return this._stringifyPathMatrixAuxPrefixed() +
-        (this.child !== undefined && this.child !== null ? this.child._toNonRootUrl() : '');
+    return this._stringifyPathMatrixAuxPrefixed() + (this.child ? this.child._toNonRootUrl() : '');
   }
 
   toUrlQuery(): string { return this.urlParams.length > 0 ? ('?' + this.urlParams.join('&')) : ''; }
@@ -175,22 +170,19 @@ export abstract class Instruction {
    * If the final URL for the instruction is ``
    */
   toUrlPath(): string {
-    return this.urlPath + this._stringifyAux() +
-        (this.child !== undefined && this.child !== null ? this.child._toNonRootUrl() : '');
+    return this.urlPath + this._stringifyAux() + (this.child ? this.child._toNonRootUrl() : '');
   }
 
   // default instructions override these
   toLinkUrl(): string {
-    return this.urlPath + this._stringifyAux() +
-        (this.child !== undefined && this.child !== null ? this.child._toLinkUrl() : '') +
+    return this.urlPath + this._stringifyAux() + (this.child ? this.child._toLinkUrl() : '') +
         this.toUrlQuery();
   }
 
   // this is the non-root version (called recursively)
   /** @internal */
   _toLinkUrl(): string {
-    return this._stringifyPathMatrixAuxPrefixed() +
-        (this.child !== undefined && this.child !== null ? this.child._toLinkUrl() : '');
+    return this._stringifyPathMatrixAuxPrefixed() + (this.child ? this.child._toLinkUrl() : '');
   }
 
   /** @internal */
@@ -209,8 +201,7 @@ export abstract class Instruction {
 
   /** @internal */
   _stringifyPathMatrixAux(): string {
-    if ((this.component === undefined || this.component === null) &&
-        (this.urlPath === undefined || this.urlPath === null)) {
+    if ((!this.component) && (this.urlPath === undefined || this.urlPath === null)) {
       return '';
     }
     return this.urlPath + this._stringifyMatrixParams() + this._stringifyAux();
@@ -270,7 +261,7 @@ export class UnresolvedInstruction extends Instruction {
   }
 
   get urlPath(): string {
-    if (this.component !== undefined && this.component !== null) {
+    if (this.component) {
       return this.component.urlPath;
     }
     if (this._urlPath !== undefined && this._urlPath !== null) {
@@ -280,23 +271,22 @@ export class UnresolvedInstruction extends Instruction {
   }
 
   get urlParams(): string[] {
-    if (this.component !== undefined && this.component !== null) {
+    if (this.component) {
       return this.component.urlParams;
     }
-    if (this._urlParams !== undefined && this._urlParams !== null) {
+    if (this._urlParams) {
       return this._urlParams;
     }
     return [];
   }
 
   resolveComponent(): Promise<ComponentInstruction> {
-    if (this.component !== undefined && this.component !== null) {
+    if (this.component) {
       return Promise.resolve(this.component);
     }
     return this._resolver().then((instruction: Instruction) => {
-      this.child = instruction !== undefined && instruction !== null ? instruction.child : null;
-      return this.component =
-                 instruction !== undefined && instruction !== null ? instruction.component : null;
+      this.child = instruction ? instruction.child : null;
+      return this.component = instruction ? instruction.component : null;
     });
   }
 }
@@ -337,6 +327,6 @@ export class ComponentInstruction {
       public componentType: any /** TODO #9100 */, public terminal: boolean,
       public specificity: string, public params: {[key: string]: string} = null,
       public routeName: string) {
-    this.routeData = data !== undefined && data !== null ? data : BLANK_ROUTE_DATA;
+    this.routeData = data ? data : BLANK_ROUTE_DATA;
   }
 }

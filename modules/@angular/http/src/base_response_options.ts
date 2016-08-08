@@ -70,7 +70,7 @@ export class ResponseOptions {
   constructor({body, status, headers, statusText, type, url}: ResponseOptionsArgs = {}) {
     this.body = body !== undefined && body !== null ? body : null;
     this.status = status !== undefined && status !== null ? status : null;
-    this.headers = headers !== undefined && headers !== null ? headers : null;
+    this.headers = headers ? headers : null;
     this.statusText = statusText !== undefined && statusText !== null ? statusText : null;
     this.type = type !== undefined && type !== null ? type : null;
     this.url = url !== undefined && url !== null ? url : null;
@@ -103,30 +103,19 @@ export class ResponseOptions {
    */
   merge(options?: ResponseOptionsArgs): ResponseOptions {
     return new ResponseOptions({
-      body: options !== undefined && options !== null && options.body !== undefined &&
-              options.body !== null ?
-          options.body :
-          this.body,
-      status: options !== undefined && options !== null && options.status !== undefined &&
-              options.status !== null ?
-          options.status :
-          this.status,
-      headers: options !== undefined && options !== null && options.headers !== undefined &&
-              options.headers !== null ?
+      body: options && options.body !== undefined && options.body !== null ? options.body :
+                                                                             this.body,
+      status: options && options.status !== undefined && options.status !== null ? options.status :
+                                                                                   this.status,
+      headers: options && options.headers !== undefined && options.headers !== null ?
           options.headers :
           this.headers,
-      statusText: options !== undefined && options !== null && options.statusText !== undefined &&
-              options.statusText !== null ?
+      statusText: options && options.statusText !== undefined && options.statusText !== null ?
           options.statusText :
           this.statusText,
-      type: options !== undefined && options !== null && options.type !== undefined &&
-              options.type !== null ?
-          options.type :
-          this.type,
-      url: options !== undefined && options !== null && options.url !== undefined &&
-              options.url !== null ?
-          options.url :
-          this.url,
+      type: options && options.type !== undefined && options.type !== null ? options.type :
+                                                                             this.type,
+      url: options && options.url !== undefined && options.url !== null ? options.url : this.url,
     });
   }
 }

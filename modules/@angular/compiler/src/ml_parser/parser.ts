@@ -110,7 +110,7 @@ class _TreeBuilder {
   private _consumeComment(token: lex.Token) {
     const text = this._advanceIf(lex.TokenType.RAW_TEXT);
     this._advanceIf(lex.TokenType.COMMENT_END);
-    const value = text !== undefined && text !== null ? text.parts[0].trim() : null;
+    const value = text ? text.parts[0].trim() : null;
     this._addToParent(new html.Comment(value, token.sourceSpan));
   }
 
@@ -123,7 +123,7 @@ class _TreeBuilder {
     // read =
     while (this._peek.type === lex.TokenType.EXPANSION_CASE_VALUE) {
       let expCase = this._parseExpansionCase();
-      if (expCase === undefined || expCase === null) return;  // error
+      if (!expCase) return;  // error
       cases.push(expCase);
     }
 
@@ -154,7 +154,7 @@ class _TreeBuilder {
     const start = this._advance();
 
     const exp = this._collectExpansionExpTokens(start);
-    if (exp === undefined || exp === null) return null;
+    if (!exp) return null;
 
     const end = this._advance();
     exp.push(new lex.Token(lex.TokenType.EOF, [], end.sourceSpan));
@@ -218,7 +218,7 @@ class _TreeBuilder {
     let text = token.parts[0];
     if (text.length > 0 && text[0] == '\n') {
       const parent = this._getParentElement();
-      if (parent !== undefined && parent !== null && parent.children.length == 0 &&
+      if (parent && parent.children.length == 0 &&
           this.getTagDefinition(parent.name).ignoreFirstLf) {
         text = text.substring(1);
       }
@@ -284,7 +284,7 @@ class _TreeBuilder {
     const tagDef = this.getTagDefinition(el.name);
     const {parent, container} = this._getParentElementSkippingContainers();
 
-    if (parent !== undefined && parent !== null && tagDef.requireExtraParent(parent.name)) {
+    if (parent && tagDef.requireExtraParent(parent.name)) {
       const newParent = new html.Element(
           tagDef.parentToAdd, [], [], el.sourceSpan, el.startSourceSpan, el.endSourceSpan);
       this._insertBeforeContainer(parent, container, newParent);
@@ -363,7 +363,7 @@ class _TreeBuilder {
 
   private _addToParent(node: html.Node) {
     const parent = this._getParentElement();
-    if (parent !== undefined && parent !== null) {
+    if (parent) {
       parent.children.push(node);
     } else {
       this._rootNodes.push(node);
@@ -399,8 +399,7 @@ class _TreeBuilder {
       string {
     if (prefix === undefined || prefix === null) {
       prefix = this.getTagDefinition(localName).implicitNamespacePrefix;
-      if ((prefix === undefined || prefix === null) &&
-          (parentElement !== undefined && parentElement !== null)) {
+      if ((prefix === undefined || prefix === null) && (parentElement)) {
         prefix = getNsPrefix(parentElement.name);
       }
     }

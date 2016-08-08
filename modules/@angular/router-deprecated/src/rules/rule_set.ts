@@ -92,7 +92,7 @@ export class RuleSet {
     this._assertNoHashCollision(newRule.hash, config.path);
 
     if (useAsDefault) {
-      if (this.defaultRule !== undefined && this.defaultRule !== null) {
+      if (this.defaultRule) {
         throw new BaseException(`Only one route can be default`);
       }
       this.defaultRule = newRule;
@@ -131,7 +131,7 @@ export class RuleSet {
 
   recognizeAuxiliary(urlParse: Url): Promise<RouteMatch>[] {
     var routeRecognizer: RouteRule = this.auxRulesByPath.get(urlParse.path);
-    if (routeRecognizer !== undefined && routeRecognizer !== null) {
+    if (routeRecognizer) {
       return [routeRecognizer.recognize(urlParse)];
     }
 
@@ -151,7 +151,7 @@ export class RuleSet {
 
   generate(name: string, params: any): ComponentInstruction {
     var rule: RouteRule = this.rulesByName.get(name);
-    if (rule === undefined || rule === null) {
+    if (!rule) {
       return null;
     }
     return rule.generate(params);
@@ -159,7 +159,7 @@ export class RuleSet {
 
   generateAuxiliary(name: string, params: any): ComponentInstruction {
     var rule: RouteRule = this.auxRulesByName.get(name);
-    if (rule === undefined || rule === null) {
+    if (!rule) {
       return null;
     }
     return rule.generate(params);

@@ -14,7 +14,7 @@ export class TouchMap {
   keys: {[key: string]: boolean} = {};
 
   constructor(map: {[key: string]: any}) {
-    if (map !== undefined && map !== null) {
+    if (map) {
       StringMapWrapper.forEach(map, (value: any /** TODO #9100 */, key: any /** TODO #9100 */) => {
         this.map[key] = value !== undefined && value !== null ? value.toString() : null;
         this.keys[key] = true;

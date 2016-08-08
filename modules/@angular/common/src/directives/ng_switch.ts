@@ -144,7 +144,7 @@ export class NgSwitch {
   /** @internal */
   _activateViews(views: SwitchView[]): void {
     // TODO(vicb): assert(this._activeViews.length === 0);
-    if (views !== undefined && views !== null) {
+    if (views) {
       for (var i = 0; i < views.length; i++) {
         views[i].create();
       }

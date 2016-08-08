@@ -109,7 +109,7 @@ export class CompileView implements NameResolver {
       });
       var constructorViewQueryCount = 0;
       this.component.type.diDeps.forEach((dep) => {
-        if (dep.viewQuery !== undefined && dep.viewQuery !== null) {
+        if (dep.viewQuery) {
           var queryList = o.THIS_EXPR.prop('declarationAppElement')
                               .prop('componentConstructorViewQueries')
                               .key(o.literal(constructorViewQueryCount++));
@@ -137,9 +137,7 @@ export class CompileView implements NameResolver {
     }
     var currView: CompileView = this;
     var result = currView.locals.get(name);
-    while ((result === undefined || result === null) &&
-           (currView.declarationElement.view !== undefined &&
-            currView.declarationElement.view !== null)) {
+    while ((result === undefined || result === null) && (currView.declarationElement.view)) {
       currView = currView.declarationElement.view;
       result = currView.locals.get(name);
     }

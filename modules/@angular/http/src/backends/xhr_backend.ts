@@ -76,7 +76,7 @@ export class XHRConnection implements Connection {
         let statusText = _xhr.statusText || 'OK';
 
         var responseOptions = new ResponseOptions({body, status, headers, statusText, url});
-        if (baseResponseOptions !== undefined && baseResponseOptions !== null) {
+        if (baseResponseOptions) {
           responseOptions = baseResponseOptions.merge(responseOptions);
         }
         let response = new Response(responseOptions);
@@ -97,7 +97,7 @@ export class XHRConnection implements Connection {
           status: _xhr.status,
           statusText: _xhr.statusText,
         });
-        if (baseResponseOptions !== undefined && baseResponseOptions !== null) {
+        if (baseResponseOptions) {
           responseOptions = baseResponseOptions.merge(responseOptions);
         }
         responseObserver.error(new Response(responseOptions));
@@ -105,7 +105,7 @@ export class XHRConnection implements Connection {
 
       this.setDetectedContentType(req, _xhr);
 
-      if (req.headers !== undefined && req.headers !== null) {
+      if (req.headers) {
         req.headers.forEach((values, name) => _xhr.setRequestHeader(name, values.join(',')));
       }
 

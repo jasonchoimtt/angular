@@ -23,7 +23,7 @@ export function main() {
           throw `Unexpected response ${url} -> ${text}`;
         } else {
           expect(text).toEqual(response);
-          if (done !== undefined && done !== null) done();
+          if (done) done();
         }
         return text;
       }
@@ -33,7 +33,7 @@ export function main() {
           throw `Unexpected error ${url}`;
         } else {
           expect(error).toEqual(`Failed to load ${url}`);
-          if (done !== undefined && done !== null) done();
+          if (done) done();
         }
         return error;
       }

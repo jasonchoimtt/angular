@@ -85,7 +85,7 @@ export class ClientMessageBroker_ extends ClientMessageBroker {
 
   runOnService(args: UiArguments, returnType: Type): Promise<any> {
     var fnArgs: any[] /** TODO #9100 */ = [];
-    if (args.args !== undefined && args.args !== null) {
+    if (args.args) {
       args.args.forEach(argument => {
         if (argument.type != null) {
           fnArgs.push(this._serializer.serialize(argument.value, argument.type));

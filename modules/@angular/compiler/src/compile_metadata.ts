@@ -232,7 +232,7 @@ export class CompileTokenMetadata implements CompileMetadataWithIdentifier {
   }
 
   get runtimeCacheKey(): any {
-    if (this.identifier !== undefined && this.identifier !== null) {
+    if (this.identifier) {
       return this.identifier.runtimeCacheKey;
     } else {
       return this.value;
@@ -240,7 +240,7 @@ export class CompileTokenMetadata implements CompileMetadataWithIdentifier {
   }
 
   get assetCacheKey(): any {
-    if (this.identifier !== undefined && this.identifier !== null) {
+    if (this.identifier) {
       return this.identifier.assetCacheKey;
     } else {
       return this.value;
@@ -402,11 +402,9 @@ export class CompileTemplateMetadata {
     this.styles = _normalizeArray(styles);
     this.styleUrls = _normalizeArray(styleUrls);
     this.externalStylesheets = _normalizeArray(externalStylesheets);
-    this.animations =
-        animations !== undefined && animations !== null ? ListWrapper.flatten(animations) : [];
-    this.ngContentSelectors =
-        ngContentSelectors !== undefined && ngContentSelectors !== null ? ngContentSelectors : [];
-    if (interpolation !== undefined && interpolation !== null && interpolation.length != 2) {
+    this.animations = animations ? ListWrapper.flatten(animations) : [];
+    this.ngContentSelectors = ngContentSelectors ? ngContentSelectors : [];
+    if (interpolation && interpolation.length != 2) {
       throw new BaseException(`'interpolation' should have a start and an end symbol.`);
     }
     this.interpolation = interpolation;
@@ -442,7 +440,7 @@ export class CompileDirectiveMetadata implements CompileMetadataWithIdentifier {
     var hostListeners: {[key: string]: string} = {};
     var hostProperties: {[key: string]: string} = {};
     var hostAttributes: {[key: string]: string} = {};
-    if (host !== undefined && host !== null) {
+    if (host) {
       StringMapWrapper.forEach(host, (value: string, key: string) => {
         const matches = key.match(HOST_REG_EXP);
         if (matches === null) {
@@ -457,7 +455,7 @@ export class CompileDirectiveMetadata implements CompileMetadataWithIdentifier {
       });
     }
     var inputsMap: {[key: string]: string} = {};
-    if (inputs !== undefined && inputs !== null) {
+    if (inputs) {
       inputs.forEach((bindConfig: string) => {
         // canonical syntax: `dirProp: elProp`
         // if there is no `:`, use dirProp = elProp
@@ -466,7 +464,7 @@ export class CompileDirectiveMetadata implements CompileMetadataWithIdentifier {
       });
     }
     var outputsMap: {[key: string]: string} = {};
-    if (outputs !== undefined && outputs !== null) {
+    if (outputs) {
       outputs.forEach((bindConfig: string) => {
         // canonical syntax: `dirProp: elProp`
         // if there is no `:`, use dirProp = elProp
@@ -721,7 +719,7 @@ export function removeIdentifierDuplicates<T extends CompileMetadataWithIdentifi
 }
 
 function _normalizeArray(obj: any[]): any[] {
-  return obj !== undefined && obj !== null ? obj : [];
+  return obj ? obj : [];
 }
 
 export function isStaticSymbol(value: any): value is StaticSymbol {

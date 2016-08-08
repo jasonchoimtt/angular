@@ -126,7 +126,7 @@ export class ParamRoutePath implements RoutePath {
       }
       currentUrlSegment = nextUrlSegment;
 
-      if (currentUrlSegment !== undefined && currentUrlSegment !== null) {
+      if (currentUrlSegment) {
         // the star segment consumes all of the remaining URL, including matrix params
         if (pathSegment instanceof StarPathSegment) {
           (positionalParams as any /** TODO #9100 */)[pathSegment.name] =
@@ -160,11 +160,11 @@ export class ParamRoutePath implements RoutePath {
     var auxiliary: any[] /** TODO #9100 */ = [];
     var urlParams: any[] /** TODO #9100 */ = [];
     var allParams = positionalParams;
-    if (currentUrlSegment !== undefined && currentUrlSegment !== null) {
+    if (currentUrlSegment) {
       // If this is the root component, read query params. Otherwise, read matrix params.
       var paramsSegment = url instanceof RootUrl ? url : currentUrlSegment;
 
-      if (paramsSegment.params !== undefined && paramsSegment.params !== null) {
+      if (paramsSegment.params) {
         allParams = StringMapWrapper.merge(paramsSegment.params, positionalParams);
         urlParams = convertUrlParamsToArray(paramsSegment.params);
       } else {

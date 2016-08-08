@@ -46,7 +46,7 @@ function declareTests({useJit}: {useJit: boolean}) {
           tcb = tcb.overrideTemplate(DummyIfCmp, tpl);
           tcb = tcb.overrideAnimations(DummyIfCmp, entries);
           var promise = tcb.createAsync(DummyIfCmp).then((root) => { callback(root); });
-          if (failure !== undefined && failure !== null) {
+          if (failure) {
             promise.catch(<any>failure);
           }
           tick();

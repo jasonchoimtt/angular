@@ -55,7 +55,7 @@ export class RedirectRule implements AbstractRule {
   recognize(beginningSegment: Url): Promise<RouteMatch> {
     var match: any /** TODO #9100 */ = null;
     const obj = this._pathRecognizer.matchUrl(beginningSegment);
-    if (obj !== undefined && obj !== null) {
+    if (obj) {
       match = new RedirectMatch(this.redirectTo, this._pathRecognizer.specificity);
     }
     return Promise.resolve(match);
@@ -89,7 +89,7 @@ export class RouteRule implements AbstractRule {
 
   recognize(beginningSegment: Url): Promise<RouteMatch> {
     var res = this._routePath.matchUrl(beginningSegment);
-    if (res === undefined || res === null) {
+    if (!res) {
       return null;
     }
 
@@ -112,7 +112,7 @@ export class RouteRule implements AbstractRule {
 
   private _getInstruction(urlPath: string, urlParams: string[], params: {[key: string]: any}):
       ComponentInstruction {
-    if (this.handler.componentType === undefined || this.handler.componentType === null) {
+    if (!this.handler.componentType) {
       throw new BaseException(`Tried to get instruction before the type was loaded.`);
     }
     var hashKey = urlPath + '?' + urlParams.join('&');

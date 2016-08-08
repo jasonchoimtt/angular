@@ -82,14 +82,10 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
     if (this._isRootNode(parent)) {
       // store appElement as root node only for ViewContainers
       if (this.view.viewType !== ViewType.COMPONENT) {
-        this.view.rootNodesOrAppElements.push(
-            vcAppEl !== undefined && vcAppEl !== null ? vcAppEl : node.renderNode);
+        this.view.rootNodesOrAppElements.push(vcAppEl ? vcAppEl : node.renderNode);
       }
-    } else if (
-        parent.component !== undefined && parent.component !== null &&
-        ngContentIndex !== undefined && ngContentIndex !== null) {
-      parent.addContentNode(
-          ngContentIndex, vcAppEl !== undefined && vcAppEl !== null ? vcAppEl : node.renderNode);
+    } else if (parent.component && ngContentIndex !== undefined && ngContentIndex !== null) {
+      parent.addContentNode(ngContentIndex, vcAppEl ? vcAppEl : node.renderNode);
     }
   }
 
@@ -103,7 +99,7 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
         return o.NULL_EXPR;
       }
     } else {
-      return parent.component !== undefined && parent.component !== null &&
+      return parent.component &&
               parent.component.template.encapsulation !== ViewEncapsulation.Native ?
           o.NULL_EXPR :
           parent.renderNode;
@@ -161,8 +157,7 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
         this.view.rootNodesOrAppElements.push(nodesExpression);
       }
     } else {
-      if (parent.component !== undefined && parent.component !== null &&
-          ast.ngContentIndex !== undefined && ast.ngContentIndex !== null) {
+      if (parent.component && ast.ngContentIndex !== undefined && ast.ngContentIndex !== null) {
         parent.addContentNode(ast.ngContentIndex, nodesExpression);
       }
     }
@@ -238,7 +233,7 @@ class ViewBuilderVisitor implements TemplateAstVisitor {
     templateVisitAll(this, ast.children, compileElement);
     compileElement.afterChildren(this.view.nodes.length - nodeIndex - 1);
 
-    if (compViewExpr !== undefined && compViewExpr !== null) {
+    if (compViewExpr) {
       var codeGenContentNodes: o.Expression;
       if (this.view.component.type.isHost) {
         codeGenContentNodes = ViewProperties.projectableNodes;
@@ -422,17 +417,14 @@ function createStaticNodeDebugInfo(node: CompileNode): o.Expression {
   var providerTokens: o.Expression[] = [];
   var componentToken: o.Expression = o.NULL_EXPR;
   var varTokenEntries: any[] = [];
-  if (compileElement !== undefined && compileElement !== null) {
+  if (compileElement) {
     providerTokens = compileElement.getProviderTokens();
-    if (compileElement.component !== undefined && compileElement.component !== null) {
+    if (compileElement.component) {
       componentToken = createDiTokenExpression(identifierToken(compileElement.component.type));
     }
     StringMapWrapper.forEach(
         compileElement.referenceTokens, (token: CompileTokenMetadata, varName: string) => {
-          varTokenEntries.push([
-            varName,
-            token !== undefined && token !== null ? createDiTokenExpression(token) : o.NULL_EXPR
-          ]);
+          varTokenEntries.push([varName, token ? createDiTokenExpression(token) : o.NULL_EXPR]);
         });
   }
   return o.importExpr(Identifiers.StaticNodeDebugInfo)

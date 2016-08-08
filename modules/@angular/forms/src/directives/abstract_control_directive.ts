@@ -23,53 +23,31 @@ import {AbstractControl} from '../model';
 export abstract class AbstractControlDirective {
   get control(): AbstractControl { return unimplemented(); }
 
-  get value(): any {
-    return this.control !== undefined && this.control !== null ? this.control.value : null;
-  }
+  get value(): any { return this.control ? this.control.value : null; }
 
-  get valid(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.valid : null;
-  }
+  get valid(): boolean { return this.control ? this.control.valid : null; }
 
-  get invalid(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.invalid : null;
-  }
+  get invalid(): boolean { return this.control ? this.control.invalid : null; }
 
-  get pending(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.pending : null;
-  }
+  get pending(): boolean { return this.control ? this.control.pending : null; }
 
-  get errors(): {[key: string]: any} {
-    return this.control !== undefined && this.control !== null ? this.control.errors : null;
-  }
+  get errors(): {[key: string]: any} { return this.control ? this.control.errors : null; }
 
-  get pristine(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.pristine : null;
-  }
+  get pristine(): boolean { return this.control ? this.control.pristine : null; }
 
-  get dirty(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.dirty : null;
-  }
+  get dirty(): boolean { return this.control ? this.control.dirty : null; }
 
-  get touched(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.touched : null;
-  }
+  get touched(): boolean { return this.control ? this.control.touched : null; }
 
-  get untouched(): boolean {
-    return this.control !== undefined && this.control !== null ? this.control.untouched : null;
-  }
+  get untouched(): boolean { return this.control ? this.control.untouched : null; }
 
-  get statusChanges(): Observable<any> {
-    return this.control !== undefined && this.control !== null ? this.control.statusChanges : null;
-  }
+  get statusChanges(): Observable<any> { return this.control ? this.control.statusChanges : null; }
 
-  get valueChanges(): Observable<any> {
-    return this.control !== undefined && this.control !== null ? this.control.valueChanges : null;
-  }
+  get valueChanges(): Observable<any> { return this.control ? this.control.valueChanges : null; }
 
   get path(): string[] { return null; }
 
   reset(value: any = undefined): void {
-    if (this.control !== undefined && this.control !== null) this.control.reset(value);
+    if (this.control) this.control.reset(value);
   }
 }

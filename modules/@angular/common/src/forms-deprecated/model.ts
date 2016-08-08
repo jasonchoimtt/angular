@@ -45,11 +45,11 @@ function _find(control: AbstractControl, path: Array<string|number>| string) {
 
   return (<Array<string|number>>path).reduce((v, name) => {
     if (v instanceof ControlGroup) {
-      return v.controls[name] !== undefined && v.controls[name] !== null ? v.controls[name] : null;
+      return v.controls[name] ? v.controls[name] : null;
     } else if (v instanceof ControlArray) {
       var index = <number>name;
       const obj = v.at(index);
-      return obj !== undefined && obj !== null ? v.at(index) : null;
+      return obj ? v.at(index) : null;
     } else {
       return null;
     }
@@ -152,11 +152,11 @@ export abstract class AbstractControl {
   }
 
   private _runValidator(): {[key: string]: any} {
-    return this.validator !== undefined && this.validator !== null ? this.validator(this) : null;
+    return this.validator ? this.validator(this) : null;
   }
 
   private _runAsyncValidator(emitEvent: boolean): void {
-    if (this.asyncValidator !== undefined && this.asyncValidator !== null) {
+    if (this.asyncValidator) {
       this._status = PENDING;
       this._cancelExistingSubscription();
       var obs = toObservable(this.asyncValidator(this));
@@ -213,10 +213,8 @@ export abstract class AbstractControl {
   find(path: Array<string|number>|string): AbstractControl { return _find(this, path); }
 
   getError(errorCode: string, path: string[] = null): any {
-    var control =
-        path !== undefined && path !== null && !ListWrapper.isEmpty(path) ? this.find(path) : this;
-    if (control !== undefined && control !== null && control._errors !== undefined &&
-        control._errors !== null) {
+    var control = path && !ListWrapper.isEmpty(path) ? this.find(path) : this;
+    if (control && control._errors !== undefined && control._errors !== null) {
       return StringMapWrapper.get(control._errors, errorCode);
     } else {
       return null;
@@ -255,7 +253,7 @@ export abstract class AbstractControl {
 
 
   private _calculateStatus(): string {
-    if (this._errors !== undefined && this._errors !== null) return INVALID;
+    if (this._errors) return INVALID;
     if (this._anyControlsHaveStatus(PENDING)) return PENDING;
     if (this._anyControlsHaveStatus(INVALID)) return INVALID;
     return VALID;
@@ -319,8 +317,7 @@ export class Control extends AbstractControl {
         emitModelToViewChange :
         true;
     this._value = value;
-    if (this._onChange !== undefined && this._onChange !== null && emitModelToViewChange)
-      this._onChange(this._value);
+    if (this._onChange && emitModelToViewChange) this._onChange(this._value);
     this.updateValueAndValidity({onlySelf: onlySelf, emitEvent: emitEvent});
   }
 
@@ -363,7 +360,7 @@ export class ControlGroup extends AbstractControl {
       public controls: {[key: string]: AbstractControl}, optionals: {[key: string]: boolean} = null,
       validator: ValidatorFn = null, asyncValidator: AsyncValidatorFn = null) {
     super(validator, asyncValidator);
-    this._optionals = optionals !== undefined && optionals !== null ? optionals : {};
+    this._optionals = optionals ? optionals : {};
     this._initObservables();
     this._setParentForControls();
     this.updateValueAndValidity({onlySelf: true, emitEvent: false});

@@ -33,7 +33,7 @@ export class KeyEventsPlugin extends EventManagerPlugin {
 
   supports(eventName: string): boolean {
     const obj = KeyEventsPlugin.parseEventName(eventName);
-    return obj !== undefined && obj !== null;
+    return !!obj;
   }
 
   addEventListener(element: HTMLElement, eventName: string, handler: Function): Function {

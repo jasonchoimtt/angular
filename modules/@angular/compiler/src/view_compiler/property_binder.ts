@@ -39,7 +39,7 @@ function bind(
     method: CompileMethod) {
   var checkExpression =
       convertCdExpressionToIr(view, context, parsedExpression, DetectChangesVars.valUnwrapper);
-  if (checkExpression.expression === undefined || checkExpression.expression === null) {
+  if (!checkExpression.expression) {
     // e.g. an empty expression was given
     return;
   }

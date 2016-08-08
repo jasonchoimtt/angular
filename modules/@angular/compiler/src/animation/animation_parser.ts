@@ -102,7 +102,7 @@ function _parseAnimationTransitionExpr(
     eventStr: string, errors: AnimationParseError[]): AnimationStateTransitionExpression[] {
   var expressions: any[] /** TODO #9100 */ = [];
   var match = eventStr.match(/^(\*|[-\w]+)\s*(<?[=-]>)\s*(\*|[-\w]+)$/);
-  if (match === undefined || match === null || match.length < 4) {
+  if (!match || match.length < 4) {
     errors.push(new AnimationParseError(`the provided ${eventStr} is not of a supported format`));
     return expressions;
   }
@@ -122,7 +122,7 @@ function _parseAnimationTransitionExpr(
 function _fetchSylesFromState(stateName: string, stateStyles: {[key: string]: AnimationStylesAst}):
     CompileAnimationStyleMetadata {
   var entry = stateStyles[stateName];
-  if (entry !== undefined && entry !== null) {
+  if (entry) {
     var styles = <{[key: string]: string | number}[]>entry.styles;
     return new CompileAnimationStyleMetadata(0, styles);
   }
@@ -190,7 +190,7 @@ function _normalizeStyleStepEntry(
       // or when the first style step is run. We want to concatenate all subsequent
       // style steps together into a single style step such that we have the correct
       // starting keyframe data to pass into the animation player.
-      if (combinedStyles === undefined || combinedStyles === null) {
+      if (!combinedStyles) {
         combinedStyles = [];
       }
       _normalizeStyleMetadata(<CompileAnimationStyleMetadata>step, stateStyles, errors)
@@ -200,7 +200,7 @@ function _normalizeStyleStepEntry(
       // before we go on an process the animate, sequence or group metadata steps.
       // This will ensure that the AST will have the previous styles painted on
       // screen before any further animations that use the styles take place.
-      if (combinedStyles !== undefined && combinedStyles !== null) {
+      if (combinedStyles) {
         newSteps.push(new CompileAnimationStyleMetadata(0, combinedStyles));
         combinedStyles = null;
       }
@@ -228,7 +228,7 @@ function _normalizeStyleStepEntry(
   });
 
   // this happens when only styles were animated within the sequence
-  if (combinedStyles !== undefined && combinedStyles !== null) {
+  if (combinedStyles) {
     newSteps.push(new CompileAnimationStyleMetadata(0, combinedStyles));
   }
 
@@ -245,7 +245,7 @@ function _resolveStylesFromState(
   } else {
     var normalizedStateName = stateName.substring(1);
     var value = stateStyles[normalizedStateName];
-    if (value === undefined || value === null) {
+    if (!value) {
       errors.push(new AnimationParseError(
           `Unable to apply styles due to missing a state: "${normalizedStateName}"`));
     } else {

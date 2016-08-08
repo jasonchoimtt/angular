@@ -87,12 +87,12 @@ export class Router {
       throw new BaseException(`registerPrimaryOutlet expects to be called with an unnamed outlet.`);
     }
 
-    if (this._outlet !== undefined && this._outlet !== null) {
+    if (this._outlet) {
       throw new BaseException(`Primary outlet is already registered.`);
     }
 
     this._outlet = outlet;
-    if (this.currentInstruction !== undefined && this.currentInstruction !== null) {
+    if (this.currentInstruction) {
       return this.commit(this.currentInstruction, false);
     }
     return _resolveToTrue;
@@ -127,9 +127,9 @@ export class Router {
     this._auxRouters.set(outletName, router);
     router._outlet = outlet;
 
-    if (this.currentInstruction !== undefined && this.currentInstruction !== null) {
+    if (this.currentInstruction) {
       var auxInstruction = this.currentInstruction.auxInstruction[outletName];
-      if (auxInstruction !== undefined && auxInstruction !== null) {
+      if (auxInstruction) {
         return router.commit(auxInstruction);
       }
     }
@@ -145,13 +145,12 @@ export class Router {
     var router: Router = this;
     var currentInstruction = this.currentInstruction;
 
-    if (currentInstruction === undefined || currentInstruction === null) {
+    if (!currentInstruction) {
       return false;
     }
 
     // `instruction` corresponds to the root router
-    while (router.parent !== undefined && router.parent !== null &&
-           instruction.child !== undefined && instruction.child !== null) {
+    while (router.parent && instruction.child !== undefined && instruction.child !== null) {
       router = router.parent;
       instruction = instruction.child;
     }
@@ -160,12 +159,12 @@ export class Router {
 
     // check the instructions in depth
     do {
-      if (instruction.component === undefined || instruction.component === null ||
-          currentInstruction.component === undefined || currentInstruction.component === null ||
+      if (!instruction.component || currentInstruction.component === undefined ||
+          currentInstruction.component === null ||
           currentInstruction.component.routeName != instruction.component.routeName) {
         return false;
       }
-      if (instruction.component.params !== undefined && instruction.component.params !== null) {
+      if (instruction.component.params) {
         StringMapWrapper.forEach(
             instruction.component.params,
             (value: any /** TODO #9100 */, key: any /** TODO #9100 */) => {
@@ -176,13 +175,11 @@ export class Router {
       }
       currentInstruction = currentInstruction.child;
       instruction = instruction.child;
-    } while (currentInstruction !== undefined && currentInstruction !== null &&
-             instruction !== undefined && instruction !== null &&
+    } while (currentInstruction && instruction !== undefined && instruction !== null &&
              !(instruction instanceof DefaultInstruction) && reason);
 
     // ignore DefaultInstruction
-    return reason && (instruction === undefined || instruction === null ||
-                      instruction instanceof DefaultInstruction);
+    return reason && (!instruction || instruction instanceof DefaultInstruction);
   }
 
 
@@ -250,7 +247,7 @@ export class Router {
    */
   navigateByInstruction(instruction: Instruction, _skipLocationChange: boolean = false):
       Promise<any> {
-    if (instruction === undefined || instruction === null) {
+    if (!instruction) {
       return _resolveToFalse;
     }
     return this._currentNavigation = this._currentNavigation.then((_) => {
@@ -264,11 +261,11 @@ export class Router {
     return instruction.resolveComponent().then((_) => {
       var unsettledInstructions: Array<Promise<any>> = [];
 
-      if (instruction.component !== undefined && instruction.component !== null) {
+      if (instruction.component) {
         instruction.component.reuse = false;
       }
 
-      if (instruction.child !== undefined && instruction.child !== null) {
+      if (instruction.child) {
         unsettledInstructions.push(this._settleInstruction(instruction.child));
       }
 
@@ -318,10 +315,10 @@ export class Router {
    */
   /** @internal */
   _routerCanReuse(instruction: Instruction): Promise<any> {
-    if (this._outlet === undefined || this._outlet === null) {
+    if (!this._outlet) {
       return _resolveToFalse;
     }
-    if (instruction.component === undefined || instruction.component === null) {
+    if (!instruction.component) {
       return _resolveToTrue;
     }
     return this._outlet.routerCanReuse(instruction.component).then((result) => {
@@ -338,18 +335,17 @@ export class Router {
   }
 
   private _routerCanDeactivate(instruction: Instruction): Promise<boolean> {
-    if (this._outlet === undefined || this._outlet === null) {
+    if (!this._outlet) {
       return _resolveToTrue;
     }
     var next: Promise<boolean>;
     var childInstruction: Instruction = null;
     var reuse: boolean = false;
     var componentInstruction: ComponentInstruction = null;
-    if (instruction !== undefined && instruction !== null) {
+    if (instruction) {
       childInstruction = instruction.child;
       componentInstruction = instruction.component;
-      reuse = instruction.component === undefined || instruction.component === null ||
-          instruction.component.reuse;
+      reuse = !instruction.component || instruction.component.reuse;
     }
     if (reuse) {
       next = _resolveToTrue;
@@ -361,7 +357,7 @@ export class Router {
       if (result == false) {
         return false;
       }
-      if (this._childRouter !== undefined && this._childRouter !== null) {
+      if (this._childRouter) {
         // TODO: ideally, this closure would map to async-await in Dart.
         // For now, casting to any to suppress an error.
         return <any>this._childRouter._routerCanDeactivate(childInstruction);
@@ -377,8 +373,7 @@ export class Router {
     this.currentInstruction = instruction;
 
     var next: Promise<any> = _resolveToTrue;
-    if (this._outlet !== undefined && this._outlet !== null &&
-        instruction.component !== undefined && instruction.component !== null) {
+    if (this._outlet && instruction.component !== undefined && instruction.component !== null) {
       var componentInstruction = instruction.component;
       if (componentInstruction.reuse) {
         next = this._outlet.reuse(componentInstruction);
@@ -386,9 +381,9 @@ export class Router {
         next =
             this.deactivate(instruction).then((_) => this._outlet.activate(componentInstruction));
       }
-      if (instruction.child !== undefined && instruction.child !== null) {
+      if (instruction.child) {
         next = next.then((_) => {
-          if (this._childRouter !== undefined && this._childRouter !== null) {
+          if (this._childRouter) {
             return this._childRouter.commit(instruction.child);
           }
         });
@@ -397,8 +392,7 @@ export class Router {
 
     var promises: Promise<any>[] = [];
     this._auxRouters.forEach((router, name) => {
-      if (instruction.auxInstruction[name] !== undefined &&
-          instruction.auxInstruction[name] !== null) {
+      if (instruction.auxInstruction[name]) {
         promises.push(router.commit(instruction.auxInstruction[name]));
       }
     });
@@ -428,15 +422,15 @@ export class Router {
   deactivate(instruction: Instruction): Promise<any> {
     var childInstruction: Instruction = null;
     var componentInstruction: ComponentInstruction = null;
-    if (instruction !== undefined && instruction !== null) {
+    if (instruction) {
       childInstruction = instruction.child;
       componentInstruction = instruction.component;
     }
     var next: Promise<any> = _resolveToTrue;
-    if (this._childRouter !== undefined && this._childRouter !== null) {
+    if (this._childRouter) {
       next = this._childRouter.deactivate(childInstruction);
     }
-    if (this._outlet !== undefined && this._outlet !== null) {
+    if (this._outlet) {
       next = next.then((_) => this._outlet.deactivate(componentInstruction));
     }
 
@@ -457,8 +451,7 @@ export class Router {
   private _getAncestorInstructions(): Instruction[] {
     var ancestorInstructions: Instruction[] = [this.currentInstruction];
     var ancestorRouter: Router = this;
-    while ((ancestorRouter = ancestorRouter.parent) ||
-           ancestorRouter !== undefined && ancestorRouter !== null) {
+    while ((ancestorRouter = ancestorRouter.parent) || ancestorRouter) {
       ancestorInstructions.unshift(ancestorRouter.currentInstruction);
     }
     return ancestorInstructions;
@@ -562,7 +555,7 @@ export class RootRouter extends Router {
   ngOnDestroy() { this.dispose(); }
 
   dispose(): void {
-    if (this._locationSub !== undefined && this._locationSub !== null) {
+    if (this._locationSub) {
       (<any>this._locationSub).unsubscribe();
       this._locationSub = null;
     }
@@ -592,13 +585,11 @@ class ChildRouter extends Router {
 function canActivateOne(
     nextInstruction: Instruction, prevInstruction: Instruction): Promise<boolean> {
   var next = _resolveToTrue;
-  if (nextInstruction.component === undefined || nextInstruction.component === null) {
+  if (!nextInstruction.component) {
     return next;
   }
-  if (nextInstruction.child !== undefined && nextInstruction.child !== null) {
-    next = canActivateOne(
-        nextInstruction.child,
-        prevInstruction !== undefined && prevInstruction !== null ? prevInstruction.child : null);
+  if (nextInstruction.child) {
+    next = canActivateOne(nextInstruction.child, prevInstruction ? prevInstruction.child : null);
   }
   return next.then<boolean>((result: boolean): boolean => {
     if (result == false) {
@@ -608,11 +599,8 @@ function canActivateOne(
       return true;
     }
     var hook = getCanActivateHook(nextInstruction.component.componentType);
-    if (hook !== undefined && hook !== null) {
-      return hook(
-          nextInstruction.component, prevInstruction !== undefined && prevInstruction !== null ?
-              prevInstruction.component :
-              null);
+    if (hook) {
+      return hook(nextInstruction.component, prevInstruction ? prevInstruction.component : null);
     }
     return true;
   });

@@ -90,7 +90,7 @@ export class Reflector extends ReflectorReader {
   factory(type: Type): Function {
     if (this._containsReflectionInfo(type)) {
       var res = this._getReflectionInfo(type).factory;
-      return res !== undefined && res !== null ? res : null;
+      return res ? res : null;
     } else {
       return this.reflectionCapabilities.factory(type);
     }
@@ -99,7 +99,7 @@ export class Reflector extends ReflectorReader {
   parameters(typeOrFunc: /*Type*/ any): any[][] {
     if (this._injectableInfo.has(typeOrFunc)) {
       var res = this._getReflectionInfo(typeOrFunc).parameters;
-      return res !== undefined && res !== null ? res : [];
+      return res ? res : [];
     } else {
       return this.reflectionCapabilities.parameters(typeOrFunc);
     }
@@ -108,7 +108,7 @@ export class Reflector extends ReflectorReader {
   annotations(typeOrFunc: /*Type*/ any): any[] {
     if (this._injectableInfo.has(typeOrFunc)) {
       var res = this._getReflectionInfo(typeOrFunc).annotations;
-      return res !== undefined && res !== null ? res : [];
+      return res ? res : [];
     } else {
       return this.reflectionCapabilities.annotations(typeOrFunc);
     }
@@ -117,7 +117,7 @@ export class Reflector extends ReflectorReader {
   propMetadata(typeOrFunc: /*Type*/ any): {[key: string]: any[]} {
     if (this._injectableInfo.has(typeOrFunc)) {
       var res = this._getReflectionInfo(typeOrFunc).propMetadata;
-      return res !== undefined && res !== null ? res : {};
+      return res ? res : {};
     } else {
       return this.reflectionCapabilities.propMetadata(typeOrFunc);
     }
@@ -126,7 +126,7 @@ export class Reflector extends ReflectorReader {
   interfaces(type: /*Type*/ any): any[] {
     if (this._injectableInfo.has(type)) {
       var res = this._getReflectionInfo(type).interfaces;
-      return res !== undefined && res !== null ? res : [];
+      return res ? res : [];
     } else {
       return this.reflectionCapabilities.interfaces(type);
     }

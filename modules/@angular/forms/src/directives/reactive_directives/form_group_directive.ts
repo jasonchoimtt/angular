@@ -197,7 +197,7 @@ export class FormGroupDirective extends ControlContainer implements Form,
   }
 
   private _checkFormPresent() {
-    if (this.form === undefined || this.form === null) {
+    if (!this.form) {
       ReactiveErrors.missingFormException();
     }
   }

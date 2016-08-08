@@ -79,7 +79,7 @@ export class NgStyle implements DoCheck {
   @Input()
   set ngStyle(v: {[key: string]: string}) {
     this._ngStyle = v;
-    if ((this._differ === undefined || this._differ === null) && (v !== undefined && v !== null)) {
+    if ((this._differ === undefined || this._differ === null) && (v)) {
       this._differ = this._differs.find(this._ngStyle).create(null);
     }
   }

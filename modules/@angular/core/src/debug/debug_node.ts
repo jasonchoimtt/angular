@@ -23,7 +23,7 @@ export class DebugNode {
 
   constructor(nativeNode: any, parent: DebugNode, private _debugInfo: RenderDebugInfo) {
     this.nativeNode = nativeNode;
-    if (parent !== undefined && parent !== null && parent instanceof DebugElement) {
+    if (parent && parent instanceof DebugElement) {
       parent.addChild(this);
     } else {
       this.parent = null;
@@ -31,36 +31,19 @@ export class DebugNode {
     this.listeners = [];
   }
 
-  get injector(): Injector {
-    return this._debugInfo !== undefined && this._debugInfo !== null ? this._debugInfo.injector :
-                                                                       null;
-  }
+  get injector(): Injector { return this._debugInfo ? this._debugInfo.injector : null; }
 
-  get componentInstance(): any {
-    return this._debugInfo !== undefined && this._debugInfo !== null ? this._debugInfo.component :
-                                                                       null;
-  }
+  get componentInstance(): any { return this._debugInfo ? this._debugInfo.component : null; }
 
-  get context(): any {
-    return this._debugInfo !== undefined && this._debugInfo !== null ? this._debugInfo.context :
-                                                                       null;
-  }
+  get context(): any { return this._debugInfo ? this._debugInfo.context : null; }
 
   get references(): {[key: string]: any} {
-    return this._debugInfo !== undefined && this._debugInfo !== null ? this._debugInfo.references :
-                                                                       null;
+    return this._debugInfo ? this._debugInfo.references : null;
   }
 
-  get providerTokens(): any[] {
-    return this._debugInfo !== undefined && this._debugInfo !== null ?
-        this._debugInfo.providerTokens :
-        null;
-  }
+  get providerTokens(): any[] { return this._debugInfo ? this._debugInfo.providerTokens : null; }
 
-  get source(): string {
-    return this._debugInfo !== undefined && this._debugInfo !== null ? this._debugInfo.source :
-                                                                       null;
-  }
+  get source(): string { return this._debugInfo ? this._debugInfo.source : null; }
 
   /**
    * Use injector.get(token) instead.
@@ -93,7 +76,7 @@ export class DebugElement extends DebugNode {
   }
 
   addChild(child: DebugNode) {
-    if (child !== undefined && child !== null) {
+    if (child) {
       this.childNodes.push(child);
       child.parent = this;
     }
@@ -116,7 +99,7 @@ export class DebugElement extends DebugNode {
           ListWrapper.concat(ListWrapper.concat(previousChildren, newChildren), nextChildren);
       for (var i = 0; i < newChildren.length; ++i) {
         var newChild = newChildren[i];
-        if (newChild.parent !== undefined && newChild.parent !== null) {
+        if (newChild.parent) {
           newChild.parent.removeChild(newChild);
         }
         newChild.parent = this;

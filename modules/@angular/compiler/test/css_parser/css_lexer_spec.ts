@@ -21,7 +21,7 @@ export function main() {
     var output = scanner.scan();
     while (output != null) {
       var error = output.error;
-      if (error !== undefined && error !== null) {
+      if (error) {
         throw new CssScannerError(error.token, error.rawMessage);
       }
       tokens.push(output.token);

@@ -194,9 +194,9 @@ export class CssScanner {
 
     var next: CssToken;
     var output = this.scan();
-    if (output !== undefined && output !== null) {
+    if (output) {
       // just incase the inner scan method returned an error
-      if (output.error !== undefined && output.error !== null) {
+      if (output.error) {
         this.setMode(mode);
         return output;
       }
@@ -204,7 +204,7 @@ export class CssScanner {
       next = output.token;
     }
 
-    if (next === undefined || next === null) {
+    if (!next) {
       next = new CssToken(this.index, this.column, this.line, CssTokenType.EOF, 'end of file');
     }
 

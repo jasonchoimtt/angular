@@ -110,8 +110,7 @@ export class NgSelectOption implements OnDestroy {
   constructor(
       private _element: ElementRef, private _renderer: Renderer,
       @Optional() @Host() private _select: SelectControlValueAccessor) {
-    if (this._select !== undefined && this._select !== null)
-      this.id = this._select._registerOption();
+    if (this._select) this.id = this._select._registerOption();
   }
 
   @Input('ngValue')
@@ -125,8 +124,7 @@ export class NgSelectOption implements OnDestroy {
   @Input('value')
   set value(value: any) {
     this._setElementValue(value);
-    if (this._select !== undefined && this._select !== null)
-      this._select.writeValue(this._select.value);
+    if (this._select) this._select.writeValue(this._select.value);
   }
 
   /** @internal */
@@ -135,7 +133,7 @@ export class NgSelectOption implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this._select !== undefined && this._select !== null) {
+    if (this._select) {
       this._select._optionMap.delete(this.id);
       this._select.writeValue(this._select.value);
     }

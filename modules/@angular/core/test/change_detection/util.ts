@@ -23,11 +23,11 @@ export function kvChangesAsString(
     {map, previous, additions, changes, removals}:
         {map?: any[], previous?: any[], additions?: any[], changes?: any[], removals?: any[]}):
     string {
-  if (map === undefined || map === null) map = [];
-  if (previous === undefined || previous === null) previous = [];
-  if (additions === undefined || additions === null) additions = [];
-  if (changes === undefined || changes === null) changes = [];
-  if (removals === undefined || removals === null) removals = [];
+  if (!map) map = [];
+  if (!previous) previous = [];
+  if (!additions) additions = [];
+  if (!changes) changes = [];
+  if (!removals) removals = [];
 
   return 'map: ' + map.join(', ') + '\n' +
       'previous: ' + previous.join(', ') + '\n' +

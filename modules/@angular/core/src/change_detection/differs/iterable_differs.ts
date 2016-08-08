@@ -51,7 +51,7 @@ export class IterableDiffers {
   constructor(public factories: IterableDifferFactory[]) {}
 
   static create(factories: IterableDifferFactory[], parent?: IterableDiffers): IterableDiffers {
-    if (parent !== undefined && parent !== null) {
+    if (parent) {
       var copied = ListWrapper.clone(parent.factories);
       factories = factories.concat(copied);
       return new IterableDiffers(factories);
@@ -82,7 +82,7 @@ export class IterableDiffers {
   static extend(factories: IterableDifferFactory[]): Provider {
     return new Provider(IterableDiffers, {
       useFactory: (parent: IterableDiffers) => {
-        if (parent === undefined || parent === null) {
+        if (!parent) {
           // Typically would occur when calling IterableDiffers.extend inside of dependencies passed
           // to
           // bootstrap(), which would override default pipes instead of extending them.

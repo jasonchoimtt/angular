@@ -204,7 +204,7 @@ export class NgFormModel extends ControlContainer implements Form,
   }
 
   private _checkFormPresent() {
-    if (this.form === undefined || this.form === null) {
+    if (!this.form) {
       throw new BaseException(
           `ngFormModel expects a form. Please pass one in. Example: <form [ngFormModel]="myCoolForm">`);
     }

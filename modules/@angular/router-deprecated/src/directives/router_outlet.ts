@@ -132,7 +132,7 @@ export class RouterOutlet implements OnDestroy {
    * and otherwise resolves to true.
    */
   routerCanDeactivate(nextInstruction: ComponentInstruction): Promise<boolean> {
-    if (this._currentInstruction === undefined || this._currentInstruction === null) {
+    if (!this._currentInstruction) {
       return _resolveToTrue;
     }
     if (hasLifecycleHook(hookMod.routerCanDeactivate, this._currentInstruction.componentType)) {
@@ -158,7 +158,7 @@ export class RouterOutlet implements OnDestroy {
   routerCanReuse(nextInstruction: ComponentInstruction): Promise<boolean> {
     var result: any /** TODO #9100 */;
 
-    if (this._currentInstruction === undefined || this._currentInstruction === null ||
+    if (!this._currentInstruction ||
         this._currentInstruction.componentType != nextInstruction.componentType) {
       result = false;
     } else if (hasLifecycleHook(hookMod.routerCanReuse, this._currentInstruction.componentType)) {
@@ -167,8 +167,7 @@ export class RouterOutlet implements OnDestroy {
               (<CanReuse>ref.instance).routerCanReuse(nextInstruction, this._currentInstruction));
     } else {
       result = nextInstruction == this._currentInstruction ||
-          (nextInstruction.params !== undefined && nextInstruction.params !== null &&
-           this._currentInstruction.params !== undefined &&
+          (nextInstruction.params && this._currentInstruction.params !== undefined &&
            this._currentInstruction.params !== null &&
            StringMapWrapper.equals(nextInstruction.params, this._currentInstruction.params));
     }

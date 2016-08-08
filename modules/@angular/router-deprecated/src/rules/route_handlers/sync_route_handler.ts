@@ -20,7 +20,7 @@ export class SyncRouteHandler implements RouteHandler {
 
   constructor(public componentType: Type, data?: {[key: string]: any}) {
     this._resolvedComponent = Promise.resolve(componentType);
-    this.data = data !== undefined && data !== null ? new RouteData(data) : BLANK_ROUTE_DATA;
+    this.data = data ? new RouteData(data) : BLANK_ROUTE_DATA;
   }
 
   resolveComponentType(): Promise<any> { return this._resolvedComponent; }

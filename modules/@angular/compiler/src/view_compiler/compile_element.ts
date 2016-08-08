@@ -28,7 +28,7 @@ export class CompileNode {
       public parent: CompileElement, public view: CompileView, public nodeIndex: number,
       public renderNode: o.Expression, public sourceAst: TemplateAst) {}
 
-  isNull(): boolean { return this.renderNode === undefined || this.renderNode === null; }
+  isNull(): boolean { return !this.renderNode; }
 
   isRootElement(): boolean { return this.view != this.parent.view; }
 }
@@ -68,8 +68,7 @@ export class CompileElement extends CompileNode {
     this.injector = o.THIS_EXPR.callMethod('injector', [o.literal(this.nodeIndex)]);
     this.instances.add(identifierToken(Identifiers.Injector), this.injector);
     this.instances.add(identifierToken(Identifiers.Renderer), o.THIS_EXPR.prop('renderer'));
-    if (this.hasViewContainer || this.hasEmbeddedView ||
-        this.component !== undefined && this.component !== null) {
+    if (this.hasViewContainer || this.hasEmbeddedView || this.component) {
       this._createAppElement();
     }
   }
@@ -123,7 +122,7 @@ export class CompileElement extends CompileNode {
 
   setEmbeddedView(embeddedView: CompileView) {
     this.embeddedView = embeddedView;
-    if (embeddedView !== undefined && embeddedView !== null) {
+    if (embeddedView) {
       var createTemplateRefExpr = o.importExpr(Identifiers.TemplateRef_).instantiate([
         this.appElement, this.embeddedView.viewFactory
       ]);
@@ -150,20 +149,16 @@ export class CompileElement extends CompileNode {
     // some as getters. We rely on the fact that they are already sorted topologically.
     this._resolvedProviders.values().forEach((resolvedProvider) => {
       var providerValueExpressions = resolvedProvider.providers.map((provider) => {
-        if (provider.useExisting !== undefined && provider.useExisting !== null) {
+        if (provider.useExisting) {
           return this._getDependency(
               resolvedProvider.providerType,
               new CompileDiDependencyMetadata({token: provider.useExisting}));
-        } else if (provider.useFactory !== undefined && provider.useFactory !== null) {
-          var deps = provider.deps !== undefined && provider.deps !== null ?
-              provider.deps :
-              provider.useFactory.diDeps;
+        } else if (provider.useFactory) {
+          var deps = provider.deps ? provider.deps : provider.useFactory.diDeps;
           var depsExpr = deps.map((dep) => this._getDependency(resolvedProvider.providerType, dep));
           return o.importExpr(provider.useFactory).callFn(depsExpr);
-        } else if (provider.useClass !== undefined && provider.useClass !== null) {
-          var deps = provider.deps !== undefined && provider.deps !== null ?
-              provider.deps :
-              provider.useClass.diDeps;
+        } else if (provider.useClass) {
+          var deps = provider.deps ? provider.deps : provider.useClass.diDeps;
           var depsExpr = deps.map((dep) => this._getDependency(resolvedProvider.providerType, dep));
           return o.importExpr(provider.useClass)
               .instantiate(depsExpr, o.importType(provider.useClass));
@@ -193,7 +188,7 @@ export class CompileElement extends CompileNode {
     StringMapWrapper.forEach(this.referenceTokens, (_: CompileTokenMetadata, varName: string) => {
       var token = this.referenceTokens[varName];
       var varValue: o.Expression;
-      if (token !== undefined && token !== null) {
+      if (token) {
         varValue = this.instances.get(token);
       } else {
         varValue = this.renderNode;
@@ -206,30 +201,28 @@ export class CompileElement extends CompileNode {
     });
     queriesWithReads.forEach((queryWithRead) => {
       var value: o.Expression;
-      if (queryWithRead.read.identifier !== undefined && queryWithRead.read.identifier !== null) {
+      if (queryWithRead.read.identifier) {
         // query for an identifier
         value = this.instances.get(queryWithRead.read);
       } else {
         // query for a reference
         var token = this.referenceTokens[queryWithRead.read.value];
-        if (token !== undefined && token !== null) {
+        if (token) {
           value = this.instances.get(token);
         } else {
           value = this.elementRef;
         }
       }
-      if (value !== undefined && value !== null) {
+      if (value) {
         queryWithRead.query.addValue(value, this.view);
       }
     });
 
-    if (this.component !== undefined && this.component !== null) {
+    if (this.component) {
       var componentConstructorViewQueryList =
-          this.component !== undefined && this.component !== null ?
-          o.literalArr(this._componentConstructorViewQueryLists) :
-          o.NULL_EXPR;
+          this.component ? o.literalArr(this._componentConstructorViewQueryLists) : o.NULL_EXPR;
       const obj = this.getComponent();
-      var compExpr = obj !== undefined && obj !== null ? this.getComponent() : o.NULL_EXPR;
+      var compExpr = obj ? this.getComponent() : o.NULL_EXPR;
       this.view.createMethod.addStmt(
           this.appElement
               .callMethod(
@@ -266,9 +259,7 @@ export class CompileElement extends CompileNode {
   }
 
   getComponent(): o.Expression {
-    return this.component !== undefined && this.component !== null ?
-        this.instances.get(identifierToken(this.component.type)) :
-        null;
+    return this.component ? this.instances.get(identifierToken(this.component.type)) : null;
   }
 
   getProviderTokens(): o.Expression[] {
@@ -283,7 +274,7 @@ export class CompileElement extends CompileNode {
     var queries: CompileQuery[];
     while (!currentEl.isNull()) {
       queries = currentEl._queries.get(token);
-      if (queries !== undefined && queries !== null) {
+      if (queries) {
         ListWrapper.addAll(
             result, queries.filter((query) => query.meta.descendants || distance <= 1));
       }
@@ -293,7 +284,7 @@ export class CompileElement extends CompileNode {
       currentEl = currentEl.parent;
     }
     queries = this.view.componentView.viewQueries.get(token);
-    if (queries !== undefined && queries !== null) {
+    if (queries) {
       ListWrapper.addAll(result, queries);
     }
     return result;
@@ -312,14 +303,12 @@ export class CompileElement extends CompileNode {
       requestingProviderType: ProviderAstType, dep: CompileDiDependencyMetadata): o.Expression {
     var result: o.Expression = null;
     // constructor content query
-    if ((result === undefined || result === null) &&
-        (dep.query !== undefined && dep.query !== null)) {
+    if ((!result) && (dep.query)) {
       result = this._addQuery(dep.query, null).queryList;
     }
 
     // constructor view query
-    if ((result === undefined || result === null) &&
-        (dep.viewQuery !== undefined && dep.viewQuery !== null)) {
+    if ((!result) && (dep.viewQuery)) {
       result = createQueryList(
           dep.viewQuery, null,
           `_viewQuery_${dep.viewQuery.selectors[0].name}_${this.nodeIndex}_${this._componentConstructorViewQueryLists.length}`,
@@ -327,9 +316,9 @@ export class CompileElement extends CompileNode {
       this._componentConstructorViewQueryLists.push(result);
     }
 
-    if (dep.token !== undefined && dep.token !== null) {
+    if (dep.token) {
       // access builtins with special visibility
-      if (result === undefined || result === null) {
+      if (!result) {
         if (dep.token.equalsTo(identifierToken(Identifiers.ChangeDetectorRef))) {
           if (requestingProviderType === ProviderAstType.Component) {
             return this._compViewExpr.prop('ref');
@@ -339,7 +328,7 @@ export class CompileElement extends CompileNode {
         }
       }
       // access regular providers on the element
-      if (result === undefined || result === null) {
+      if (!result) {
         let resolvedProvider = this._resolvedProviders.get(dep.token);
         // don't allow directives / public services to access private services.
         // only components and private services can access private services.
@@ -361,20 +350,20 @@ export class CompileElement extends CompileNode {
     if (dep.isValue) {
       result = o.literal(dep.value);
     }
-    if ((result === undefined || result === null) && !dep.isSkipSelf) {
+    if ((!result) && !dep.isSkipSelf) {
       result = this._getLocalDependency(requestingProviderType, dep);
     }
     // check parent elements
-    while ((result === undefined || result === null) && !currElement.parent.isNull()) {
+    while ((!result) && !currElement.parent.isNull()) {
       currElement = currElement.parent;
       result = currElement._getLocalDependency(
           ProviderAstType.PublicService, new CompileDiDependencyMetadata({token: dep.token}));
     }
 
-    if (result === undefined || result === null) {
+    if (!result) {
       result = injectFromViewParentInjector(dep.token, dep.isOptional);
     }
-    if (result === undefined || result === null) {
+    if (!result) {
       result = o.NULL_EXPR;
     }
     return getPropertyInView(result, this.view, currElement.view);
@@ -411,7 +400,7 @@ function createProviderProperty(
     resolvedProviderValueExpr = providerValueExpressions[0];
     type = providerValueExpressions[0].type;
   }
-  if (type === undefined || type === null) {
+  if (!type) {
     type = o.DYNAMIC_TYPE;
   }
   if (isEager) {
@@ -435,6 +424,6 @@ function createProviderProperty(
 class _QueryWithRead {
   public read: CompileTokenMetadata;
   constructor(public query: CompileQuery, match: CompileTokenMetadata) {
-    this.read = query.meta.read !== undefined && query.meta.read !== null ? query.meta.read : match;
+    this.read = query.meta.read ? query.meta.read : match;
   }
 }

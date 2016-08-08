@@ -108,14 +108,14 @@ export class ResolvedReflectiveFactory {
 export function resolveReflectiveFactory(provider: Provider): ResolvedReflectiveFactory {
   var factoryFn: Function;
   var resolvedDeps: ReflectiveDependency[];
-  if (provider.useClass !== undefined && provider.useClass !== null) {
+  if (provider.useClass) {
     var useClass = resolveForwardRef(provider.useClass);
     factoryFn = reflector.factory(useClass);
     resolvedDeps = _dependenciesFor(useClass);
   } else if (provider.useExisting !== undefined && provider.useExisting !== null) {
     factoryFn = (aliasInstance: any) => aliasInstance;
     resolvedDeps = [ReflectiveDependency.fromKey(ReflectiveKey.get(provider.useExisting))];
-  } else if (provider.useFactory !== undefined && provider.useFactory !== null) {
+  } else if (provider.useFactory) {
     factoryFn = provider.useFactory;
     resolvedDeps = constructDependencies(provider.useFactory, provider.dependencies);
   } else {
@@ -213,7 +213,7 @@ function _normalizeProviders(
 
 export function constructDependencies(
     typeOrFunc: any, dependencies: any[]): ReflectiveDependency[] {
-  if (dependencies === undefined || dependencies === null) {
+  if (!dependencies) {
     return _dependenciesFor(typeOrFunc);
   } else {
     var params: any[][] = dependencies.map(t => [t]);
@@ -223,7 +223,7 @@ export function constructDependencies(
 
 function _dependenciesFor(typeOrFunc: any): ReflectiveDependency[] {
   var params = reflector.parameters(typeOrFunc);
-  if (params === undefined || params === null) return [];
+  if (!params) return [];
   if (params.some(isBlank)) {
     throw new NoAnnotationError(typeOrFunc, params);
   }

@@ -26,7 +26,7 @@ export class MockAnimationPlayer implements AnimationPlayer {
 
       this._subscriptions.forEach((entry) => { entry(); });
       this._subscriptions = [];
-      if (this.parentPlayer === undefined || this.parentPlayer === null) {
+      if (!this.parentPlayer) {
         this.destroy();
       }
     }

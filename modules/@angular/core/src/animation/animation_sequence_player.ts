@@ -48,7 +48,7 @@ export class AnimationSequencePlayer implements AnimationPlayer {
   private _onFinish() {
     if (!this._finished) {
       this._finished = true;
-      if (this.parentPlayer === undefined || this.parentPlayer === null) {
+      if (!this.parentPlayer) {
         this.destroy();
       }
       this._subscriptions.forEach(subscription => subscription());
@@ -63,7 +63,7 @@ export class AnimationSequencePlayer implements AnimationPlayer {
   hasStarted() { return this._started; }
 
   play(): void {
-    if (this.parentPlayer === undefined || this.parentPlayer === null) {
+    if (!this.parentPlayer) {
       this.init();
     }
     this._started = true;
