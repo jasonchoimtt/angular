@@ -6,12 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
-import {StringMapWrapper} from '@angular/facade/src/collection';
-import {isBlank, isPresent} from '@angular/facade/src/lang';
-import {Metric, Options, PerfLogFeatures, PerflogMetric, ReflectiveInjector, WebDriverExtension} from 'benchpress/common';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
+import {StringMapWrapper}  from '@angular/facade/src/collection';
+import {Metric, Options, PerfLogFeatures, PerflogMetric, ReflectiveInjector, WebDriverExtension}  from 'benchpress/common';
 
-import {TraceEventFactory} from '../trace_event_factory';
+import {TraceEventFactory}  from '../trace_event_factory';
 
 export function main() {
   var commandLog: any[];
@@ -27,11 +26,11 @@ export function main() {
         requestCount?: boolean
       } = {}): Metric {
     commandLog = [];
-    if (isBlank(perfLogFeatures)) {
+    if (perfLogFeatures === undefined || perfLogFeatures === null) {
       perfLogFeatures =
           new PerfLogFeatures({render: true, gc: true, frameCapture: true, userTiming: true});
     }
-    if (isBlank(microMetrics)) {
+    if (microMetrics === undefined || microMetrics === null) {
       microMetrics = StringMapWrapper.create();
     }
     var providers: any[] = [
@@ -48,16 +47,16 @@ export function main() {
         useValue: new MockDriverExtension(perfLogs, commandLog, perfLogFeatures)
       }
     ];
-    if (isPresent(forceGc)) {
+    if (forceGc !== undefined && forceGc !== null) {
       providers.push({provide: Options.FORCE_GC, useValue: forceGc});
     }
-    if (isPresent(captureFrames)) {
+    if (captureFrames !== undefined && captureFrames !== null) {
       providers.push({provide: Options.CAPTURE_FRAMES, useValue: captureFrames});
     }
-    if (isPresent(receivedData)) {
+    if (receivedData !== undefined && receivedData !== null) {
       providers.push({provide: Options.RECEIVED_DATA, useValue: receivedData});
     }
-    if (isPresent(requestCount)) {
+    if (requestCount !== undefined && requestCount !== null) {
       providers.push({provide: Options.REQUEST_COUNT, useValue: requestCount});
     }
     return ReflectiveInjector.resolveAndCreate(providers).get(PerflogMetric);

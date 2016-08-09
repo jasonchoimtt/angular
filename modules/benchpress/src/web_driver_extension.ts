@@ -6,11 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Injector, OpaqueToken} from '@angular/core/src/di';
-import {BaseException, WrappedException} from '@angular/facade/src/exceptions';
-import {isBlank, isPresent} from '@angular/facade/src/lang';
+import {Injector, OpaqueToken}  from '@angular/core/src/di';
+import {BaseException, WrappedException}  from '@angular/facade/src/exceptions';
 
-import {Options} from './common_options';
+import {Options}  from './common_options';
 
 
 /**
@@ -35,7 +34,7 @@ export abstract class WebDriverExtension {
               delegate = extension;
             }
           });
-          if (isBlank(delegate)) {
+          if (delegate === undefined || delegate === null) {
             throw new BaseException('Could not find a delegate for given capabilities!');
           }
           return delegate;

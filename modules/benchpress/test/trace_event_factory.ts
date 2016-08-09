@@ -1,12 +1,4 @@
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
-import {isPresent} from '@angular/facade/src/lang';
 
 export class TraceEventFactory {
   private _cat: string;
@@ -19,7 +11,7 @@ export class TraceEventFactory {
 
   create(ph, name, time, args = null) {
     var res = {'name': name, 'cat': this._cat, 'ph': ph, 'ts': time, 'pid': this._pid};
-    if (isPresent(args)) {
+    if (args !== undefined && args !== null) {
       res['args'] = args;
     }
     return res;

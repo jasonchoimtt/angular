@@ -6,10 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {StringWrapper, isPresent} from '@angular/facade/src/lang';
+import {StringWrapper}  from '@angular/facade/src/lang';
 
-import {WebDriverAdapter} from '../web_driver_adapter';
-import {PerfLogFeatures, WebDriverExtension} from '../web_driver_extension';
+import {WebDriverAdapter}  from '../web_driver_adapter';
+import {PerfLogFeatures, WebDriverExtension}  from '../web_driver_extension';
 
 export class FirefoxDriverExtension extends WebDriverExtension {
   static get PROVIDERS(): any[] { return _PROVIDERS; }
@@ -33,7 +33,7 @@ export class FirefoxDriverExtension extends WebDriverExtension {
 
   timeEnd(name: string, restartName: string = null): Promise<any> {
     var script = 'window.markEnd("' + name + '");';
-    if (isPresent(restartName)) {
+    if (restartName !== undefined && restartName !== null) {
       script += 'window.markStart("' + restartName + '");';
     }
     return this._driver.executeScript(script);

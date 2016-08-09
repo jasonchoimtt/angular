@@ -6,9 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
-import {isBlank} from '@angular/facade/src/lang';
-import {Injector, Metric, Options, ReflectiveInjector, Runner, SampleDescription, SampleState, Sampler, Validator, WebDriverAdapter} from 'benchpress/common';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
+import {Injector, Metric, Options, ReflectiveInjector, Runner, SampleDescription, SampleState, Sampler, Validator, WebDriverAdapter}  from 'benchpress/common';
 
 export function main() {
   describe('runner', () => {
@@ -16,7 +15,7 @@ export function main() {
     var runner;
 
     function createRunner(defaultBindings = null): Runner {
-      if (isBlank(defaultBindings)) {
+      if (defaultBindings === undefined || defaultBindings === null) {
         defaultBindings = [];
       }
       runner = new Runner([

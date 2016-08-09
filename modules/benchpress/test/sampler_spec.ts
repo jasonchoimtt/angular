@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
-import {Date, DateWrapper, isBlank, isPresent, stringify} from '@angular/facade/src/lang';
-import {MeasureValues, Metric, Options, ReflectiveInjector, Reporter, Sampler, Validator, WebDriverAdapter} from 'benchpress/common';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
+import {Date, DateWrapper, stringify}  from '@angular/facade/src/lang';
+import {MeasureValues, Metric, Options, ReflectiveInjector, Reporter, Sampler, Validator, WebDriverAdapter}  from 'benchpress/common';
 
 export function main() {
   var EMPTY_EXECUTE = () => {};
@@ -25,13 +25,13 @@ export function main() {
       execute?: any
     } = {}) {
       var time = 1000;
-      if (isBlank(metric)) {
+      if (metric === undefined || metric === null) {
         metric = new MockMetric([]);
       }
-      if (isBlank(reporter)) {
+      if (reporter === undefined || reporter === null) {
         reporter = new MockReporter([]);
       }
-      if (isBlank(driver)) {
+      if (driver === undefined || driver === null) {
         driver = new MockDriverAdapter([]);
       }
       var providers = [
@@ -40,7 +40,7 @@ export function main() {
         {provide: Options.EXECUTE, useValue: execute}, {provide: Validator, useValue: validator},
         {provide: Options.NOW, useValue: () => DateWrapper.fromMillis(time++)}
       ];
-      if (isPresent(prepare)) {
+      if (prepare !== undefined && prepare !== null) {
         providers.push({provide: Options.PREPARE, useValue: prepare});
       }
 
@@ -209,7 +209,7 @@ function createCountingValidator(count, validSample = null, log = null) {
   return new MockValidator(log, (completeSample) => {
     count--;
     if (count === 0) {
-      return isPresent(validSample) ? validSample : completeSample;
+      return validSample !== undefined && validSample !== null ? validSample : completeSample;
     } else {
       return null;
     }
@@ -227,14 +227,14 @@ class MockDriverAdapter extends WebDriverAdapter {
   private _waitFor: Function;
   constructor(log = null, waitFor = null) {
     super();
-    if (isBlank(log)) {
+    if (log === undefined || log === null) {
       log = [];
     }
     this._log = log;
     this._waitFor = waitFor;
   }
   waitFor(callback: Function): Promise<any> {
-    if (isPresent(this._waitFor)) {
+    if (this._waitFor !== undefined && this._waitFor !== null) {
       return this._waitFor(callback);
     } else {
       return Promise.resolve(callback());
@@ -248,13 +248,15 @@ class MockValidator extends Validator {
   private _log: any[];
   constructor(log = null, private _validate: Function = null) {
     super();
-    if (isBlank(log)) {
+    if (log === undefined || log === null) {
       log = [];
     }
     this._log = log;
   }
   validate(completeSample: MeasureValues[]): MeasureValues[] {
-    var stableSample = isPresent(this._validate) ? this._validate(completeSample) : completeSample;
+    var stableSample = this._validate !== undefined && this._validate !== null ?
+        this._validate(completeSample) :
+        completeSample;
     this._log.push(['validate', completeSample, stableSample]);
     return stableSample;
   }
@@ -265,7 +267,7 @@ class MockMetric extends Metric {
   private _log: any[];
   constructor(log = null, private _endMeasure: Function = null) {
     super();
-    if (isBlank(log)) {
+    if (log === undefined || log === null) {
       log = [];
     }
     this._log = log;
@@ -275,7 +277,8 @@ class MockMetric extends Metric {
     return Promise.resolve(null);
   }
   endMeasure(restart) {
-    var measureValues = isPresent(this._endMeasure) ? this._endMeasure() : {};
+    var measureValues =
+        this._endMeasure !== undefined && this._endMeasure !== null ? this._endMeasure() : {};
     this._log.push(['endMeasure', restart, measureValues]);
     return Promise.resolve(measureValues);
   }
@@ -286,7 +289,7 @@ class MockReporter extends Reporter {
   private _log: any[];
   constructor(log = null) {
     super();
-    if (isBlank(log)) {
+    if (log === undefined || log === null) {
       log = [];
     }
     this._log = log;

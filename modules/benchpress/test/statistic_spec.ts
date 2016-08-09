@@ -6,8 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
-import {Statistic} from 'benchpress/src/statistic';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
+import {Statistic}  from 'benchpress/src/statistic';
 
 export function main() {
   describe('statistic', () => {

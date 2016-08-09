@@ -6,13 +6,12 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {OpaqueToken, Provider, bind} from '@angular/core';
-import {StringMapWrapper} from '@angular/facade/src/collection';
-import {isNumber} from '@angular/facade/src/lang';
+import {OpaqueToken, Provider, bind}  from '@angular/core';
+import {StringMapWrapper}  from '@angular/facade/src/collection';
 
-import {Options} from '../common_options';
-import {Metric} from '../metric';
-import {WebDriverAdapter} from '../web_driver_adapter';
+import {Options}  from '../common_options';
+import {Metric}  from '../metric';
+import {WebDriverAdapter}  from '../web_driver_adapter';
 
 export class UserMetric extends Metric {
   // TODO(tbosch): use static values when our transpiler supports them
@@ -43,7 +42,7 @@ export class UserMetric extends Metric {
     function getAndClearValues() {
       Promise.all(names.map(name => adapter.executeScript(`return window.${name}`)))
           .then((values: any[]) => {
-            if (values.every(isNumber)) {
+            if (values.every(v => typeof v === 'number')) {
               Promise.all(names.map(name => adapter.executeScript(`delete window.${name}`)))
                   .then((_: any[]) => {
                     let map = StringMapWrapper.create();

@@ -6,27 +6,26 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {ReflectiveInjector} from '@angular/core';
-import {isBlank, isPresent} from '@angular/facade/src/lang';
+import {ReflectiveInjector}  from '@angular/core';
 
-import {Options} from './common_options';
-import {Metric} from './metric';
-import {MultiMetric} from './metric/multi_metric';
-import {PerflogMetric} from './metric/perflog_metric';
-import {UserMetric} from './metric/user_metric';
-import {Reporter} from './reporter';
-import {ConsoleReporter} from './reporter/console_reporter';
-import {MultiReporter} from './reporter/multi_reporter';
-import {SampleDescription} from './sample_description';
-import {SampleState, Sampler} from './sampler';
-import {Validator} from './validator';
-import {RegressionSlopeValidator} from './validator/regression_slope_validator';
-import {SizeValidator} from './validator/size_validator';
-import {WebDriverAdapter} from './web_driver_adapter';
-import {WebDriverExtension} from './web_driver_extension';
-import {ChromeDriverExtension} from './webdriver/chrome_driver_extension';
-import {FirefoxDriverExtension} from './webdriver/firefox_driver_extension';
-import {IOsDriverExtension} from './webdriver/ios_driver_extension';
+import {Options}  from './common_options';
+import {Metric}  from './metric';
+import {MultiMetric}  from './metric/multi_metric';
+import {PerflogMetric}  from './metric/perflog_metric';
+import {UserMetric}  from './metric/user_metric';
+import {Reporter}  from './reporter';
+import {ConsoleReporter}  from './reporter/console_reporter';
+import {MultiReporter}  from './reporter/multi_reporter';
+import {SampleDescription}  from './sample_description';
+import {SampleState, Sampler}  from './sampler';
+import {Validator}  from './validator';
+import {RegressionSlopeValidator}  from './validator/regression_slope_validator';
+import {SizeValidator}  from './validator/size_validator';
+import {WebDriverAdapter}  from './web_driver_adapter';
+import {WebDriverExtension}  from './web_driver_extension';
+import {ChromeDriverExtension}  from './webdriver/chrome_driver_extension';
+import {FirefoxDriverExtension}  from './webdriver/firefox_driver_extension';
+import {IOsDriverExtension}  from './webdriver/ios_driver_extension';
 
 
 /**
@@ -36,7 +35,7 @@ import {IOsDriverExtension} from './webdriver/ios_driver_extension';
 export class Runner {
   private _defaultProviders: any[];
   constructor(defaultProviders: any[] = null) {
-    if (isBlank(defaultProviders)) {
+    if (defaultProviders === undefined || defaultProviders === null) {
       defaultProviders = [];
     }
     this._defaultProviders = defaultProviders;
@@ -54,16 +53,16 @@ export class Runner {
       _DEFAULT_PROVIDERS, this._defaultProviders, {provide: Options.SAMPLE_ID, useValue: id},
       {provide: Options.EXECUTE, useValue: execute}
     ];
-    if (isPresent(prepare)) {
+    if (prepare !== undefined && prepare !== null) {
       sampleProviders.push({provide: Options.PREPARE, useValue: prepare});
     }
-    if (isPresent(microMetrics)) {
+    if (microMetrics !== undefined && microMetrics !== null) {
       sampleProviders.push({provide: Options.MICRO_METRICS, useValue: microMetrics});
     }
-    if (isPresent(userMetrics)) {
+    if (userMetrics !== undefined && userMetrics !== null) {
       sampleProviders.push({provide: Options.USER_METRICS, useValue: userMetrics});
     }
-    if (isPresent(providers)) {
+    if (providers !== undefined && providers !== null) {
       sampleProviders.push(providers);
     }
 

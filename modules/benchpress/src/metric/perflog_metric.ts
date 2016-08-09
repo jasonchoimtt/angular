@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {OpaqueToken} from '@angular/core/src/di';
-import {ListWrapper, StringMapWrapper} from '@angular/facade/src/collection';
-import {BaseException, WrappedException} from '@angular/facade/src/exceptions';
-import {Math, NumberWrapper, StringWrapper, isBlank, isPresent} from '@angular/facade/src/lang';
+import {OpaqueToken}  from '@angular/core/src/di';
+import {ListWrapper, StringMapWrapper}  from '@angular/facade/src/collection';
+import {BaseException, WrappedException}  from '@angular/facade/src/exceptions';
+import {Math, NumberWrapper, StringWrapper}  from '@angular/facade/src/lang';
 
-import {Options} from '../common_options';
-import {Metric} from '../metric';
-import {PerfLogFeatures, WebDriverExtension} from '../web_driver_extension';
+import {Options}  from '../common_options';
+import {Metric}  from '../metric';
+import {PerfLogFeatures, WebDriverExtension}  from '../web_driver_extension';
 
 
 /**
@@ -162,7 +162,7 @@ export class PerflogMetric extends Metric {
     return this._driverExtension.readPerfLog().then((events) => {
       this._addEvents(events);
       var result = this._aggregateEvents(this._remainingEvents, markName);
-      if (isPresent(result)) {
+      if (result !== undefined && result !== null) {
         this._remainingEvents = events;
         return result;
       }
@@ -245,7 +245,7 @@ export class PerflogMetric extends Metric {
       var name = event['name'];
       var microIterations = 1;
       var microIterationsMatch = name.match(_MICRO_ITERATIONS_REGEX);
-      if (isPresent(microIterationsMatch)) {
+      if (microIterationsMatch !== undefined && microIterationsMatch !== null) {
         name = microIterationsMatch[1];
         microIterations = NumberWrapper.parseInt(microIterationsMatch[2], 10);
       }
@@ -272,10 +272,11 @@ export class PerflogMetric extends Metric {
           result['requestCount'] = 0;
         }
       }
-      if (isPresent(markStartEvent) && isBlank(markEndEvent) &&
+      if ((markStartEvent !== undefined && markStartEvent !== null && markEndEvent === undefined ||
+           markEndEvent === null) &&
           event['pid'] === markStartEvent['pid']) {
         if (StringWrapper.equals(ph, 'b') && StringWrapper.equals(name, _MARK_NAME_FRAME_CAPUTRE)) {
-          if (isPresent(frameCaptureStartEvent)) {
+          if (frameCaptureStartEvent !== undefined && frameCaptureStartEvent !== null) {
             throw new BaseException('can capture frames only once per benchmark run');
           }
           if (!this._captureFrames) {
@@ -285,14 +286,16 @@ export class PerflogMetric extends Metric {
           frameCaptureStartEvent = event;
         } else if (
             StringWrapper.equals(ph, 'e') && StringWrapper.equals(name, _MARK_NAME_FRAME_CAPUTRE)) {
-          if (isBlank(frameCaptureStartEvent)) {
+          if (frameCaptureStartEvent === undefined || frameCaptureStartEvent === null) {
             throw new BaseException('missing start event for frame capture');
           }
           frameCaptureEndEvent = event;
         }
 
         if (isInstant) {
-          if (isPresent(frameCaptureStartEvent) && isBlank(frameCaptureEndEvent) &&
+          if ((frameCaptureStartEvent !== undefined && frameCaptureStartEvent !== null &&
+                   frameCaptureEndEvent === undefined ||
+               frameCaptureEndEvent === null) &&
               StringWrapper.equals(name, 'frame')) {
             frameTimestamps.push(event['ts']);
             if (frameTimestamps.length >= 2) {
@@ -304,7 +307,7 @@ export class PerflogMetric extends Metric {
         }
 
         if (StringWrapper.equals(ph, 'B') || StringWrapper.equals(ph, 'b')) {
-          if (isBlank(intervalStarts[name])) {
+          if (intervalStarts[name] === undefined || intervalStarts[name] === null) {
             intervalStartCount[name] = 1;
             intervalStarts[name] = event;
           } else {
@@ -312,7 +315,7 @@ export class PerflogMetric extends Metric {
           }
         } else if (
             (StringWrapper.equals(ph, 'E') || StringWrapper.equals(ph, 'e')) &&
-            isPresent(intervalStarts[name])) {
+            (intervalStarts[name] !== undefined && intervalStarts[name] !== null)) {
           intervalStartCount[name]--;
           if (intervalStartCount[name] === 0) {
             var startEvent = intervalStarts[name];
@@ -324,36 +327,41 @@ export class PerflogMetric extends Metric {
                   (startEvent['args']['usedHeapSize'] - event['args']['usedHeapSize']) / 1000;
               result['gcAmount'] += amount;
               var majorGc = event['args']['majorGc'];
-              if (isPresent(majorGc) && majorGc) {
+              if (majorGc !== undefined && majorGc !== null && majorGc) {
                 result['majorGcTime'] += duration;
               }
-              if (isPresent(intervalStarts['script'])) {
+              if (intervalStarts['script'] !== undefined && intervalStarts['script'] !== null) {
                 gcTimeInScript += duration;
               }
             } else if (StringWrapper.equals(name, 'render')) {
               result['renderTime'] += duration;
-              if (isPresent(intervalStarts['script'])) {
+              if (intervalStarts['script'] !== undefined && intervalStarts['script'] !== null) {
                 renderTimeInScript += duration;
               }
             } else if (StringWrapper.equals(name, 'script')) {
               result['scriptTime'] += duration;
-            } else if (isPresent(this._microMetrics[name])) {
+            } else if (
+                this._microMetrics[name] !== undefined && this._microMetrics[name] !== null) {
               result[name] += duration / microIterations;
             }
           }
         }
       }
     });
-    if (isBlank(markStartEvent) || isBlank(markEndEvent)) {
+    if (markStartEvent === undefined || markStartEvent === null || markEndEvent === undefined ||
+        markEndEvent === null) {
       // not all events have been received, no further processing for now
       return null;
     }
 
-    if (isPresent(markEndEvent) && isPresent(frameCaptureStartEvent) &&
-        isBlank(frameCaptureEndEvent)) {
+    if (markEndEvent !== undefined && markEndEvent !== null &&
+            frameCaptureStartEvent !== undefined && frameCaptureStartEvent !== null &&
+            frameCaptureEndEvent === undefined ||
+        frameCaptureEndEvent === null) {
       throw new BaseException('missing end event for frame capture');
     }
-    if (this._captureFrames && isBlank(frameCaptureStartEvent)) {
+    if (this._captureFrames && frameCaptureStartEvent === undefined ||
+        frameCaptureStartEvent === null) {
       throw new BaseException(
           'frame capture requested in benchpress, but no start event was found');
     }

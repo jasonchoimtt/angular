@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Date, DateWrapper, isBlank, isPresent} from '@angular/facade/src/lang';
+import {Date, DateWrapper}  from '@angular/facade/src/lang';
 
-import {Options} from './common_options';
-import {MeasureValues} from './measure_values';
-import {Metric} from './metric';
-import {Reporter} from './reporter';
-import {Validator} from './validator';
-import {WebDriverAdapter} from './web_driver_adapter';
+import {Options}  from './common_options';
+import {MeasureValues}  from './measure_values';
+import {Metric}  from './metric';
+import {Reporter}  from './reporter';
+import {Validator}  from './validator';
+import {WebDriverAdapter}  from './web_driver_adapter';
 
 
 /**
@@ -65,7 +65,7 @@ export class Sampler {
     var loop;
     loop = (lastState) => {
       return this._iterate(lastState).then((newState) => {
-        if (isPresent(newState.validSample)) {
+        if (newState.validSample !== undefined && newState.validSample !== null) {
           return newState;
         } else {
           return loop(newState);
@@ -78,16 +78,17 @@ export class Sampler {
   /** @internal */
   private _iterate(lastState): Promise<SampleState> {
     var resultPromise: Promise<any>;
-    if (isPresent(this._prepare)) {
+    if (this._prepare !== undefined && this._prepare !== null) {
       resultPromise = this._driver.waitFor(this._prepare);
     } else {
       resultPromise = Promise.resolve(null);
     }
-    if (isPresent(this._prepare) || lastState.completeSample.length === 0) {
+    if (this._prepare !== undefined && this._prepare !== null ||
+        lastState.completeSample.length === 0) {
       resultPromise = resultPromise.then((_) => this._metric.beginMeasure());
     }
     return resultPromise.then((_) => this._driver.waitFor(this._execute))
-        .then((_) => this._metric.endMeasure(isBlank(this._prepare)))
+        .then((_) => this._metric.endMeasure(this._prepare === undefined || this._prepare === null))
         .then((measureValues) => this._report(lastState, measureValues));
   }
 
@@ -97,7 +98,7 @@ export class Sampler {
     var completeSample = state.completeSample.concat([measureValues]);
     var validSample = this._validator.validate(completeSample);
     var resultPromise = this._reporter.reportMeasureValues(measureValues);
-    if (isPresent(validSample)) {
+    if (validSample !== undefined && validSample !== null) {
       resultPromise =
           resultPromise.then((_) => this._reporter.reportSample(completeSample, validSample));
     }

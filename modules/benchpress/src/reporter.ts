@@ -6,8 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {BaseException, WrappedException} from '@angular/facade/src/exceptions';
-import {MeasureValues} from './measure_values';
+import {BaseException, WrappedException}  from '@angular/facade/src/exceptions';
+import {MeasureValues}  from './measure_values';
 
 /**
  * A reporter reports measure values and the valid sample.

@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
-import {Date, DateWrapper, isBlank, isPresent} from '@angular/facade/src/lang';
-import {ConsoleReporter, MeasureValues, ReflectiveInjector, Reporter, SampleDescription, SampleState} from 'benchpress/common';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
+import {Date, DateWrapper}  from '@angular/facade/src/lang';
+import {ConsoleReporter, MeasureValues, ReflectiveInjector, Reporter, SampleDescription, SampleState}  from 'benchpress/common';
 
 export function main() {
   describe('console reporter', () => {
@@ -18,10 +18,10 @@ export function main() {
     function createReporter({columnWidth = null, sampleId = null, descriptions = null,
                              metrics = null}: {columnWidth?, sampleId?, descriptions?, metrics?}) {
       log = [];
-      if (isBlank(descriptions)) {
+      if (descriptions === undefined || descriptions === null) {
         descriptions = [];
       }
-      if (isBlank(sampleId)) {
+      if (sampleId === undefined || sampleId === null) {
         sampleId = 'null';
       }
       var bindings = [
@@ -31,7 +31,7 @@ export function main() {
         },
         {provide: ConsoleReporter.PRINT, useValue: (line) => log.push(line)}
       ];
-      if (isPresent(columnWidth)) {
+      if (columnWidth !== undefined && columnWidth !== null) {
         bindings.push({provide: ConsoleReporter.COLUMN_WIDTH, useValue: columnWidth});
       }
       reporter = ReflectiveInjector.resolveAndCreate(bindings).get(ConsoleReporter);

@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {ReflectiveInjector} from '@angular/core';
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
-import {StringMapWrapper} from '@angular/facade/src/collection';
-import {Json, isBlank, isPresent} from '@angular/facade/src/lang';
-import {Injector, Metric, MultiMetric, Options, PerfLogFeatures, PerflogMetric, UserMetric, WebDriverAdapter, WebDriverExtension, bind, provide} from 'benchpress/common';
+import {ReflectiveInjector}  from '@angular/core';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
+import {StringMapWrapper}  from '@angular/facade/src/collection';
+import {Json}  from '@angular/facade/src/lang';
+import {Injector, Metric, MultiMetric, Options, PerfLogFeatures, PerflogMetric, UserMetric, WebDriverAdapter, WebDriverExtension, bind, provide}  from 'benchpress/common';
 
 export function main() {
   var wdAdapter: MockDriverAdapter;
@@ -18,11 +18,11 @@ export function main() {
   function createMetric(
       perfLogs, perfLogFeatures,
       {userMetrics}: {userMetrics?: {[key: string]: string}} = {}): UserMetric {
-    if (isBlank(perfLogFeatures)) {
+    if (perfLogFeatures === undefined || perfLogFeatures === null) {
       perfLogFeatures =
           new PerfLogFeatures({render: true, gc: true, frameCapture: true, userTiming: true});
     }
-    if (isBlank(userMetrics)) {
+    if (userMetrics === undefined || userMetrics === null) {
       userMetrics = StringMapWrapper.create();
     }
     wdAdapter = new MockDriverAdapter();

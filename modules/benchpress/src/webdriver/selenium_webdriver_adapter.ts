@@ -8,7 +8,7 @@
 
 import * as webdriver from 'selenium-webdriver';
 
-import {WebDriverAdapter} from '../web_driver_adapter';
+import {WebDriverAdapter}  from '../web_driver_adapter';
 
 
 

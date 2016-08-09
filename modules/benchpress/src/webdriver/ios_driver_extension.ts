@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {BaseException, WrappedException} from '@angular/facade/src/exceptions';
-import {Json, StringWrapper, isBlank, isPresent} from '@angular/facade/src/lang';
+import {BaseException, WrappedException}  from '@angular/facade/src/exceptions';
+import {Json, StringWrapper}  from '@angular/facade/src/lang';
 
-import {WebDriverAdapter} from '../web_driver_adapter';
-import {PerfLogFeatures, WebDriverExtension} from '../web_driver_extension';
+import {WebDriverAdapter}  from '../web_driver_adapter';
+import {PerfLogFeatures, WebDriverExtension}  from '../web_driver_extension';
 
 export class IOsDriverExtension extends WebDriverExtension {
   // TODO(tbosch): use static values when our transpiler supports them
@@ -26,7 +26,7 @@ export class IOsDriverExtension extends WebDriverExtension {
 
   timeEnd(name: string, restartName: string = null): Promise<any> {
     var script = `console.timeEnd('${name}');`;
-    if (isPresent(restartName)) {
+    if (restartName !== undefined && restartName !== null) {
       script += `console.time('${restartName}');`;
     }
     return this._driver.executeScript(script);
@@ -52,7 +52,7 @@ export class IOsDriverExtension extends WebDriverExtension {
 
   /** @internal */
   private _convertPerfRecordsToEvents(records: any[], events: any[] = null) {
-    if (isBlank(events)) {
+    if (events === undefined || events === null) {
       events = [];
     }
     records.forEach((record) => {
@@ -63,7 +63,8 @@ export class IOsDriverExtension extends WebDriverExtension {
       var endTime = record['endTime'];
 
       if (StringWrapper.equals(type, 'FunctionCall') &&
-          (isBlank(data) || !StringWrapper.equals(data['scriptName'], 'InjectedScript'))) {
+          (data === undefined || data === null ||
+           !StringWrapper.equals(data['scriptName'], 'InjectedScript'))) {
         events.push(createStartEvent('script', startTime));
         endEvent = createEndEvent('script', endTime);
       } else if (StringWrapper.equals(type, 'Time')) {
@@ -79,10 +80,10 @@ export class IOsDriverExtension extends WebDriverExtension {
         endEvent = createEndEvent('render', endTime);
       }
       // Note: ios used to support GCEvent up until iOS 6 :-(
-      if (isPresent(record['children'])) {
+      if (record['children'] !== undefined && record['children'] !== null) {
         this._convertPerfRecordsToEvents(record['children'], events);
       }
-      if (isPresent(endEvent)) {
+      if (endEvent !== undefined && endEvent !== null) {
         events.push(endEvent);
       }
     });
@@ -106,7 +107,7 @@ function createEvent(ph, name, time, args = null) {
     // the perflog...
     'pid': 'pid0'
   };
-  if (isPresent(args)) {
+  if (args !== undefined && args !== null) {
     result['args'] = args;
   }
   return result;

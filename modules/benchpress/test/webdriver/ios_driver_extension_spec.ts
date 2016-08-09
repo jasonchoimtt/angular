@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
-import {Json, isBlank, isPresent} from '@angular/facade/src/lang';
-import {IOsDriverExtension, ReflectiveInjector, WebDriverAdapter, WebDriverExtension} from 'benchpress/common';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
+import {Json}  from '@angular/facade/src/lang';
+import {IOsDriverExtension, ReflectiveInjector, WebDriverAdapter, WebDriverExtension}  from 'benchpress/common';
 
-import {TraceEventFactory} from '../trace_event_factory';
+import {TraceEventFactory}  from '../trace_event_factory';
 
 export function main() {
   describe('ios driver extension', () => {
@@ -20,7 +20,7 @@ export function main() {
     var normEvents = new TraceEventFactory('timeline', 'pid0');
 
     function createExtension(perfRecords = null): WebDriverExtension {
-      if (isBlank(perfRecords)) {
+      if (perfRecords === undefined || perfRecords === null) {
         perfRecords = [];
       }
       log = [];
@@ -150,7 +150,7 @@ function timeEndRecord(name, time) {
 }
 
 function durationRecord(type, startTime, endTime, children = null) {
-  if (isBlank(children)) {
+  if (children === undefined || children === null) {
     children = [];
   }
   return {'type': type, 'startTime': startTime, 'endTime': endTime, 'children': children};

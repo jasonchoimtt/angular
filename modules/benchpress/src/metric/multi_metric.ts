@@ -6,10 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Injector, OpaqueToken} from '@angular/core/src/di';
-import {StringMapWrapper} from '@angular/facade/src/collection';
+import {Injector, OpaqueToken}  from '@angular/core/src/di';
+import {StringMapWrapper}  from '@angular/facade/src/collection';
 
-import {Metric} from '../metric';
+import {Metric}  from '../metric';
 
 export class MultiMetric extends Metric {
   static createBindings(childTokens: any[]): any[] {
