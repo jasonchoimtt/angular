@@ -8,7 +8,7 @@
 
 import {Location} from '@angular/common';
 import {Component, Injectable} from '@angular/core';
-import {DateWrapper, isBlank, isPresent} from '@angular/core/src/facade/lang';
+import {DateWrapper} from '@angular/core/src/facade/lang';
 import {Route, RouteConfig, RouteParams, Router, RouterLink, RouterOutlet} from '@angular/router-deprecated';
 
 import * as db from './data';
