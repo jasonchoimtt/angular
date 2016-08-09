@@ -3,7 +3,7 @@ import {BrowserDomAdapter} from '@angular/platform-browser/src/browser/browser_a
 import {DOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {PromiseWrapper} from '@angular/facade/src/async';
 import {ListWrapper, Map, MapWrapper} from '@angular/facade/src/collection';
-import {DateWrapper, Type, print, isPresent} from '@angular/facade/src/lang';
+import {DateWrapper, Type} from '@angular/facade/src/lang';
 
 import {
   ComponentResolver,
@@ -48,10 +48,10 @@ export function main() {
 function measureWrapper(func, desc) {
   return function() {
     var begin = DateWrapper.now();
-    print(`[${desc}] Begin...`);
+    console.log(`[${desc}] Begin...`);
     var onSuccess = function(_) {
       var elapsedMs = DateWrapper.toMillis(DateWrapper.now()) - DateWrapper.toMillis(begin);
-      print(`[${desc}] ...done, took ${elapsedMs} ms`);
+      console.log(`[${desc}] ...done, took ${elapsedMs} ms`);
     };
     var onError = function(e) { DOM.logError(e); };
     PromiseWrapper.then(func(), onSuccess, onError);
@@ -82,7 +82,7 @@ class MultiplyDirectiveResolver extends DirectiveResolver {
 
   resolve(component: Type): ViewMetadata {
     var result = this._cache.get(component);
-    return isPresent(result) ? result : super.resolve(component);
+    return result ? result : super.resolve(component);
   }
 }
 
