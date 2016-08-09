@@ -8,7 +8,6 @@
 
 import {Injector} from '../di';
 import {ListWrapper, MapWrapper, Predicate} from '../facade/collection';
-import {isPresent} from '../facade/lang';
 import {RenderDebugInfo} from '../render/api';
 
 export class EventListener { constructor(public name: string, public callback: Function){}; }

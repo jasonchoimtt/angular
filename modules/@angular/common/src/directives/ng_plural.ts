@@ -7,8 +7,6 @@
  */
 
 import {Attribute, Directive, Host, Input, OnInit, TemplateRef, ViewContainerRef} from '@angular/core';
-
-import {isBlank, isPresent} from '../facade/lang';
 import {NgLocalization, getPluralCategory} from '../localization';
 
 import {SwitchView} from './ng_switch';

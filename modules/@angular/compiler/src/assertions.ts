@@ -8,8 +8,6 @@
 
 import {isDevMode} from '@angular/core';
 
-import {isArray, isBlank, isPresent, isString} from '../src/facade/lang';
-
 export function assertArrayOfStrings(identifier: string, value: any) {
   if (!isDevMode() || value === undefined || value === null) {
     return;

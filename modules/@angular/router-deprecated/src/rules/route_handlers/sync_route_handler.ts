@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Type, isPresent} from '../../facade/lang';
+import {Type} from '../../facade/lang';
 import {BLANK_ROUTE_DATA, RouteData} from '../../instruction';
 
 import {RouteHandler} from './route_handler';

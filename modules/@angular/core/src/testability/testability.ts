@@ -9,7 +9,6 @@
 import {Injectable} from '../di/decorators';
 import {Map, MapWrapper} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {scheduleMicroTask} from '../facade/lang';
 import {NgZone} from '../zone/ng_zone';
 
 

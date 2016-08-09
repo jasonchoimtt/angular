@@ -6,8 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {isPresent, isString} from '../../src/facade/lang';
-
 const SVG_PREFIX = ':svg:';
 
 var document = typeof(global as any /** TODO #???? */)['document'] == 'object' ?

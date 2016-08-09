@@ -9,7 +9,7 @@
 import {Injectable} from '@angular/core';
 
 import {BaseException} from '../facade/exceptions';
-import {Math, isBlank, isPresent} from '../facade/lang';
+import {Math} from '../facade/lang';
 
 
 // asset:<package-name>/<realm>/<path-to-module>

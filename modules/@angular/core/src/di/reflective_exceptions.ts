@@ -8,7 +8,7 @@
 
 import {ListWrapper} from '../facade/collection';
 import {BaseException, WrappedException} from '../facade/exceptions';
-import {Type, isBlank, stringify} from '../facade/lang';
+import {Type, stringify} from '../facade/lang';
 
 import {Provider} from './provider';
 import {ReflectiveInjector} from './reflective_injector';

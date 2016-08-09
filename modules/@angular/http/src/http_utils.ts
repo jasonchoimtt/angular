@@ -7,7 +7,6 @@
  */
 
 import {makeTypeError} from '../src/facade/exceptions';
-import {isString} from '../src/facade/lang';
 
 import {RequestMethod} from './enums';
 

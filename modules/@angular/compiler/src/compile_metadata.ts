@@ -11,7 +11,7 @@ import {ChangeDetectionStrategy, SchemaMetadata, ViewEncapsulation} from '@angul
 import {LifecycleHooks, reflector} from '../core_private';
 import {ListWrapper, StringMapWrapper} from './facade/collection';
 import {BaseException, unimplemented} from './facade/exceptions';
-import {Type, isBlank, isPresent, isStringMap, normalizeBlank, normalizeBool} from './facade/lang';
+import {Type} from './facade/lang';
 
 import {CssSelector} from './selector';
 import {getUrlScheme} from './url_resolver';

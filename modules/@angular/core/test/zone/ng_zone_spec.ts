@@ -11,7 +11,6 @@ import {AsyncTestCompleter, Log, beforeEach, ddescribe, describe, expect, iit, i
 import {browserDetection} from '@angular/platform-browser/testing/browser_util';
 
 import {BaseException} from '../../src/facade/exceptions';
-import {isPresent, scheduleMicroTask} from '../../src/facade/lang';
 
 var needsLongerTimers = browserDetection.isSlow || browserDetection.isEdge;
 var resultTimer = 1000;

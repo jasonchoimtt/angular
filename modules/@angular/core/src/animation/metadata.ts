@@ -7,7 +7,7 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {NumberWrapper, isArray, isBlank, isPresent, isString} from '../facade/lang';
+import {NumberWrapper} from '../facade/lang';
 
 /**
  * @experimental Animation support is experimental.

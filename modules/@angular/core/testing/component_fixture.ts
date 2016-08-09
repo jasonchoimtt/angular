@@ -8,7 +8,6 @@
 
 import {AnimationEntryMetadata, ChangeDetectorRef, ComponentFactory, ComponentRef, ComponentResolver, DebugElement, ElementRef, Injectable, Injector, NgZone, NgZoneError, OpaqueToken, ViewMetadata, getDebugNode} from '../index';
 import {BaseException} from '../src/facade/exceptions';
-import {scheduleMicroTask} from '../src/facade/lang';
 
 import {tick} from './fake_async';
 

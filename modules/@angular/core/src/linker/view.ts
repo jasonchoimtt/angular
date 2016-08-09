@@ -12,7 +12,6 @@ import {ViewAnimationMap} from '../animation/view_animation_map';
 import {ChangeDetectorRef, ChangeDetectorStatus} from '../change_detection/change_detection';
 import {Injector} from '../di/injector';
 import {ListWrapper} from '../facade/collection';
-import {isPresent} from '../facade/lang';
 import {WtfScopeFn, wtfCreateScope, wtfLeave} from '../profile/profile';
 import {RenderComponentType, RenderDebugInfo, Renderer} from '../render/api';
 

@@ -6,12 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, beforeEach, beforeEachProviders, ddescribe, xdescribe, describe, expect, iit, inject, it, xit,} from '@angular/core/testing/testing_internal';
-import {TestComponentBuilder, ComponentFixture} from '@angular/core/testing';
-
-import {Component} from '@angular/core';
-
 import {NgStyle} from '@angular/common/src/directives/ng_style';
+import {Component} from '@angular/core';
+import {ComponentFixture, TestComponentBuilder} from '@angular/core/testing';
+import {AsyncTestCompleter, beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 
 function expectNativeEl(fixture: ComponentFixture<any>) {
   return <any>expect(fixture.debugElement.children[0].nativeElement);

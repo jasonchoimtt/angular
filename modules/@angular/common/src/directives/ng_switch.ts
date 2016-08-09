@@ -9,7 +9,6 @@
 import {Directive, Host, Input, TemplateRef, ViewContainerRef} from '@angular/core';
 
 import {ListWrapper} from '../facade/collection';
-import {isBlank, isPresent, normalizeBlank} from '../facade/lang';
 
 const _CASE_DEFAULT = new Object();
 

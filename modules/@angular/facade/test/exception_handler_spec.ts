@@ -6,8 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {beforeEach, ddescribe, describe, expect, iit, inject, it, xdescribe, xit,} from '@angular/core/testing/testing_internal';
-import {BaseException, WrappedException, ExceptionHandler} from '../src/exceptions';
+import {beforeEach, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
+
+import {BaseException, ExceptionHandler, WrappedException} from '../src/exceptions';
 
 class _CustomException {
   context = 'some context';

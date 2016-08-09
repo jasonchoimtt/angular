@@ -8,7 +8,6 @@
 
 import {BaseWrappedException} from './base_wrapped_exception';
 import {isListLikeIterable} from './collection';
-import {isBlank, isPresent} from './lang';
 
 class _ArrayLogger {
   res: any[] = [];

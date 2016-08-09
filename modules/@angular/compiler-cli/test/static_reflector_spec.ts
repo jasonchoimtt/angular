@@ -10,7 +10,6 @@ import {StaticReflector, StaticReflectorHost, StaticSymbol} from '@angular/compi
 import {HostListenerMetadata, animate, group, keyframes, sequence, state, style, transition, trigger} from '@angular/core';
 import {beforeEach, ddescribe, describe, expect, iit, it} from '@angular/core/testing/testing_internal';
 import {ListWrapper} from '@angular/facade/src/collection';
-import {isBlank} from '@angular/facade/src/lang';
 import {MetadataCollector} from '@angular/tsc-wrapped';
 import * as ts from 'typescript';
 

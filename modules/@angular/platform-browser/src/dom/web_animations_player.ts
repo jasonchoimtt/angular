@@ -10,7 +10,6 @@ import {AUTO_STYLE} from '@angular/core';
 
 import {AnimationPlayer} from '../../core_private';
 import {StringMapWrapper} from '../facade/collection';
-import {isBlank, isPresent} from '../facade/lang';
 
 import {getDOM} from './dom_adapter';
 import {DomAnimatePlayer} from './dom_animate_player';

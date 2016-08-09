@@ -13,7 +13,7 @@ import {ResolvedReflectiveProvider_} from '@angular/core/src/di/reflective_provi
 import {expect} from '@angular/platform-browser/testing/matchers';
 
 import {BaseException} from '../../src/facade/exceptions';
-import {isBlank, isPresent, stringify} from '../../src/facade/lang';
+import {stringify} from '../../src/facade/lang';
 
 class CustomDependencyMetadata extends DependencyMetadata {}
 

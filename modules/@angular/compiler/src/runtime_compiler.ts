@@ -14,7 +14,7 @@ import {CompileDirectiveMetadata, CompileIdentifierMetadata, CompileNgModuleMeta
 import {CompilerConfig} from './config';
 import {DirectiveNormalizer} from './directive_normalizer';
 import {BaseException} from './facade/exceptions';
-import {ConcreteType, Type, isBlank, isString, stringify} from './facade/lang';
+import {ConcreteType, Type, stringify} from './facade/lang';
 import {CompileMetadataResolver} from './metadata_resolver';
 import {NgModuleCompiler} from './ng_module_compiler';
 import * as ir from './output/output_ast';

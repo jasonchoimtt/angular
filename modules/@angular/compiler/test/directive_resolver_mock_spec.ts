@@ -9,7 +9,7 @@
 import {Component, ComponentMetadata, Injector, ViewMetadata} from '@angular/core';
 import {beforeEach, ddescribe, describe, expect, iit, inject, it} from '@angular/core/testing/testing_internal';
 
-import {isBlank, stringify} from '../src/facade/lang';
+import {stringify} from '../src/facade/lang';
 import {MockDirectiveResolver} from '../testing';
 
 export function main() {

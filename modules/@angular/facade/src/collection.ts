@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {getSymbolIterator, global, isArray, isBlank, isJsObject, isPresent, isPrimitive} from './lang';
+import {getSymbolIterator, global} from './lang';
 
 export var Map = global.Map;
 export var Set = global.Set;

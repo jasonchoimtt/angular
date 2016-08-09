@@ -11,7 +11,7 @@ import {ComponentFixture, ComponentFixtureNoNgZone, TestBed, TestComponentBuilde
 
 import {DirectiveResolver} from '../index';
 import {MapWrapper} from '../src/facade/collection';
-import {ConcreteType, Type, isBlank, isPresent} from '../src/facade/lang';
+import {ConcreteType, Type} from '../src/facade/lang';
 
 
 /**

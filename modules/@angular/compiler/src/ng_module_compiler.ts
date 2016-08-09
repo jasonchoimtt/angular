@@ -11,7 +11,6 @@ import {Injectable} from '@angular/core';
 import {LifecycleHooks} from '../core_private';
 
 import {CompileDiDependencyMetadata, CompileIdentifierMap, CompileIdentifierMetadata, CompileNgModuleMetadata, CompileProviderMetadata, CompileTokenMetadata} from './compile_metadata';
-import {isBlank, isPresent} from './facade/lang';
 import {Identifiers, identifierToken} from './identifiers';
 import * as o from './output/output_ast';
 import {convertValueToOutputAst} from './output/value_util';

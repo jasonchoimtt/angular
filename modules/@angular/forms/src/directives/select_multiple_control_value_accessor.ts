@@ -9,7 +9,7 @@
 import {Directive, ElementRef, Host, Input, OnDestroy, OpaqueToken, Optional, Renderer, Type, forwardRef} from '@angular/core';
 
 import {MapWrapper} from '../facade/collection';
-import {StringWrapper, isBlank, isJsObject, isPresent, isPrimitive, isString, looseIdentical} from '../facade/lang';
+import {StringWrapper, looseIdentical} from '../facade/lang';
 
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from './control_value_accessor';
 

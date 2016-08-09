@@ -8,7 +8,6 @@
 
 import {ListWrapper} from '../facade/collection';
 import {BaseException, unimplemented} from '../facade/exceptions';
-import {isPresent} from '../facade/lang';
 
 import * as o from './output_ast';
 import {debugOutputAstAsTypeScript} from './ts_emitter';

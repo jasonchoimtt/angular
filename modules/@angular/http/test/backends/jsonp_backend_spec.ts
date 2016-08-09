@@ -16,7 +16,6 @@ import {BaseRequestOptions, RequestOptions} from '../../src/base_request_options
 import {BaseResponseOptions, ResponseOptions} from '../../src/base_response_options';
 import {ReadyState, RequestMethod, ResponseType} from '../../src/enums';
 import {Map} from '../../src/facade/collection';
-import {isBlank, isPresent} from '../../src/facade/lang';
 import {Request} from '../../src/static_request';
 import {Response} from '../../src/static_response';
 

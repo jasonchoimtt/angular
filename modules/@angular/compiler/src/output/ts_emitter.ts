@@ -8,7 +8,6 @@
 
 import {CompileIdentifierMetadata} from '../compile_metadata';
 import {BaseException} from '../facade/exceptions';
-import {isArray, isBlank, isPresent} from '../facade/lang';
 
 import {AbstractEmitterVisitor, CATCH_ERROR_VAR, CATCH_STACK_VAR, EmitterVisitorContext, OutputEmitter} from './abstract_emitter';
 import * as o from './output_ast';

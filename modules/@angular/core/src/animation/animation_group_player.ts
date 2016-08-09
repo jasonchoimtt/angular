@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {isBlank, isPresent, scheduleMicroTask} from '../facade/lang';
 import {Math} from '../facade/math';
 
 import {AnimationPlayer} from './animation_player';

@@ -7,7 +7,6 @@
  */
 
 import {StringMapWrapper} from '../src/facade/collection';
-import {isBlank, isPresent, normalizeBlank} from '../src/facade/lang';
 
 
 

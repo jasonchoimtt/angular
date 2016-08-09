@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {evalExpression, isPresent} from '../facade/lang';
+import {evalExpression} from '../facade/lang';
 import {sanitizeIdentifier} from '../util';
 
 import {EmitterVisitorContext} from './abstract_emitter';

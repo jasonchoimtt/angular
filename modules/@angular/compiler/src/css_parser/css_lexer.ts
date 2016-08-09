@@ -8,7 +8,7 @@
 
 import * as chars from '../chars';
 import {BaseException} from '../facade/exceptions';
-import {StringWrapper, isBlank, isPresent, resolveEnumToken} from '../facade/lang';
+import {StringWrapper} from '../facade/lang';
 
 export enum CssTokenType {
   EOF,

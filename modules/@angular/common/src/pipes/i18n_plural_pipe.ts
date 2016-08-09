@@ -7,7 +7,7 @@
  */
 
 import {Pipe, PipeTransform} from '@angular/core';
-import {StringWrapper, isBlank, isStringMap} from '../facade/lang';
+import {StringWrapper} from '../facade/lang';
 import {NgLocalization, getPluralCategory} from '../localization';
 import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 

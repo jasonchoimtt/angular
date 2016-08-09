@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Type, isBlank} from '../facade/lang';
+import {Type} from '../facade/lang';
 
 var _DOM: DomAdapter = null;
 

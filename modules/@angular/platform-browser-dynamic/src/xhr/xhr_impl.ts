@@ -8,8 +8,6 @@
 import {XHR} from '@angular/compiler';
 import {Injectable} from '@angular/core';
 
-import {isPresent} from '../facade/lang';
-
 @Injectable()
 export class XHRImpl extends XHR {
   get(url: string): Promise<string> {

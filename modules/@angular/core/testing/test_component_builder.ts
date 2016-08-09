@@ -7,7 +7,7 @@
  */
 
 import {AnimationEntryMetadata, Compiler, ComponentFactory, Injectable, Injector, NgZone, OpaqueToken, ViewMetadata} from '../index';
-import {ConcreteType, Type, isPresent} from '../src/facade/lang';
+import {ConcreteType, Type} from '../src/facade/lang';
 
 import {ComponentFixture} from './component_fixture';
 import {tick} from './fake_async';

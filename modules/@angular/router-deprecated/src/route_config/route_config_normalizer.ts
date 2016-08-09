@@ -7,7 +7,7 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {Type, isType} from '../facade/lang';
+import {Type} from '../facade/lang';
 import {ComponentDefinition} from '../route_definition';
 import {RouteRegistry} from '../route_registry';
 

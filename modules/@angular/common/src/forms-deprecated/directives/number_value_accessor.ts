@@ -8,7 +8,7 @@
 
 import {Directive, ElementRef, Renderer, forwardRef} from '@angular/core';
 
-import {NumberWrapper, isBlank} from '../../facade/lang';
+import {NumberWrapper} from '../../facade/lang';
 
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from './control_value_accessor';
 

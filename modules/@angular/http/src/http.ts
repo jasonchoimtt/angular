@@ -10,7 +10,6 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
 import {makeTypeError} from '../src/facade/exceptions';
-import {isPresent, isString} from '../src/facade/lang';
 
 import {BaseRequestOptions, RequestOptions} from './base_request_options';
 import {RequestMethod} from './enums';

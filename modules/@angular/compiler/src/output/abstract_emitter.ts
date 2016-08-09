@@ -7,7 +7,7 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {StringWrapper, isBlank, isPresent, isString} from '../facade/lang';
+import {StringWrapper} from '../facade/lang';
 
 import * as o from './output_ast';
 

@@ -12,7 +12,7 @@ import {TestComponentBuilder} from '@angular/core/testing';
 import {AsyncTestCompleter, beforeEach, ddescribe, describe, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {isPresent, stringify} from '../../src/facade/lang';
+import {stringify} from '../../src/facade/lang';
 
 export function main() {
   describe('Query API', () => {

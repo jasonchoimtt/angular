@@ -13,7 +13,7 @@ import {Observer} from 'rxjs/Observer';
 import {BaseResponseOptions, ResponseOptions} from '../base_response_options';
 import {ReadyState, RequestMethod, ResponseType} from '../enums';
 import {makeTypeError} from '../facade/exceptions';
-import {StringWrapper, isPresent} from '../facade/lang';
+import {StringWrapper} from '../facade/lang';
 import {Connection, ConnectionBackend} from '../interfaces';
 import {Request} from '../static_request';
 import {Response} from '../static_response';

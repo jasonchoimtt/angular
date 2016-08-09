@@ -8,7 +8,6 @@
 
 import {StringMapWrapper} from '../src/facade/collection';
 import {BaseException} from '../src/facade/exceptions';
-import {isBlank, isPresent} from '../src/facade/lang';
 
 export function convertUrlParamsToArray(urlParams: {[key: string]: any}): string[] {
   var paramsArray: any[] /** TODO #9100 */ = [];

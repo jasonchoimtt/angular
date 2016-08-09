@@ -7,7 +7,6 @@
  */
 
 import {Set} from '../../facade/collection';
-import {isPresent} from '../../facade/lang';
 
 const MOUSE_EVENT_PROPERTIES = [
   'altKey', 'button', 'clientX', 'clientY', 'metaKey', 'movementX', 'movementY', 'offsetX',

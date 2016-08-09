@@ -8,7 +8,7 @@
 
 import {isListLikeIterable, iterateListLike} from '../../facade/collection';
 import {BaseException} from '../../facade/exceptions';
-import {getMapKey, isArray, isBlank, isPresent, looseIdentical, stringify} from '../../facade/lang';
+import {looseIdentical, stringify} from '../../facade/lang';
 import {ChangeDetectorRef} from '../change_detector_ref';
 
 import {IterableDiffer, IterableDifferFactory, TrackByFn} from './iterable_differs';

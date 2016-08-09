@@ -7,7 +7,6 @@
  */
 
 import {Injectable} from './di/decorators';
-import {print, warn} from './facade/lang';
 
 @Injectable()
 export class Console {

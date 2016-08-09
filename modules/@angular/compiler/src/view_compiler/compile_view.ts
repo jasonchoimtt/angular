@@ -11,7 +11,6 @@ import {CompiledAnimation} from '../animation/animation_compiler';
 import {CompileDirectiveMetadata, CompileIdentifierMap, CompileIdentifierMetadata, CompilePipeMetadata, CompileTokenMetadata} from '../compile_metadata';
 import {CompilerConfig} from '../config';
 import {ListWrapper} from '../facade/collection';
-import {isBlank, isPresent} from '../facade/lang';
 import {Identifiers} from '../identifiers';
 import * as o from '../output/output_ast';
 import {createDiTokenExpression} from '../util';

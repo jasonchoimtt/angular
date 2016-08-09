@@ -9,7 +9,6 @@
 import {ChangeDetectorRef, CollectionChangeRecord, DefaultIterableDiffer, Directive, DoCheck, EmbeddedViewRef, Input, IterableDiffer, IterableDiffers, OnChanges, SimpleChanges, TemplateRef, TrackByFn, ViewContainerRef} from '@angular/core';
 
 import {BaseException} from '../facade/exceptions';
-import {getTypeNameForDebugging, isBlank, isPresent} from '../facade/lang';
 
 export class NgForRow {
   constructor(public $implicit: any, public index: number, public count: number) {}

@@ -11,7 +11,7 @@ import {ClientMessageBroker, ClientMessageBrokerFactory_, UiArguments} from '@an
 import {MessageBus, MessageBusSink, MessageBusSource} from '@angular/platform-browser/src/web_workers/shared/message_bus';
 import {ListWrapper, StringMapWrapper} from '../../../src/facade/collection';
 import {BaseException} from '../../../src/facade/exceptions';
-import {Type, isPresent} from '../../../src/facade/lang';
+import {Type} from '../../../src/facade/lang';
 import {SpyMessageBroker} from '../worker/spies';
 
 import {MockEventEmitter} from './mock_event_emitter';

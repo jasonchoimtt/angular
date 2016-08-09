@@ -8,7 +8,7 @@
 
 import {ListWrapper} from '../src/facade/collection';
 import {BaseException, ExceptionHandler, unimplemented} from '../src/facade/exceptions';
-import {ConcreteType, Type, isBlank, isPresent, isPromise, stringify} from '../src/facade/lang';
+import {ConcreteType, Type, stringify} from '../src/facade/lang';
 
 import {ApplicationInitStatus} from './application_init';
 import {APP_BOOTSTRAP_LISTENER, PLATFORM_INITIALIZER} from './application_tokens';

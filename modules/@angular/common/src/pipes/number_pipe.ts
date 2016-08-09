@@ -9,7 +9,7 @@
 import {Pipe, PipeTransform} from '@angular/core';
 
 import {NumberFormatStyle, NumberFormatter} from '../facade/intl';
-import {NumberWrapper, Type, isBlank, isNumber, isPresent, isString} from '../facade/lang';
+import {NumberWrapper, Type} from '../facade/lang';
 
 import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 

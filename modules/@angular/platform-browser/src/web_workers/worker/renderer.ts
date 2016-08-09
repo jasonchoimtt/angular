@@ -10,7 +10,6 @@ import {Injectable, RenderComponentType, Renderer, RootRenderer, ViewEncapsulati
 
 import {AnimationKeyframe, AnimationPlayer, AnimationStyles, RenderDebugInfo} from '../../../core_private';
 import {ListWrapper} from '../../facade/collection';
-import {isBlank, isPresent} from '../../facade/lang';
 import {ClientMessageBrokerFactory, FnArg, UiArguments} from '../shared/client_message_broker';
 import {MessageBus} from '../shared/message_bus';
 import {EVENT_CHANNEL, RENDERER_CHANNEL} from '../shared/messaging_api';

@@ -8,8 +8,6 @@
 
 import {Injectable} from '@angular/core';
 
-import {isPresent, isString} from '../src/facade/lang';
-
 import {RequestMethod, ResponseContentType} from './enums';
 import {Headers} from './headers';
 import {normalizeMethodName} from './http_utils';

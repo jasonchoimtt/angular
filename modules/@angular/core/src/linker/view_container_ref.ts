@@ -9,7 +9,6 @@
 import {Injector} from '../di/injector';
 import {ListWrapper} from '../facade/collection';
 import {unimplemented} from '../facade/exceptions';
-import {isPresent} from '../facade/lang';
 import {WtfScopeFn, wtfCreateScope, wtfLeave} from '../profile/profile';
 import {ComponentFactory, ComponentRef} from './component_factory';
 import {AppElement} from './element';

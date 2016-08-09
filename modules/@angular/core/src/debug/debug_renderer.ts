@@ -10,7 +10,6 @@ import {StringMapWrapper} from '../../src/facade/collection';
 import {AnimationKeyframe} from '../animation/animation_keyframe';
 import {AnimationPlayer} from '../animation/animation_player';
 import {AnimationStyles} from '../animation/animation_styles';
-import {isPresent} from '../facade/lang';
 import {RenderComponentType, RenderDebugInfo, Renderer, RootRenderer} from '../render/api';
 
 import {DebugElement, DebugNode, EventListener, getDebugNode, indexDebugNode, removeDebugNodeFromIndex} from './debug_node';

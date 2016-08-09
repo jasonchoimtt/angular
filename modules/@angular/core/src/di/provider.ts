@@ -7,7 +7,7 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {Type, isBlank, isFunction, isType, normalizeBool, stringify} from '../facade/lang';
+import {Type, stringify} from '../facade/lang';
 
 
 /**

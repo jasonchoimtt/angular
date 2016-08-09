@@ -12,7 +12,7 @@ import {UNINITIALIZED} from '../change_detection/change_detection_util';
 import {Inject, Injectable} from '../di/decorators';
 import {ListWrapper} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {isBlank, isPresent, looseIdentical} from '../facade/lang';
+import {looseIdentical} from '../facade/lang';
 import {ViewEncapsulation} from '../metadata/view';
 import {RenderComponentType, Renderer, RootRenderer} from '../render/api';
 import {SanitizationService} from '../security';

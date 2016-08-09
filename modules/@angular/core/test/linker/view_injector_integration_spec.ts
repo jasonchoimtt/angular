@@ -13,7 +13,7 @@ import {beforeEach, beforeEachProviders, ddescribe, describe, iit, inject, it, x
 import {getDOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {ConcreteType, isBlank} from '../../src/facade/lang';
+import {ConcreteType} from '../../src/facade/lang';
 
 const ALL_DIRECTIVES = [
   forwardRef(() => SimpleDirective),

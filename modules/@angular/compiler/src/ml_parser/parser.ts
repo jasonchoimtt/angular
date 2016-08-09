@@ -7,7 +7,6 @@
  */
 
 import {ListWrapper} from '../facade/collection';
-import {isBlank, isPresent} from '../facade/lang';
 import {ParseError, ParseSourceSpan} from '../parse_util';
 
 import * as html from './ast';

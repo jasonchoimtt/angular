@@ -8,7 +8,7 @@
 
 import {Console} from '../console';
 import {Injectable} from '../di';
-import {Type, global, isString} from '../facade/lang';
+import {Type, global} from '../facade/lang';
 
 import {ComponentFactory} from './component_factory';
 import {ComponentResolver} from './component_resolver';

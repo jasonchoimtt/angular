@@ -8,7 +8,7 @@
 
 import {Inject, Injectable, PACKAGE_ROOT_URL} from '@angular/core';
 
-import {StringWrapper, isBlank, isPresent} from './facade/lang';
+import {StringWrapper} from './facade/lang';
 
 
 const _ASSET_SCHEME = 'asset:';

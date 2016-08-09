@@ -11,7 +11,7 @@ import {Inject, Injectable, OpaqueToken} from '@angular/core';
 import {reflector} from '../core_private';
 import {ListWrapper, Map, StringMapWrapper} from '../src/facade/collection';
 import {BaseException} from '../src/facade/exceptions';
-import {Math, StringWrapper, Type, getTypeNameForDebugging, isArray, isBlank, isPresent, isString, isStringMap, isType} from '../src/facade/lang';
+import {Math, StringWrapper, Type} from '../src/facade/lang';
 
 import {DefaultInstruction, Instruction, RedirectInstruction, ResolvedInstruction, UnresolvedInstruction} from './instruction';
 import {AuxRoute, Route, RouteConfig, RouteDefinition} from './route_config/route_config_impl';

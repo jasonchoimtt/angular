@@ -6,8 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {isBlank, isPresent, scheduleMicroTask} from '../facade/lang';
-
 import {AnimationPlayer, NoOpAnimationPlayer} from './animation_player';
 
 export class AnimationSequencePlayer implements AnimationPlayer {

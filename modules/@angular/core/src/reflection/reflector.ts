@@ -8,7 +8,7 @@
 
 import {Map, MapWrapper, Set, SetWrapper, StringMapWrapper} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {Type, isPresent} from '../facade/lang';
+import {Type} from '../facade/lang';
 
 import {PlatformReflectionCapabilities} from './platform_reflection_capabilities';
 import {ReflectorReader} from './reflector_reader';

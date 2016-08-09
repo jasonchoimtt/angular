@@ -14,7 +14,6 @@ import {AST, ASTWithSource, BindingPipe, EmptyExpr, Interpolation, ParserError, 
 import {Parser} from '../expression_parser/parser';
 import {ListWrapper, SetWrapper, StringMapWrapper} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {isBlank, isPresent} from '../facade/lang';
 import {Identifiers, identifierToken} from '../identifiers';
 import * as html from '../ml_parser/ast';
 import {HtmlParser, ParseTreeResult} from '../ml_parser/html_parser';

@@ -8,7 +8,7 @@
 
 import {ListWrapper, StringMapWrapper} from '../../facade/collection';
 import {BaseException} from '../../facade/exceptions';
-import {hasConstructor, isBlank, isPresent, looseIdentical} from '../../facade/lang';
+import {looseIdentical} from '../../facade/lang';
 import {Control, ControlGroup} from '../model';
 import {Validators} from '../validators';
 

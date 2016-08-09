@@ -7,7 +7,6 @@
  */
 
 import {ListWrapper} from '../facade/collection';
-import {isBlank} from '../facade/lang';
 
 export class ParserError {
   public message: string;

@@ -8,8 +8,6 @@
 
 import {Directive, Self} from '@angular/core';
 
-import {isPresent} from '../facade/lang';
-
 import {NgControl} from './ng_control';
 
 

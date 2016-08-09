@@ -8,7 +8,7 @@
 
 import {BaseException} from '@angular/core';
 
-import {StringWrapper, evalExpression, isBlank, isPresent, isString} from '../facade/lang';
+import {StringWrapper, evalExpression} from '../facade/lang';
 
 import {EmitterVisitorContext, OutputEmitter} from './abstract_emitter';
 import {AbstractJsEmitterVisitor} from './abstract_js_emitter';

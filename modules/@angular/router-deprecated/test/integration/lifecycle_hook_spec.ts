@@ -13,7 +13,6 @@ import {expect} from '@angular/platform-browser/testing/matchers';
 import {RouteParams, Router, RouterLink, RouterOutlet} from '@angular/router-deprecated';
 
 import {EventEmitter} from '../../src/facade/async';
-import {isPresent} from '../../src/facade/lang';
 import {ComponentInstruction} from '../../src/instruction';
 import {CanDeactivate, CanReuse, OnActivate, OnDeactivate, OnReuse} from '../../src/interfaces';
 import {CanActivate} from '../../src/lifecycle/lifecycle_annotations';

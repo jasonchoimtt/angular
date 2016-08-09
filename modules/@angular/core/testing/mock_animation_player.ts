@@ -7,7 +7,6 @@
  */
 
 import {AnimationPlayer} from '../src/animation/animation_player';
-import {isBlank, isPresent} from '../src/facade/lang';
 
 export class MockAnimationPlayer implements AnimationPlayer {
   private _subscriptions: any[] /** TODO #9100 */ = [];

@@ -11,7 +11,6 @@ import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, iit, inj
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 
 import {EventEmitter} from '../src/facade/async';
-import {isPresent} from '../src/facade/lang';
 
 export function main() {
   function asyncValidator(expected: any /** TODO #9100 */, timeouts = {}) {

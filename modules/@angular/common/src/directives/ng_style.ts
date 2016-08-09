@@ -8,8 +8,6 @@
 
 import {Directive, DoCheck, ElementRef, Input, KeyValueChangeRecord, KeyValueDiffer, KeyValueDiffers, Renderer} from '@angular/core';
 
-import {isBlank, isPresent} from '../facade/lang';
-
 
 
 /**

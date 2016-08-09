@@ -9,7 +9,6 @@
 import {CollectionChangeRecord, Directive, DoCheck, ElementRef, Input, IterableDiffer, IterableDiffers, KeyValueChangeRecord, KeyValueDiffer, KeyValueDiffers, Renderer} from '@angular/core';
 
 import {StringMapWrapper, isListLikeIterable} from '../facade/collection';
-import {isArray, isPresent, isString} from '../facade/lang';
 
 
 

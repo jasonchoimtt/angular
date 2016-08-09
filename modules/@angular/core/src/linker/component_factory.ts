@@ -9,7 +9,7 @@
 import {ChangeDetectorRef} from '../change_detection/change_detection';
 import {Injector} from '../di/injector';
 import {unimplemented} from '../facade/exceptions';
-import {Type, isBlank} from '../facade/lang';
+import {Type} from '../facade/lang';
 import {AppElement} from './element';
 import {ElementRef} from './element_ref';
 import {ViewRef} from './view_ref';

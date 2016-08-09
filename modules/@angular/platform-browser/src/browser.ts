@@ -25,7 +25,6 @@ import {EVENT_MANAGER_PLUGINS, EventManager} from './dom/events/event_manager';
 import {HAMMER_GESTURE_CONFIG, HammerGestureConfig, HammerGesturesPlugin} from './dom/events/hammer_gestures';
 import {KeyEventsPlugin} from './dom/events/key_events';
 import {DomSharedStylesHost, SharedStylesHost} from './dom/shared_styles_host';
-import {isBlank} from './facade/lang';
 import {DomSanitizationService, DomSanitizationServiceImpl} from './security/dom_sanitization_service';
 
 export const INTERNAL_BROWSER_PLATFORM_PROVIDERS: Array<any /*Type | Provider | any[]*/> = [

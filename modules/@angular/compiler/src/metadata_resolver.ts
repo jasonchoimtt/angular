@@ -16,7 +16,7 @@ import * as cpl from './compile_metadata';
 import {CompilerConfig} from './config';
 import {DirectiveResolver} from './directive_resolver';
 import {BaseException} from './facade/exceptions';
-import {Type, isArray, isBlank, isPresent, isString, stringify} from './facade/lang';
+import {Type, stringify} from './facade/lang';
 import {Identifiers, identifierToken} from './identifiers';
 import {hasLifecycleHook} from './lifecycle_reflector';
 import {NgModuleResolver} from './ng_module_resolver';

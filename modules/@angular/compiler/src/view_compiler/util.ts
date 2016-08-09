@@ -8,7 +8,6 @@
 
 import {CompileDirectiveMetadata, CompileTokenMetadata} from '../compile_metadata';
 import {BaseException} from '../facade/exceptions';
-import {isBlank, isPresent} from '../facade/lang';
 import {Identifiers} from '../identifiers';
 import * as o from '../output/output_ast';
 import {createDiTokenExpression} from '../util';

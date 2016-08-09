@@ -12,7 +12,6 @@ import {NgZone} from '@angular/core/src/zone/ng_zone';
 import {AsyncTestCompleter, SpyObject, beforeEach, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 
 import {EventEmitter} from '../../src/facade/async';
-import {normalizeBlank, scheduleMicroTask} from '../../src/facade/lang';
 
 
 // Schedules a microtasks (using a resolved promise .then())

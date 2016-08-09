@@ -13,7 +13,6 @@ import {getDOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {browserDetection} from '@angular/platform-browser/testing/browser_util';
 
 import {EventEmitter} from '../../src/facade/async';
-import {isPresent} from '../../src/facade/lang';
 import {SpyChangeDetectorRef} from '../spies';
 
 export function main() {

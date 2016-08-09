@@ -8,8 +8,6 @@
 
 import {Location} from '@angular/common';
 import {Directive} from '@angular/core';
-
-import {isString} from '../facade/lang';
 import {Instruction} from '../instruction';
 import {Router} from '../router';
 

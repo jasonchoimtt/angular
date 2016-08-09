@@ -6,8 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {isPromise} from '../src/facade/lang';
-
 import {Inject, Injectable, OpaqueToken, Optional} from './di';
 
 

@@ -7,7 +7,7 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {ConcreteType, Type, global, isFunction, isPresent, stringify} from '../facade/lang';
+import {ConcreteType, Type, global, stringify} from '../facade/lang';
 
 import {PlatformReflectionCapabilities} from './platform_reflection_capabilities';
 import {GetterFn, MethodFn, SetterFn} from './types';

@@ -8,8 +8,6 @@
 
 import {Directive, ElementRef, Renderer, forwardRef} from '@angular/core';
 
-import {isBlank} from '../../facade/lang';
-
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from './control_value_accessor';
 
 export const DEFAULT_VALUE_ACCESSOR: any = {

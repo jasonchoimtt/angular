@@ -9,7 +9,7 @@
 import {Injectable} from '@angular/core';
 
 import * as chars from '../chars';
-import {StringWrapper, escapeRegExp, isBlank, isPresent} from '../facade/lang';
+import {StringWrapper, escapeRegExp} from '../facade/lang';
 import {DEFAULT_INTERPOLATION_CONFIG, InterpolationConfig} from '../ml_parser/interpolation_config';
 
 import {AST, ASTWithSource, AstVisitor, Binary, BindingPipe, Chain, Conditional, EmptyExpr, FunctionCall, ImplicitReceiver, Interpolation, KeyedRead, KeyedWrite, LiteralArray, LiteralMap, LiteralPrimitive, MethodCall, ParseSpan, ParserError, PrefixNot, PropertyRead, PropertyWrite, Quote, SafeMethodCall, SafePropertyRead, TemplateBinding} from './ast';

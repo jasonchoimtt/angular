@@ -7,7 +7,7 @@
  */
 
 import {areIterablesEqual, isListLikeIterable} from '../facade/collection';
-import {isJsObject, isPrimitive, looseIdentical} from '../facade/lang';
+import {looseIdentical} from '../facade/lang';
 
 export {looseIdentical} from '../facade/lang';
 

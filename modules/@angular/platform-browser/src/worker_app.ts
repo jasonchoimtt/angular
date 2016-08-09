@@ -10,7 +10,6 @@ import {CommonModule, FORM_PROVIDERS} from '@angular/common';
 import {APP_INITIALIZER, ApplicationModule, ExceptionHandler, NgModule, NgZone, OpaqueToken, PLATFORM_COMMON_PROVIDERS, PlatformRef, ReflectiveInjector, RootRenderer, assertPlatform, createPlatform, createPlatformFactory, getPlatform, platformCore} from '@angular/core';
 
 import {BROWSER_SANITIZATION_PROVIDERS} from './browser';
-import {isBlank, print} from './facade/lang';
 import {ON_WEB_WORKER} from './web_workers/shared/api';
 import {ClientMessageBrokerFactory, ClientMessageBrokerFactory_} from './web_workers/shared/client_message_broker';
 import {MessageBus} from './web_workers/shared/message_bus';

@@ -8,7 +8,6 @@
 
 import {Injector} from '../di';
 import {StringMapWrapper} from '../facade/collection';
-import {isBlank, isPresent} from '../facade/lang';
 import {RenderDebugInfo} from '../render/api';
 
 import {DebugAppView} from './view';

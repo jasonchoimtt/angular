@@ -8,7 +8,6 @@
 
 import {ListWrapper, Map, MapWrapper, StringMapWrapper, isListLikeIterable, iterateListLike} from '../src/facade/collection';
 import {BaseException} from '../src/facade/exceptions';
-import {isBlank} from '../src/facade/lang';
 
 
 /**

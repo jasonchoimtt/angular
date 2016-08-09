@@ -9,7 +9,7 @@
 import {CompilerOptions, ComponentFactory, ComponentMetadataType, ComponentStillLoadingError, DirectiveMetadataType, Injector, ModuleWithComponentFactories, NgModule, NgModuleFactory, NgModuleMetadataType, NgModuleRef, NgZone, OpaqueToken, PipeMetadataType, PlatformRef, Provider, ReflectiveInjector, SchemaMetadata, Type, assertPlatform, createPlatform, getPlatform} from '../index';
 import {ListWrapper} from '../src/facade/collection';
 import {BaseException} from '../src/facade/exceptions';
-import {ConcreteType, FunctionWrapper, isPresent, stringify} from '../src/facade/lang';
+import {ConcreteType, FunctionWrapper, stringify} from '../src/facade/lang';
 
 import {AsyncTestCompleter} from './async_test_completer';
 import {ComponentFixture} from './component_fixture';

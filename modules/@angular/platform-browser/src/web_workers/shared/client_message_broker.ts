@@ -10,7 +10,7 @@ import {Injectable, Type} from '@angular/core';
 
 import {EventEmitter} from '../../facade/async';
 import {StringMapWrapper} from '../../facade/collection';
-import {DateWrapper, StringWrapper, isPresent, print, stringify} from '../../facade/lang';
+import {DateWrapper, StringWrapper, stringify} from '../../facade/lang';
 
 import {MessageBus} from './message_bus';
 import {Serializer} from './serializer';

@@ -7,8 +7,6 @@
  */
 
 import {BaseException} from '@angular/core';
-
-import {isBlank} from '../../facade/lang';
 import {Url} from '../../url_parser';
 
 import {GeneratedUrl, MatchedUrl, RoutePath} from './route_path';

@@ -8,7 +8,7 @@
 
 import {setRootDomAdapter} from '../dom/dom_adapter';
 import {ListWrapper} from '../facade/collection';
-import {DateWrapper, global, isBlank, isFunction, isPresent, setValueOnPath} from '../facade/lang';
+import {DateWrapper, global, setValueOnPath} from '../facade/lang';
 
 import {GenericBrowserDomAdapter} from './generic_browser_adapter';
 

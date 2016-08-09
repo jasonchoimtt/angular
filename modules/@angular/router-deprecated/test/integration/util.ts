@@ -17,7 +17,6 @@ import {RouteRegistry} from '@angular/router-deprecated/src/route_registry';
 import {RootRouter} from '@angular/router-deprecated/src/router';
 
 import {BaseException} from '../../src/facade/exceptions';
-import {isBlank} from '../../src/facade/lang';
 
 
 /**

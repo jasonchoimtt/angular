@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {StringWrapper, isPresent} from '../src/facade/lang';
+import {StringWrapper} from '../src/facade/lang';
 
 import {Body} from './body';
 import {ContentType, RequestMethod, ResponseContentType} from './enums';

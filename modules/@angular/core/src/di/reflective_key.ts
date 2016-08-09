@@ -7,7 +7,7 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {isBlank, stringify} from '../facade/lang';
+import {stringify} from '../facade/lang';
 
 import {resolveForwardRef} from './forward_ref';
 

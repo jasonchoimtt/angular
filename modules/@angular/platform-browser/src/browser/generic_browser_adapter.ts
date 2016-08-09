@@ -8,7 +8,7 @@
 
 import {DomAdapter} from '../dom/dom_adapter';
 import {StringMapWrapper} from '../facade/collection';
-import {Type, isFunction, isPresent} from '../facade/lang';
+import {Type} from '../facade/lang';
 
 
 

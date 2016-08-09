@@ -11,7 +11,7 @@ import {AnimationEntryMetadata, Compiler, ComponentMetadata, DirectiveMetadata, 
 import {DirectiveResolver} from '../src/directive_resolver';
 import {Map} from '../src/facade/collection';
 import {BaseException} from '../src/facade/exceptions';
-import {Type, isArray, isBlank, isPresent, stringify} from '../src/facade/lang';
+import {Type, stringify} from '../src/facade/lang';
 
 
 /**

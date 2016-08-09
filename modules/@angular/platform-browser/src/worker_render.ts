@@ -23,7 +23,6 @@ import {HAMMER_GESTURE_CONFIG, HammerGestureConfig, HammerGesturesPlugin} from '
 import {KeyEventsPlugin} from './dom/events/key_events';
 import {DomSharedStylesHost, SharedStylesHost} from './dom/shared_styles_host';
 import {BaseException} from './facade/exceptions';
-import {isBlank} from './facade/lang';
 import {ON_WEB_WORKER} from './web_workers/shared/api';
 import {ClientMessageBrokerFactory, ClientMessageBrokerFactory_} from './web_workers/shared/client_message_broker';
 import {MessageBus} from './web_workers/shared/message_bus';

@@ -10,7 +10,6 @@ import {Attribute, ComponentRef, Directive, DynamicComponentLoader, OnDestroy, O
 
 import {EventEmitter} from '../facade/async';
 import {StringMapWrapper} from '../facade/collection';
-import {isBlank, isPresent} from '../facade/lang';
 import {ComponentInstruction, RouteData, RouteParams} from '../instruction';
 import {CanDeactivate, CanReuse, OnActivate, OnDeactivate, OnReuse} from '../interfaces';
 import * as hookMod from '../lifecycle/lifecycle_annotations';

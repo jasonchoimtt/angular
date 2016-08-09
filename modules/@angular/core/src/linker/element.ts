@@ -9,7 +9,6 @@
 import {Injector} from '../di/injector';
 import {ListWrapper} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {isPresent} from '../facade/lang';
 
 import {ElementRef} from './element_ref';
 import {QueryList} from './query_list';

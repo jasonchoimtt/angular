@@ -7,7 +7,7 @@
  */
 
 import {Injectable, Injector, ReflectiveInjector, ResolvedReflectiveProvider} from '../di';
-import {Type, isPresent} from '../facade/lang';
+import {Type} from '../facade/lang';
 
 import {Compiler} from './compiler';
 import {ComponentRef} from './component_factory';

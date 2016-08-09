@@ -7,7 +7,6 @@
  */
 
 import {ListWrapper, Map, StringMapWrapper} from '../facade/collection';
-import {isBlank, isPresent} from '../facade/lang';
 
 import {AnimationPlayer} from './animation_player';
 

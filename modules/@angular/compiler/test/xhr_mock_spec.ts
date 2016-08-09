@@ -8,7 +8,6 @@
 
 import {MockXHR} from '@angular/compiler/testing/xhr_mock';
 import {AsyncTestCompleter, beforeEach, ddescribe, describe, expect, iit, inject, it} from '@angular/core/testing/testing_internal';
-import {isPresent} from '../src/facade/lang';
 
 export function main() {
   describe('MockXHR', () => {

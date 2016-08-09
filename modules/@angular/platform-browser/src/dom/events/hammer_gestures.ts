@@ -9,7 +9,6 @@
 import {Inject, Injectable, OpaqueToken} from '@angular/core';
 
 import {BaseException} from '../../facade/exceptions';
-import {isBlank, isPresent} from '../../facade/lang';
 
 import {HammerGesturesPluginCommon} from './hammer_common';
 

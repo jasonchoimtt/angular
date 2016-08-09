@@ -8,7 +8,6 @@
 
 import {Map} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {isBlank, isPresent} from '../facade/lang';
 import {ComponentInstruction} from '../instruction';
 import {Url, convertUrlParamsToArray} from '../url_parser';
 

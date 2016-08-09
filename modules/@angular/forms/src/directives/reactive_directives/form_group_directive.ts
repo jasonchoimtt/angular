@@ -11,7 +11,6 @@ import {Directive, Inject, Input, OnChanges, Optional, Output, Self, SimpleChang
 import {EventEmitter} from '../../facade/async';
 import {ListWrapper, StringMapWrapper} from '../../facade/collection';
 import {BaseException} from '../../facade/exceptions';
-import {isBlank} from '../../facade/lang';
 import {FormArray, FormControl, FormGroup} from '../../model';
 import {NG_ASYNC_VALIDATORS, NG_VALIDATORS, Validators} from '../../validators';
 import {ControlContainer} from '../control_container';

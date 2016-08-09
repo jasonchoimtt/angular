@@ -9,7 +9,6 @@
 import {CompileIdentifierMetadata} from '../compile_metadata';
 import {StringMapWrapper} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {isBlank, isPresent, isString} from '../facade/lang';
 import {ValueTransformer, visitValue} from '../util';
 
 

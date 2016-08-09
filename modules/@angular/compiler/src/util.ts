@@ -8,7 +8,7 @@
 
 import {CompileTokenMetadata} from './compile_metadata';
 import {StringMapWrapper} from './facade/collection';
-import {StringWrapper, isArray, isBlank, isPresent, isPrimitive, isStrictStringMap} from './facade/lang';
+import {StringWrapper, isStrictStringMap} from './facade/lang';
 import * as o from './output/output_ast';
 
 export const MODULE_SUFFIX = '';

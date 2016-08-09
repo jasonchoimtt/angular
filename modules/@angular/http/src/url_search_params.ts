@@ -7,7 +7,6 @@
  */
 
 import {ListWrapper, Map, isListLikeIterable} from '../src/facade/collection';
-import {isPresent} from '../src/facade/lang';
 
 function paramParser(rawParams: string = ''): Map<string, string[]> {
   const map = new Map<string, string[]>();

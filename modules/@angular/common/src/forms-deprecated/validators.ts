@@ -10,7 +10,6 @@ import {OpaqueToken} from '@angular/core';
 import {toPromise} from 'rxjs/operator/toPromise';
 
 import {StringMapWrapper} from '../facade/collection';
-import {isBlank, isPresent, isPromise, isString} from '../facade/lang';
 
 import {AsyncValidatorFn, ValidatorFn} from './directives/validators';
 import {AbstractControl} from './model';

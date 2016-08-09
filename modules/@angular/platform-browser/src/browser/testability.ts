@@ -10,7 +10,7 @@ import {GetTestability, Injectable, Testability, TestabilityRegistry, setTestabi
 
 import {getDOM} from '../dom/dom_adapter';
 import {ListWrapper} from '../facade/collection';
-import {global, isPresent} from '../facade/lang';
+import {global} from '../facade/lang';
 
 
 

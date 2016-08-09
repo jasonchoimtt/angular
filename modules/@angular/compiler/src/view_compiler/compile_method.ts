@@ -7,7 +7,6 @@
  */
 
 import {ListWrapper} from '../facade/collection';
-import {isPresent} from '../facade/lang';
 import * as o from '../output/output_ast';
 import {TemplateAst} from '../template_parser/template_ast';
 

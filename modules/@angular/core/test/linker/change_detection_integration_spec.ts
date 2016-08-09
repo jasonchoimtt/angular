@@ -21,7 +21,7 @@ import {DomRootRenderer} from '@angular/platform-browser/src/dom/dom_renderer';
 import {EventEmitter} from '../../src/facade/async';
 import {StringMapWrapper} from '../../src/facade/collection';
 import {BaseException} from '../../src/facade/exceptions';
-import {ConcreteType, NumberWrapper, Type, isBlank} from '../../src/facade/lang';
+import {ConcreteType, NumberWrapper, Type} from '../../src/facade/lang';
 
 export function main() {
   let tcb: TestComponentBuilder;

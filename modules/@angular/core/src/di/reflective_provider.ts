@@ -7,7 +7,7 @@
  */
 
 import {ListWrapper, MapWrapper} from '../facade/collection';
-import {Type, isArray, isBlank, isPresent} from '../facade/lang';
+import {Type} from '../facade/lang';
 import {reflector} from '../reflection/reflection';
 
 import {resolveForwardRef} from './forward_ref';

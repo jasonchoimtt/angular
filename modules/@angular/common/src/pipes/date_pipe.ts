@@ -9,7 +9,7 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {StringMapWrapper} from '../facade/collection';
 import {DateFormatter} from '../facade/intl';
-import {DateWrapper, NumberWrapper, isBlank, isDate, isString} from '../facade/lang';
+import {DateWrapper, NumberWrapper} from '../facade/lang';
 import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 
 // TODO: move to a global configurable location along with other i18n components.

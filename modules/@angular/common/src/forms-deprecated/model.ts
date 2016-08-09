@@ -10,7 +10,6 @@ import {PromiseObservable} from 'rxjs/observable/PromiseObservable';
 
 import {EventEmitter, Observable} from '../facade/async';
 import {ListWrapper, StringMapWrapper} from '../facade/collection';
-import {isBlank, isPresent, isPromise, normalizeBool} from '../facade/lang';
 
 import {AsyncValidatorFn, ValidatorFn} from './directives/validators';
 

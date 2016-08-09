@@ -7,7 +7,6 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {isPresent} from '../facade/lang';
 
 import {AbstractEmitterVisitor, CATCH_ERROR_VAR, CATCH_STACK_VAR, EmitterVisitorContext} from './abstract_emitter';
 import * as o from './output_ast';

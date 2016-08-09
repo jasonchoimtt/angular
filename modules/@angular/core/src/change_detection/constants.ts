@@ -6,8 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {isBlank} from '../facade/lang';
-
 /**
  * Describes within the change detector which strategy will be used the next time change
  * detection is triggered.

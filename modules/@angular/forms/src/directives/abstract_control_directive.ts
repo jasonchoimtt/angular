@@ -8,7 +8,6 @@
 
 import {Observable} from '../facade/async';
 import {unimplemented} from '../facade/exceptions';
-import {isPresent} from '../facade/lang';
 import {AbstractControl} from '../model';
 
 

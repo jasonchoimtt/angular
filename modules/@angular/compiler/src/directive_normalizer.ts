@@ -12,7 +12,6 @@ import {CompileDirectiveMetadata, CompileStylesheetMetadata, CompileTemplateMeta
 import {CompilerConfig} from './config';
 import {MapWrapper} from './facade/collection';
 import {BaseException} from './facade/exceptions';
-import {isBlank, isPresent} from './facade/lang';
 import * as html from './ml_parser/ast';
 import {HtmlParser} from './ml_parser/html_parser';
 import {InterpolationConfig} from './ml_parser/interpolation_config';

@@ -11,7 +11,7 @@ import {Inject, Injectable, OpaqueToken, RenderComponentType, Renderer, RootRend
 import {AnimationKeyframe, AnimationPlayer, AnimationStyles, RenderDebugInfo} from '../../core_private';
 import {StringMapWrapper} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {Json, StringWrapper, isArray, isBlank, isPresent, isString, stringify} from '../facade/lang';
+import {Json, StringWrapper, stringify} from '../facade/lang';
 
 import {AnimationDriver} from './animation_driver';
 import {getDOM} from './dom_adapter';

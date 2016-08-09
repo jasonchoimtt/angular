@@ -13,7 +13,6 @@ import {Observer} from 'rxjs/Observer';
 
 import {ResponseOptions} from '../base_response_options';
 import {ContentType, ReadyState, RequestMethod, ResponseContentType, ResponseType} from '../enums';
-import {isPresent, isString} from '../facade/lang';
 import {Headers} from '../headers';
 import {getResponseURL, isSuccess} from '../http_utils';
 import {Connection, ConnectionBackend, XSRFStrategy} from '../interfaces';

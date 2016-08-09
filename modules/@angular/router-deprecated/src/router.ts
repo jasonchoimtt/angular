@@ -12,7 +12,7 @@ import {Inject, Injectable} from '@angular/core';
 import {EventEmitter} from '../src/facade/async';
 import {Map, StringMapWrapper} from '../src/facade/collection';
 import {BaseException} from '../src/facade/exceptions';
-import {Type, isBlank, isPresent} from '../src/facade/lang';
+import {Type} from '../src/facade/lang';
 
 import {RouterOutlet} from './directives/router_outlet';
 import {ComponentInstruction, DefaultInstruction, Instruction} from './instruction';

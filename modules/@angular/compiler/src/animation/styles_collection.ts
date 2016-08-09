@@ -7,7 +7,6 @@
  */
 
 import {ListWrapper} from '../facade/collection';
-import {isBlank, isPresent} from '../facade/lang';
 
 export class StylesCollectionEntry {
   constructor(public time: number, public value: string|number) {}

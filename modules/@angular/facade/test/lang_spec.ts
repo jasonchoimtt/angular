@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {NumberWrapper, StringWrapper, escapeRegExp, hasConstructor, isPresent, isPromise, resolveEnumToken} from '../src/lang';
+import {NumberWrapper, StringWrapper, escapeRegExp} from '../src/lang';
 
 enum UsefulEnum {
   MyToken,

@@ -9,7 +9,7 @@
 import {ANY_STATE, FILL_STYLE_FLAG} from '../../core_private';
 import {CompileAnimationAnimateMetadata, CompileAnimationEntryMetadata, CompileAnimationGroupMetadata, CompileAnimationKeyframesSequenceMetadata, CompileAnimationMetadata, CompileAnimationSequenceMetadata, CompileAnimationStateDeclarationMetadata, CompileAnimationStateTransitionMetadata, CompileAnimationStyleMetadata, CompileAnimationWithStepsMetadata} from '../compile_metadata';
 import {ListWrapper, StringMapWrapper} from '../facade/collection';
-import {NumberWrapper, isArray, isBlank, isPresent, isString, isStringMap} from '../facade/lang';
+import {NumberWrapper} from '../facade/lang';
 import {Math} from '../facade/math';
 import {ParseError} from '../parse_util';
 

@@ -7,7 +7,6 @@
  */
 
 import {DomAnimatePlayer} from '../src/dom/dom_animate_player';
-import {isBlank, isPresent} from '../src/facade/lang';
 
 export class MockDomAnimatePlayer implements DomAnimatePlayer {
   public captures: {[key: string]: any[]} = {};

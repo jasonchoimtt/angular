@@ -12,7 +12,7 @@ import {ReflectorReader, reflector} from '../core_private';
 
 import {StringMapWrapper} from './facade/collection';
 import {BaseException} from './facade/exceptions';
-import {Type, isPresent, stringify} from './facade/lang';
+import {Type, stringify} from './facade/lang';
 import {splitAtColon} from './util';
 
 function _isDirectiveMetadata(type: any): type is DirectiveMetadata {

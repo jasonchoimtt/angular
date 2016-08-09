@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {ConcreteType, Type, global, isFunction, stringify} from '../facade/lang';
+import {ConcreteType, Type, global, stringify} from '../facade/lang';
 
 var _nextClassId = 0;
 

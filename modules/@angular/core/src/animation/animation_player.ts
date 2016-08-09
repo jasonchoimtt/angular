@@ -7,7 +7,6 @@
  */
 
 import {BaseException} from '../facade/exceptions';
-import {scheduleMicroTask} from '../facade/lang';
 
 
 /**

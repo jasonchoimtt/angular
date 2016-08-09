@@ -10,7 +10,7 @@ import {AUTO_STYLE, BaseException} from '@angular/core';
 
 import {AnimationKeyframe, AnimationPlayer, AnimationStyles, NoOpAnimationPlayer} from '../../core_private';
 import {StringMapWrapper} from '../facade/collection';
-import {StringWrapper, isBlank, isNumber, isPresent} from '../facade/lang';
+import {StringWrapper} from '../facade/lang';
 
 import {AnimationDriver} from './animation_driver';
 import {DomAnimatePlayer} from './dom_animate_player';

@@ -7,7 +7,6 @@
  */
 
 import {Pipe, PipeTransform} from '@angular/core';
-import {isBlank, isStringMap} from '../facade/lang';
 import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 
 /**

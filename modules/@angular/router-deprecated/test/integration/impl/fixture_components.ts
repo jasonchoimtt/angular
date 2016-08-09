@@ -9,7 +9,6 @@
 import {Component, ComponentRef, ViewChild, ViewContainerRef} from '@angular/core';
 import {DynamicComponentLoader} from '@angular/core/src/linker/dynamic_component_loader';
 import {AsyncRoute, ROUTER_DIRECTIVES, Redirect, Route, RouteConfig, RouteData, RouteParams} from '@angular/router-deprecated';
-import {isPresent} from '../../../src/facade/lang';
 
 @Component({selector: 'goodbye-cmp', template: `{{farewell}}`})
 export class GoodbyeCmp {

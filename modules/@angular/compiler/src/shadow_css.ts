@@ -7,7 +7,7 @@
  */
 
 import {ListWrapper} from './facade/collection';
-import {StringWrapper, isBlank, isPresent} from './facade/lang';
+import {StringWrapper} from './facade/lang';
 
 /**
  * This file is a port of shadowCSS from webcomponents.js to TypeScript.

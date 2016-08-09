@@ -8,8 +8,6 @@
 
 import {Inject, Injectable, Optional} from '@angular/core';
 
-import {isBlank, isPresent} from '../facade/lang';
-
 import {Location} from './location';
 import {APP_BASE_HREF, LocationStrategy} from './location_strategy';
 import {PlatformLocation, UrlChangeListener} from './platform_location';

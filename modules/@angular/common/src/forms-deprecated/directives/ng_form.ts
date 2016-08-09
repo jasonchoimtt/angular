@@ -10,7 +10,6 @@ import {Directive, Inject, Optional, Self, forwardRef} from '@angular/core';
 
 import {EventEmitter} from '../../facade/async';
 import {ListWrapper} from '../../facade/collection';
-import {isPresent} from '../../facade/lang';
 import {AbstractControl, Control, ControlGroup} from '../model';
 import {NG_ASYNC_VALIDATORS, NG_VALIDATORS} from '../validators';
 

@@ -9,7 +9,7 @@
 import {AnimationEntryMetadata} from '../animation/metadata';
 import {ChangeDetectionStrategy} from '../change_detection/constants';
 import {InjectableMetadata} from '../di/metadata';
-import {Type, isPresent} from '../facade/lang';
+import {Type} from '../facade/lang';
 
 import {ViewEncapsulation} from './view';
 

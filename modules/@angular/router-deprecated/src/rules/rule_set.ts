@@ -8,7 +8,6 @@
 
 import {Map} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {isBlank, isFunction, isPresent} from '../facade/lang';
 import {ComponentInstruction} from '../instruction';
 import {AsyncRoute, AuxRoute, Redirect, Route, RouteDefinition} from '../route_config/route_config_impl';
 import {Url} from '../url_parser';

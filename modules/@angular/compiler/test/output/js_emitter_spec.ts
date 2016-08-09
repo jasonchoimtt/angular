@@ -11,8 +11,6 @@ import {JavaScriptEmitter} from '@angular/compiler/src/output/js_emitter';
 import * as o from '@angular/compiler/src/output/output_ast';
 import {beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
 
-import {isBlank} from '../../src/facade/lang';
-
 import {SimpleJsImportGenerator} from './output_emitter_util';
 
 var someModuleUrl = 'asset:somePackage/lib/somePath';

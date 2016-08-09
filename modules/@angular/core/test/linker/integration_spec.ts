@@ -26,7 +26,7 @@ import {expect} from '@angular/platform-browser/testing/matchers';
 
 import {EventEmitter} from '../../src/facade/async';
 import {BaseException} from '../../src/facade/exceptions';
-import {isBlank, isPresent, stringify} from '../../src/facade/lang';
+import {stringify} from '../../src/facade/lang';
 
 const ANCHOR_ELEMENT = new OpaqueToken('AnchorElement');
 

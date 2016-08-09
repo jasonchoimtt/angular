@@ -8,7 +8,6 @@
 
 import * as cdAst from '../expression_parser/ast';
 import {BaseException} from '../facade/exceptions';
-import {isArray, isBlank, isPresent} from '../facade/lang';
 import {Identifiers} from '../identifiers';
 import * as o from '../output/output_ast';
 

@@ -9,7 +9,7 @@
 import {resolveForwardRef} from '../di/forward_ref';
 import {DependencyMetadata} from '../di/metadata';
 import {OpaqueToken} from '../di/opaque_token';
-import {StringWrapper, Type, isString, stringify} from '../facade/lang';
+import {StringWrapper, Type, stringify} from '../facade/lang';
 
 /**
  * This token can be used to create a virtual provider that will populate the

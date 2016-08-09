@@ -11,7 +11,6 @@ import {fakeAsync, flushMicrotasks, tick} from '@angular/core/testing';
 import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
 
 import {EventEmitter} from '../../src/facade/async';
-import {isPresent} from '../../src/facade/lang';
 
 export function main() {
   function asyncValidator(expected: any /** TODO #9100 */, timeouts = {}) {

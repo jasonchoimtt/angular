@@ -8,7 +8,7 @@
 
 import {Injectable} from '@angular/core';
 import * as chars from '../chars';
-import {NumberWrapper, StringJoiner, StringWrapper, isPresent} from '../facade/lang';
+import {NumberWrapper, StringJoiner, StringWrapper} from '../facade/lang';
 
 export enum TokenType {
   Character,

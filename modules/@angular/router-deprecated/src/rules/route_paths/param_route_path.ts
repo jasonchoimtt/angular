@@ -8,7 +8,7 @@
 
 import {StringMapWrapper} from '../../facade/collection';
 import {BaseException} from '../../facade/exceptions';
-import {StringWrapper, isBlank, isPresent} from '../../facade/lang';
+import {StringWrapper} from '../../facade/lang';
 import {RootUrl, Url, convertUrlParamsToArray} from '../../url_parser';
 import {TouchMap, normalizeString} from '../../utils';
 

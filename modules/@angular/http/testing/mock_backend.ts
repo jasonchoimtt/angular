@@ -13,7 +13,6 @@ import {take} from 'rxjs/operator/take';
 
 import {ReadyState} from '../src/enums';
 import {BaseException} from '../src/facade/exceptions';
-import {isBlank, isPresent} from '../src/facade/lang';
 import {Connection, ConnectionBackend} from '../src/interfaces';
 import {Request} from '../src/static_request';
 import {Response} from '../src/static_response';

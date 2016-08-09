@@ -9,7 +9,6 @@
 import {Injectable} from '@angular/core';
 
 import {StringMapWrapper} from '../facade/collection';
-import {isArray, isPresent} from '../facade/lang';
 
 import {AsyncValidatorFn, ValidatorFn} from './directives/validators';
 import {AbstractControl, Control, ControlArray, ControlGroup} from './model';

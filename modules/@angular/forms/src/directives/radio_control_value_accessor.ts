@@ -10,7 +10,6 @@ import {Directive, ElementRef, Injectable, Injector, Input, OnDestroy, OnInit, R
 
 import {ListWrapper} from '../facade/collection';
 import {BaseException} from '../facade/exceptions';
-import {isPresent} from '../facade/lang';
 
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from './control_value_accessor';
 import {NgControl} from './ng_control';

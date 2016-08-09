@@ -8,8 +8,6 @@
 
 import {Directive, Input, TemplateRef, ViewContainerRef} from '@angular/core';
 
-import {isBlank} from '../facade/lang';
-
 
 
 /**

@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Json, isString} from '../src/facade/lang';
+import {Json} from '../src/facade/lang';
 
-import {isJsObject, stringToArrayBuffer} from './http_utils';
+import {stringToArrayBuffer} from './http_utils';
 import {URLSearchParams} from './url_search_params';
 
 
