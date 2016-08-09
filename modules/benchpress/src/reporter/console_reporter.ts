@@ -112,5 +112,5 @@ var _PROVIDERS = [
                     new ConsoleReporter(columnWidth, sampleDescription, print),
     deps: [_COLUMN_WIDTH, SampleDescription, _PRINT]
   },
-  {provide: _COLUMN_WIDTH, useValue: 18}, {provide: _PRINT, useValue: print}
+  {provide: _COLUMN_WIDTH, useValue: 18}, {provide: _PRINT, useValue: console.log.bind(console)}
 ];

@@ -20,6 +20,8 @@ import {ServiceMessageBrokerFactory, ServiceMessageBrokerFactory_} from './web_w
 import {WebWorkerRootRenderer} from './web_workers/worker/renderer';
 import {WorkerDomAdapter} from './web_workers/worker/worker_adapter';
 
+const print = console.log.bind(console);
+
 class PrintLogger {
   log = print;
   logError = print;
