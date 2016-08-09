@@ -32,7 +32,7 @@ class InboxRecord {
     lastName: string,
     date: string, draft?: boolean
   } = null) {
-    if (isPresent(data)) {
+    if (data !== undefined && data !== null) {
       this.setData(data);
     }
   }
@@ -63,13 +63,15 @@ class DbService {
 
   drafts(): Promise<any[]> {
     return this.getData().then(
-        (data: any[]): any[] =>
-            data.filter(record => isPresent(record['draft']) && record['draft'] == true));
+        (data: any[]): any[] => data.filter(
+            record => record['draft'] !== undefined && record['draft'] !== null &&
+                record['draft'] == true));
   }
 
   emails(): Promise<any[]> {
     return this.getData().then(
-        (data: any[]): any[] => data.filter(record => isBlank(record['draft'])));
+        (data: any[]): any[] =>
+            data.filter(record => record['draft'] === undefined || record['draft'] === null));
   }
 
   email(id: any /** TODO #9100 */): Promise<any> {
@@ -104,7 +106,7 @@ class InboxCmp {
 
   constructor(public router: Router, db: DbService, params: RouteParams) {
     var sortType = params.get('sort');
-    var sortEmailsByDate = isPresent(sortType) && sortType == 'date';
+    var sortEmailsByDate = sortType !== undefined && sortType !== null && sortType == 'date';
 
     db.emails().then((emails: any[]) => {
       this.ready = true;

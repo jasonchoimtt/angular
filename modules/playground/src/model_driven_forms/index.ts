@@ -17,7 +17,7 @@ import {bootstrap} from '@angular/platform-browser-dynamic';
  * Custom validator.
  */
 function creditCardValidator(c: AbstractControl): {[key: string]: boolean} {
-  if (isPresent(c.value) && /^\d{16}$/.test(c.value)) {
+  if (c.value !== undefined && c.value !== null && /^\d{16}$/.test(c.value)) {
     return null;
   } else {
     return {'invalidCreditCard': true};
@@ -57,7 +57,7 @@ class ShowError {
   get errorMessage(): string {
     var form: ControlGroup = this.formDir.form;
     var control = form.find(this.controlPath);
-    if (isPresent(control) && control.touched) {
+    if (control !== undefined && control !== null && control.touched) {
       for (var i = 0; i < this.errorTypes.length; ++i) {
         if (control.hasError(this.errorTypes[i])) {
           return this._errorMessage(this.errorTypes[i]);
@@ -152,8 +152,8 @@ class ModelDrivenForms {
   }
 
   onSubmit(): void {
-    print('Submitting:');
-    print(this.form.value);
+    console.log('Submitting:');
+    console.log(this.form.value);
   }
 }
 
