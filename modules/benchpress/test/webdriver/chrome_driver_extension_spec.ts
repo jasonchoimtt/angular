@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
-import {Json}  from '@angular/facade/src/lang';
-import {ChromeDriverExtension, Options, ReflectiveInjector, WebDriverAdapter, WebDriverExtension}  from 'benchpress/common';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
+import {Json} from '@angular/facade/src/lang';
+import {ChromeDriverExtension, Options, ReflectiveInjector, WebDriverAdapter, WebDriverExtension} from 'benchpress/common';
 
-import {TraceEventFactory}  from '../trace_event_factory';
+import {TraceEventFactory} from '../trace_event_factory';
 
 export function main() {
   describe('chrome driver extension', () => {

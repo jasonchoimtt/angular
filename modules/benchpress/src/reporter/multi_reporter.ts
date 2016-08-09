@@ -6,10 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Injector, OpaqueToken}  from '@angular/core/src/di';
+import {Injector, OpaqueToken} from '@angular/core/src/di';
 
-import {MeasureValues}  from '../measure_values';
-import {Reporter}  from '../reporter';
+import {MeasureValues} from '../measure_values';
+import {Reporter} from '../reporter';
 
 export class MultiReporter extends Reporter {
   static createBindings(childTokens: any[]): any[] {

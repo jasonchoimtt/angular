@@ -6,13 +6,13 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {ListWrapper, StringMapWrapper}  from '@angular/facade/src/collection';
-import {BaseException, WrappedException}  from '@angular/facade/src/exceptions';
-import {Json, NumberWrapper, StringWrapper}  from '@angular/facade/src/lang';
+import {ListWrapper, StringMapWrapper} from '@angular/facade/src/collection';
+import {BaseException, WrappedException} from '@angular/facade/src/exceptions';
+import {Json, NumberWrapper, StringWrapper} from '@angular/facade/src/lang';
 
-import {Options}  from '../common_options';
-import {WebDriverAdapter}  from '../web_driver_adapter';
-import {PerfLogFeatures, WebDriverExtension}  from '../web_driver_extension';
+import {Options} from '../common_options';
+import {WebDriverAdapter} from '../web_driver_adapter';
+import {PerfLogFeatures, WebDriverExtension} from '../web_driver_extension';
 
 
 /**

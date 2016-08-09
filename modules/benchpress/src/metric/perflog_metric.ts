@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {OpaqueToken}  from '@angular/core/src/di';
-import {ListWrapper, StringMapWrapper}  from '@angular/facade/src/collection';
-import {BaseException, WrappedException}  from '@angular/facade/src/exceptions';
-import {Math, NumberWrapper, StringWrapper}  from '@angular/facade/src/lang';
+import {OpaqueToken} from '@angular/core/src/di';
+import {ListWrapper, StringMapWrapper} from '@angular/facade/src/collection';
+import {BaseException, WrappedException} from '@angular/facade/src/exceptions';
+import {Math, NumberWrapper, StringWrapper} from '@angular/facade/src/lang';
 
-import {Options}  from '../common_options';
-import {Metric}  from '../metric';
-import {PerfLogFeatures, WebDriverExtension}  from '../web_driver_extension';
+import {Options} from '../common_options';
+import {Metric} from '../metric';
+import {PerfLogFeatures, WebDriverExtension} from '../web_driver_extension';
 
 
 /**

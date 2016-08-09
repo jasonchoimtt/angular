@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {BaseException, WrappedException}  from '@angular/facade/src/exceptions';
-import {Json, StringWrapper}  from '@angular/facade/src/lang';
+import {BaseException, WrappedException} from '@angular/facade/src/exceptions';
+import {Json, StringWrapper} from '@angular/facade/src/lang';
 
-import {WebDriverAdapter}  from '../web_driver_adapter';
-import {PerfLogFeatures, WebDriverExtension}  from '../web_driver_extension';
+import {WebDriverAdapter} from '../web_driver_adapter';
+import {PerfLogFeatures, WebDriverExtension} from '../web_driver_extension';
 
 export class IOsDriverExtension extends WebDriverExtension {
   // TODO(tbosch): use static values when our transpiler supports them

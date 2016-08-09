@@ -6,12 +6,12 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {OpaqueToken, Provider, bind}  from '@angular/core';
-import {StringMapWrapper}  from '@angular/facade/src/collection';
+import {OpaqueToken, Provider, bind} from '@angular/core';
+import {StringMapWrapper} from '@angular/facade/src/collection';
 
-import {Options}  from '../common_options';
-import {Metric}  from '../metric';
-import {WebDriverAdapter}  from '../web_driver_adapter';
+import {Options} from '../common_options';
+import {Metric} from '../metric';
+import {WebDriverAdapter} from '../web_driver_adapter';
 
 export class UserMetric extends Metric {
   // TODO(tbosch): use static values when our transpiler supports them

@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Math}  from '@angular/facade/src/math';
+import {Math} from '@angular/facade/src/math';
 
 export class Statistic {
   static calculateCoefficientOfVariation(sample, mean) {

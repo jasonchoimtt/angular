@@ -6,8 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {bind}  from '@angular/core/src/di';
-import {Options}  from './common';
+import {bind} from '@angular/core/src/di';
+import {Options} from './common';
 
 export * from './common';
 export {SeleniumWebDriverAdapter} from './src/webdriver/selenium_webdriver_adapter';

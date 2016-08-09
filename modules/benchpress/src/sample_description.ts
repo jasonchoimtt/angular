@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {StringMapWrapper}  from '@angular/facade/src/collection';
+import {StringMapWrapper} from '@angular/facade/src/collection';
 
-import {Options}  from './common_options';
-import {Metric}  from './metric';
-import {Validator}  from './validator';
+import {Options} from './common_options';
+import {Metric} from './metric';
+import {Validator} from './validator';
 
 
 /**

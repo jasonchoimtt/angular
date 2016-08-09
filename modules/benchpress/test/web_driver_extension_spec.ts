@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
-import {StringWrapper}  from '@angular/facade/src/lang';
-import {Options, ReflectiveInjector, WebDriverExtension}  from 'benchpress/common';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
+import {StringWrapper} from '@angular/facade/src/lang';
+import {Options, ReflectiveInjector, WebDriverExtension} from 'benchpress/common';
 
 export function main() {
   function createExtension(ids: any[], caps) {

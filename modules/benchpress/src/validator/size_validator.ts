@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {OpaqueToken}  from '@angular/core/src/di';
-import {ListWrapper}  from '@angular/facade/src/collection';
+import {OpaqueToken} from '@angular/core/src/di';
+import {ListWrapper} from '@angular/facade/src/collection';
 
-import {MeasureValues}  from '../measure_values';
-import {Validator}  from '../validator';
+import {MeasureValues} from '../measure_values';
+import {Validator} from '../validator';
 
 
 /**

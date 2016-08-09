@@ -6,10 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit}  from '@angular/core/testing/testing_internal';
-import {ListWrapper}  from '@angular/facade/src/collection';
-import {Date, DateWrapper}  from '@angular/facade/src/lang';
-import {MeasureValues, ReflectiveInjector, RegressionSlopeValidator}  from 'benchpress/common';
+import {AsyncTestCompleter, afterEach, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
+import {ListWrapper} from '@angular/facade/src/collection';
+import {Date, DateWrapper} from '@angular/facade/src/lang';
+import {MeasureValues, ReflectiveInjector, RegressionSlopeValidator} from 'benchpress/common';
 
 export function main() {
   describe('regression slope validator', () => {

@@ -6,10 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Injector, OpaqueToken}  from '@angular/core/src/di';
-import {BaseException, WrappedException}  from '@angular/facade/src/exceptions';
+import {Injector, OpaqueToken} from '@angular/core/src/di';
+import {BaseException, WrappedException} from '@angular/facade/src/exceptions';
 
-import {Options}  from './common_options';
+import {Options} from './common_options';
 
 
 /**

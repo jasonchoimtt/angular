@@ -6,14 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Date, DateWrapper}  from '@angular/facade/src/lang';
+import {Date, DateWrapper} from '@angular/facade/src/lang';
 
-import {Options}  from './common_options';
-import {MeasureValues}  from './measure_values';
-import {Metric}  from './metric';
-import {Reporter}  from './reporter';
-import {Validator}  from './validator';
-import {WebDriverAdapter}  from './web_driver_adapter';
+import {Options} from './common_options';
+import {MeasureValues} from './measure_values';
+import {Metric} from './metric';
+import {Reporter} from './reporter';
+import {Validator} from './validator';
+import {WebDriverAdapter} from './web_driver_adapter';
 
 
 /**
