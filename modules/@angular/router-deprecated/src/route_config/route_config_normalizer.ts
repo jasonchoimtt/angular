@@ -108,7 +108,7 @@ function wrapLoaderToReconfigureRegistry(loader: Function, registry: RouteRegist
 }
 
 export function assertComponentExists(component: Type, path: string): void {
-  if (!(typeof component === 'function')) {
+  if (typeof component !== 'function') {
     throw new BaseException(`Component for route "${path}" is not defined, or is not a class.`);
   }
 }

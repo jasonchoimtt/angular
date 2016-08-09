@@ -22,7 +22,7 @@ import {InvalidPipeArgumentException} from './invalid_pipe_argument_exception';
 export class UpperCasePipe implements PipeTransform {
   transform(value: string): string {
     if (value === undefined || value === null) return value;
-    if (!(typeof value === 'string')) {
+    if (typeof value !== 'string') {
       throw new InvalidPipeArgumentException(UpperCasePipe, value);
     }
     return value.toUpperCase();

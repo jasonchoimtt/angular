@@ -304,7 +304,7 @@ export class ProviderBuilder {
    * ```
    */
   toClass(type: Type): Provider {
-    if (!(typeof type === 'function')) {
+    if (typeof type !== 'function') {
       throw new BaseException(
           `Trying to create a class provider but "${stringify(type)}" is not a class!`);
     }
@@ -381,7 +381,7 @@ export class ProviderBuilder {
    * ```
    */
   toFactory(factory: Function, dependencies?: any[]): Provider {
-    if (!(typeof factory === 'function')) {
+    if (typeof factory !== 'function') {
       throw new BaseException(
           `Trying to create a factory provider but "${stringify(factory)}" is not a function!`);
     }

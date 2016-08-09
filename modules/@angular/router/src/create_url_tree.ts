@@ -116,7 +116,7 @@ function normalizeCommands(commands: any[]): NormalizedNavigationCommands {
       continue;
     }
 
-    if (!(typeof c === 'string')) {
+    if (typeof c !== 'string') {
       res.push(c);
       continue;
     }
@@ -171,7 +171,7 @@ function getPath(command: any): any {
 }
 
 function getOutlets(commands: any[]): {[k: string]: any[]} {
-  if (!(typeof commands[0] === 'object')) return {[PRIMARY_OUTLET]: commands};
+  if (typeof commands[0] !== 'object') return {[PRIMARY_OUTLET]: commands};
   if (commands[0].outlets === undefined) return {[PRIMARY_OUTLET]: commands};
   return commands[0].outlets;
 }

@@ -22,7 +22,7 @@ function formatNumber(
   if (value === undefined || value === null) return null;
   // Convert strings to numbers
   value = typeof value === 'string' && NumberWrapper.isNumeric(value) ? +value : value;
-  if (!(typeof value === 'number')) {
+  if (typeof value !== 'number') {
     throw new InvalidPipeArgumentException(pipe, value);
   }
   let minInt: number;

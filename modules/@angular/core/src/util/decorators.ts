@@ -106,7 +106,7 @@ function applyParams(fnOrArray: (Function | any[]), key: string): Function {
     const annotations: any[] = fnOrArray;
     const annoLength = annotations.length - 1;
     const fn: Function = fnOrArray[annoLength];
-    if (!(typeof fn === 'function')) {
+    if (typeof fn !== 'function') {
       throw new Error(
           `Last position of Class method array must be Function in key ${key} was '${stringify(fn)}'`);
     }

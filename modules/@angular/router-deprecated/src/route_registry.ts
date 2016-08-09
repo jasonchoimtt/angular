@@ -107,7 +107,7 @@ export class RouteRegistry {
    * Reads the annotations of a component and configures the registry based on them
    */
   configFromComponent(component: any): void {
-    if (!(typeof component === 'function')) {
+    if (typeof component !== 'function') {
       return;
     }
 
@@ -529,7 +529,7 @@ function compareSpecificityStrings(a: string, b: string): number {
 }
 
 function assertTerminalComponent(component: any /** TODO #9100 */, path: any /** TODO #9100 */) {
-  if (!(typeof component === 'function')) {
+  if (typeof component !== 'function') {
     return;
   }
 
