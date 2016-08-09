@@ -8,7 +8,7 @@
 
 import {provide} from '../index';
 import {StringMapWrapper} from '../src/facade/collection';
-import {Math, global, isFunction, isPromise} from '../src/facade/lang';
+import {Math, global} from '../src/facade/lang';
 
 import {AsyncTestCompleter} from './async_test_completer';
 import {getTestBed, inject} from './test_bed';
@@ -144,7 +144,7 @@ function _it(jsmFn: Function, name: string, testFn: Function, testTimeOut: numbe
     inIt = true;
     if (testFn.length == 0) {
       let retVal = testFn();
-      if (isPromise(retVal)) {
+      if (retVal !== undefined && retVal !== null && typeof(<any>retVal).then === 'function') {
         // Asynchronous test function that returns a Promise - wait for completion.
         (<Promise<any>>retVal).then(done, done.fail);
       } else {

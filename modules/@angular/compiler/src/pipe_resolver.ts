@@ -10,7 +10,7 @@ import {Injectable, PipeMetadata, resolveForwardRef} from '@angular/core';
 
 import {ReflectorReader, reflector} from '../core_private';
 import {BaseException} from './facade/exceptions';
-import {Type, isPresent, stringify} from './facade/lang';
+import {Type, stringify} from './facade/lang';
 
 function _isPipeMetadata(type: any): boolean {
   return type instanceof PipeMetadata;
@@ -32,9 +32,9 @@ export class PipeResolver {
    */
   resolve(type: Type, throwIfNotFound = true): PipeMetadata {
     var metas = this._reflector.annotations(resolveForwardRef(type));
-    if (isPresent(metas)) {
+    if (metas) {
       var annotation = metas.find(_isPipeMetadata);
-      if (isPresent(annotation)) {
+      if (annotation) {
         return annotation;
       }
     }

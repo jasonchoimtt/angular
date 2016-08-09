@@ -10,7 +10,6 @@ import {BaseException} from '@angular/core';
 
 import {XHR} from '../index';
 import {ListWrapper, Map} from '../src/facade/collection';
-import {isBlank, normalizeBlank} from '../src/facade/lang';
 
 
 /**
@@ -93,7 +92,7 @@ export class MockXHR extends XHR {
 
     if (this._definitions.has(url)) {
       var response = this._definitions.get(url);
-      request.complete(normalizeBlank(response));
+      request.complete(response === undefined ? null : response);
       return;
     }
 
@@ -114,7 +113,7 @@ class _PendingRequest {
   }
 
   complete(response: string) {
-    if (isBlank(response)) {
+    if (response === undefined || response === null) {
       this.reject(`Failed to load ${this.url}`);
     } else {
       this.resolve(response);

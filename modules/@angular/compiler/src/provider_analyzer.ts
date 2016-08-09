@@ -73,7 +73,11 @@ export class ProviderElementContext {
 
     // create the providers that we know are eager first
     this._allProviders.values().forEach((provider) => {
-      const eager = provider.eager || isPresent(queriedTokens.get(provider.token));
+      var eager = provider.eager;
+      if (!eager) {
+        var token = queriedTokens.get(provider.token);
+        eager = token !== undefined && token !== null;
+      }
       if (eager) {
         this._getOrCreateLocalProvider(provider.providerType, provider.token, true);
       }
@@ -140,10 +144,9 @@ export class ProviderElementContext {
       requestingProviderType: ProviderAstType, token: CompileTokenMetadata,
       eager: boolean): ProviderAst {
     var resolvedProvider = this._allProviders.get(token);
-    if (isBlank(resolvedProvider) ||
-        ((requestingProviderType === ProviderAstType.Directive ||
-          requestingProviderType === ProviderAstType.PublicService) &&
-         resolvedProvider.providerType === ProviderAstType.PrivateService) ||
+    if (!resolvedProvider || ((requestingProviderType === ProviderAstType.Directive ||
+                               requestingProviderType === ProviderAstType.PublicService) &&
+                              resolvedProvider.providerType === ProviderAstType.PrivateService) ||
         ((requestingProviderType === ProviderAstType.PrivateService ||
           requestingProviderType === ProviderAstType.PublicService) &&
          resolvedProvider.providerType === ProviderAstType.Builtin)) {

@@ -224,7 +224,7 @@ export function constructDependencies(
 function _dependenciesFor(typeOrFunc: any): ReflectiveDependency[] {
   var params = reflector.parameters(typeOrFunc);
   if (!params) return [];
-  if (params.some(isBlank)) {
+  if (params.some(p => p === undefined || p === null)) {
     throw new NoAnnotationError(typeOrFunc, params);
   }
   return params.map((p: any[]) => _extractToken(typeOrFunc, p, params));

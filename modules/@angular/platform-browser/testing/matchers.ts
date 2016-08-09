@@ -8,7 +8,7 @@
 
 import {getDOM} from '../src/dom/dom_adapter';
 import {StringMapWrapper} from '../src/facade/collection';
-import {global, isString} from '../src/facade/lang';
+import {global} from '../src/facade/lang';
 
 /**
  * Jasmine matchers that check Angular specific conditions.
@@ -186,7 +186,7 @@ _global.beforeEach(function() {
       return {
         compare: function(actual: any, styles: {[k: string]: string}|string) {
           let allPassed: boolean;
-          if (isString(styles)) {
+          if (typeof styles === 'string') {
             allPassed = getDOM().hasStyle(actual, styles);
           } else {
             allPassed = !StringMapWrapper.isEmpty(styles);
@@ -198,9 +198,9 @@ _global.beforeEach(function() {
           return {
             pass: allPassed,
             get message() {
-              const expectedValueStr = isString(styles) ? styles : JSON.stringify(styles);
+              const expectedValueStr = typeof styles === 'string' ? styles : JSON.stringify(styles);
               return `Expected ${actual.outerHTML} ${!allPassed ? ' ' : 'not '}to contain the
-                      CSS ${isString(styles) ? 'property' : 'styles'} "${expectedValueStr}"`;
+                      CSS ${typeof styles === 'string' ? 'property' : 'styles'} "${expectedValueStr}"`;
             }
           };
         }

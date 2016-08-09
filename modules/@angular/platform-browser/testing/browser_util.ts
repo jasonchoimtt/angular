@@ -8,15 +8,15 @@
 
 import {getDOM} from '../src/dom/dom_adapter';
 import {ListWrapper} from '../src/facade/collection';
-import {RegExp, StringWrapper, global, isPresent, isString} from '../src/facade/lang';
+import {RegExp, StringWrapper, global} from '../src/facade/lang';
 
 export class BrowserDetection {
   private _overrideUa: string;
   private get _ua(): string {
-    if (isPresent(this._overrideUa)) {
+    if (this._overrideUa !== undefined && this._overrideUa !== null) {
       return this._overrideUa;
     } else {
-      return isPresent(getDOM()) ? getDOM().getUserAgent() : '';
+      return getDOM() ? getDOM().getUserAgent() : '';
     }
   }
 
@@ -100,7 +100,7 @@ export function stringifyElement(el: any /** TODO #9100 */): string {
     for (let i = 0; i < keys.length; i++) {
       var key = keys[i];
       var attValue = attributeMap.get(key);
-      if (!isString(attValue)) {
+      if (typeof attValue !== 'string') {
         result += ` ${key}`;
       } else {
         result += ` ${key}="${attValue}"`;
@@ -110,7 +110,9 @@ export function stringifyElement(el: any /** TODO #9100 */): string {
 
     // Children
     var childrenRoot = getDOM().templateAwareRoot(el);
-    var children = isPresent(childrenRoot) ? getDOM().childNodes(childrenRoot) : [];
+    var children = childrenRoot !== undefined && childrenRoot !== null ?
+        getDOM().childNodes(childrenRoot) :
+        [];
     for (let j = 0; j < children.length; j++) {
       result += stringifyElement(children[j]);
     }

@@ -118,7 +118,7 @@ export class Validators {
    */
   static compose(validators: ValidatorFn[]): ValidatorFn {
     if (!validators) return null;
-    var presentValidators = validators.filter(isPresent);
+    var presentValidators = validators.filter(v => !!v);
     if (presentValidators.length == 0) return null;
 
     return function(control: AbstractControl) {
@@ -128,7 +128,7 @@ export class Validators {
 
   static composeAsync(validators: AsyncValidatorFn[]): AsyncValidatorFn {
     if (!validators) return null;
-    var presentValidators = validators.filter(isPresent);
+    var presentValidators = validators.filter(v => !!v);
     if (presentValidators.length == 0) return null;
 
     return function(control: AbstractControl) {

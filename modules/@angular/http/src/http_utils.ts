@@ -45,5 +45,3 @@ export function stringToArrayBuffer(input: String): ArrayBuffer {
   }
   return view.buffer;
 }
-
-export {isJsObject} from '../src/facade/lang';
