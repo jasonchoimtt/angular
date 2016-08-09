@@ -1,4 +1,4 @@
-import * as child_process from 'child_process';
+import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -17,7 +17,9 @@ describe('e2e test', () => {
   }
 
   beforeEach(() => {
-    workspace = path.join(os.tmpdir(), Math.round(Math.random() * 100000).toString());
+    const tmpDir = process.env['TEST_TMPDIR'];
+    expect(tmpDir).toBeTruthy();
+    workspace = path.join(tmpDir, Math.round(Math.random() * 100000).toString());
     fs.mkdirSync(workspace);
     write('WORKSPACE', '');
   });
@@ -65,12 +67,12 @@ describe('e2e test', () => {
 });
 
 class IBazelProcess {
-  child: child_process.ChildProcess;
+  child: childProcess.ChildProcess;
   stopped: boolean;
   waiters: {keyword: string, callback: Function, active: boolean}[]
 
   constructor(cwd: string, argv: string[], timeout: number = 10000) {
-    this.child = child_process.spawn(
+    this.child = childProcess.spawn(
         'node', [BAZEL_BINARY, '--max_idle_secs=5'].concat(argv), {stdio: 'pipe', cwd: cwd});
     this.stopped = false;
     this.waiters = [];

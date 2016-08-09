@@ -73,5 +73,5 @@ jasmine_node_test(
     srcs = [":ibazel_e2e_test_module"],
     size = "small",
     args = ["--node_path=tools"],
-    tags = ["local"],
+    local = True,
 )
