@@ -47,11 +47,6 @@ if (typeof window === 'undefined') {
   globalScope = <any>window;
 }
 
-/** @inline */
-export function scheduleMicroTask(fn: Function) {
-  Zone.current.scheduleMicroTask('scheduleMicrotask', fn);
-}
-
 // Need to declare a new variable for global here since TypeScript
 // exports the original value of the symbol.
 var _global: BrowserNodeGlobal = globalScope;
@@ -76,12 +71,6 @@ export interface Type extends Function {}
  */
 export interface ConcreteType<T> extends Type { new (...args: any[]): T; }
 
-/** @inline */
-export function getTypeNameForDebugging(type: Type): string {
-  return type['name'] || typeof type;
-}
-
-
 export var Math = _global.Math;
 export var Date = _global.Date;
 
@@ -92,66 +81,9 @@ _global.assert = function assert(condition) {
   // TODO: to be fixed properly via #2830, noop for now
 };
 
-/** @inline */
-export function isPresent(obj: any): boolean {
-  return obj !== undefined && obj !== null;
-}
-
-/** @inline */
-export function isBlank(obj: any): boolean {
-  return obj === undefined || obj === null;
-}
-
-/** @inline */
-export function isBoolean(obj: any): boolean {
-  return typeof obj === 'boolean';
-}
-
-/** @inline */
-export function isNumber(obj: any): boolean {
-  return typeof obj === 'number';
-}
-
-/** @inline */
-export function isString(obj: any): obj is String {
-  return typeof obj === 'string';
-}
-
-/** @inline */
-export function isFunction(obj: any): boolean {
-  return typeof obj === 'function';
-}
-
-/** @inline */
-export function isType(obj: any): boolean {
-  return typeof obj === 'function';
-}
-
-/** @inline */
-export function isStringMap(obj: any): obj is Object {
-  return typeof obj === 'object' && obj !== null;
-}
-
 const STRING_MAP_PROTO = Object.getPrototypeOf({});
 export function isStrictStringMap(obj: any): boolean {
   return typeof obj === 'object' && obj !== null && Object.getPrototypeOf(obj) === STRING_MAP_PROTO;
-}
-
-/** @inline */
-export function isPromise(obj: any): boolean {
-  // allow any Promise/A+ compliant thenable.
-  // It's up to the caller to ensure that obj.then conforms to the spec
-  return obj !== undefined && obj !== null && typeof(<any>obj).then === 'function';
-}
-
-/** @inline */
-export function isArray(obj: any): boolean {
-  return Array.isArray(obj);
-}
-
-/** @inline */
-export function isDate(obj: any): obj is Date {
-  return obj instanceof Date && !isNaN(obj.valueOf());
 }
 
 export function noop() {}
@@ -179,21 +111,6 @@ export function stringify(token: any): string {
 
 // serialize / deserialize enum exist only for consistency with dart API
 // enums in typescript don't need to be serialized
-
-/** @inline */
-export function serializeEnum(val: any): number {
-  return val;
-}
-
-/** @inline */
-export function deserializeEnum(val: any, values: Map<number, any>): any {
-  return val;
-}
-
-/** @inline */
-export function resolveEnumToken(enumValue: any, val: any): string {
-  return enumValue[val];
-}
 
 export class StringWrapper {
   static fromCharCode(code: number): string { return String.fromCharCode(code); }
@@ -336,38 +253,6 @@ export function looseIdentical(a: any, b: any): boolean {
   return a === b || typeof a === 'number' && typeof b === 'number' && isNaN(a) && isNaN(b);
 }
 
-// JS considers NaN is the same as NaN for map Key (while NaN !== NaN otherwise)
-// see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
-/** @inline */
-export function getMapKey<T>(value: T): T {
-  return value;
-}
-
-/** @inline */
-export function normalizeBlank(obj: Object): any {
-  return obj === undefined ? null : obj;
-}
-
-/** @inline */
-export function normalizeBool(obj: boolean): boolean {
-  return obj === undefined || obj === null ? false : obj;
-}
-
-/** @inline */
-export function isJsObject(obj: any): boolean {
-  return obj !== null && (typeof obj === 'function' || typeof obj === 'object');
-}
-
-/** @inline */
-export function print(obj: Error | Object) {
-  console.log(obj);
-}
-
-/** @inline */
-export function warn(obj: Error | Object) {
-  console.warn(obj);
-}
-
 // Can't be all uppercase as our transpiler would think it is a special directive...
 export class Json {
   static parse(s: string): Object { return _global.JSON.parse(s); }
@@ -440,21 +325,6 @@ export function evalExpression(
     fnArgValues.push(vars[argName]);
   }
   return new Function(...fnArgNames.concat(fnBody))(...fnArgValues);
-}
-
-/** @inline */
-export function isPrimitive(obj: any): boolean {
-  return obj === null || typeof obj !== 'function' && typeof obj !== 'object';
-}
-
-/** @inline */
-export function hasConstructor(value: Object, type: Type): boolean {
-  return value.constructor === type;
-}
-
-/** @inline */
-export function escape(s: string): string {
-  return encodeURI(s);
 }
 
 export function escapeRegExp(s: string): string {
