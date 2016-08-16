@@ -174,6 +174,9 @@
     "asap": {
       "version": "2.0.3"
     },
+    "ascli": {
+      "version": "1.0.0"
+    },
     "asn1": {
       "version": "0.2.3"
     },
@@ -1608,6 +1611,9 @@
     "builtins": {
       "version": "0.0.7"
     },
+    "bytebuffer": {
+      "version": "5.0.1"
+    },
     "bytes": {
       "version": "2.1.0"
     },
@@ -1701,6 +1707,9 @@
     },
     "colors": {
       "version": "1.1.2"
+    },
+    "colour": {
+      "version": "0.7.1"
     },
     "combine-source-map": {
       "version": "0.6.1",
@@ -3807,6 +3816,9 @@
         }
       }
     },
+    "long": {
+      "version": "3.2.0"
+    },
     "longest": {
       "version": "1.0.1"
     },
@@ -4301,6 +4313,9 @@
     "options": {
       "version": "0.0.6"
     },
+    "optjs": {
+      "version": "3.2.2"
+    },
     "orchestrator": {
       "version": "0.3.7",
       "dependencies": {
@@ -4459,6 +4474,14 @@
     },
     "proto-list": {
       "version": "1.2.4"
+    },
+    "protobufjs": {
+      "version": "5.0.1",
+      "dependencies": {
+        "glob": {
+          "version": "5.0.15"
+        }
+      }
     },
     "protractor": {
       "version": "3.0.0",
@@ -4985,7 +5008,7 @@
       }
     },
     "source-map-support": {
-      "version": "0.2.10",
+      "version": "0.4.2",
       "dependencies": {
         "source-map": {
           "version": "0.1.32"
@@ -5288,6 +5311,12 @@
         },
         "semver": {
           "version": "2.3.2"
+        },
+        "source-map": {
+          "version": "0.1.32"
+        },
+        "source-map-support": {
+          "version": "0.2.10"
         }
       }
     },
@@ -5342,6 +5371,9 @@
               "version": "0.1.32"
             }
           }
+        },
+        "typescript": {
+          "version": "1.9.0-dev.20160409"
         }
       }
     },
@@ -5407,7 +5439,7 @@
       "version": "0.0.6"
     },
     "typescript": {
-      "version": "1.9.0-dev.20160409"
+      "version": "2.0.0"
     },
     "ua-parser-js": {
       "version": "0.7.10"
@@ -5440,6 +5472,17 @@
     },
     "uglify-to-browserify": {
       "version": "1.0.2"
+    },
+    "uglifyjs": {
+      "version": "2.4.10",
+      "dependencies": {
+        "source-map": {
+          "version": "0.1.34"
+        },
+        "yargs": {
+          "version": "1.3.3"
+        }
+      }
     },
     "uid-number": {
       "version": "0.0.5"

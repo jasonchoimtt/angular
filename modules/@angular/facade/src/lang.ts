@@ -57,10 +57,27 @@ var _global: BrowserNodeGlobal = globalScope;
 
 export {_global as global};
 
+/**
+ * Runtime representation a type that a Component or other object is instances of.
+ *
+ * An example of a `Type` is `MyCustomComponent` class, which in JavaScript is be represented by
+ * the `MyCustomComponent` constructor function.
+ *
+ * @stable
+ */
+export var Type = Function;
 
-export function getTypeNameForDebugging(type: any): string {
-  if (type['name']) {
-    return type['name'];
+
+export interface Type extends Function {}
+
+/**
+ * Runtime representation of a type that is constructable (non-abstract).
+ */
+export interface ConcreteType<T> extends Type { new (...args: any[]): T; }
+
+export function getTypeNameForDebugging(type: Type): string {
+  if ((<any>type).name) {
+    return (<any>type).name;
   }
   return typeof type;
 }
@@ -290,7 +307,7 @@ export class NumberWrapper {
 
   static isNaN(value: any): boolean { return isNaN(value); }
 
-  static isInteger(value: any): boolean { return Number.isInteger(value); }
+  static isInteger(value: any): boolean { return (<any>Number).isInteger(value); }
 }
 
 export var RegExp = _global.RegExp;
@@ -409,7 +426,7 @@ export function isPrimitive(obj: any): boolean {
   return !isJsObject(obj);
 }
 
-export function hasConstructor(value: Object, type: any): boolean {
+export function hasConstructor(value: Object, type: Type): boolean {
   return value.constructor === type;
 }
 

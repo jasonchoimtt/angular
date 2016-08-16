@@ -222,7 +222,7 @@ export class ListWrapper {
   static clear(list: any[]) { list.length = 0; }
   static isEmpty(list: any[]): boolean { return list.length == 0; }
   static fill(list: any[], value: any, start: number = 0, end: number = null) {
-    list.fill(value, start, end === null ? list.length : end);
+    (<any>list).fill(value, start, end === null ? list.length : end);
   }
   static equals(a: any[], b: any[]): boolean {
     if (a.length != b.length) return false;
