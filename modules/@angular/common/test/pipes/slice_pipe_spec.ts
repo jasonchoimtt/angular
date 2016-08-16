@@ -113,3 +113,5 @@ export function main() {
 class TestComp {
   data: any;
 }
+
+main();

@@ -56,3 +56,5 @@ class Frame {
 class Lock {
   name: string = 'lock';
 }
+
+main();

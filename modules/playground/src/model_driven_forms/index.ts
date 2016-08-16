@@ -8,7 +8,7 @@
 
 import {NgFor, NgIf} from '@angular/common';
 import {Component, Directive, Host} from '@angular/core';
-import {isPresent, print} from '@angular/core/src/facade/lang';
+import {isPresent, print} from '@angular/facade/src/lang';
 import {AbstractControl, FormBuilder, FormGroup, FormGroupDirective, REACTIVE_FORM_DIRECTIVES, Validators} from '@angular/forms';
 import {bootstrap} from '@angular/platform-browser-dynamic';
 

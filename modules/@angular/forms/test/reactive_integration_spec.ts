@@ -15,7 +15,7 @@ import {By} from '@angular/platform-browser/src/dom/debug/by';
 import {getDOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {dispatchEvent} from '@angular/platform-browser/testing/browser_util';
 
-import {ListWrapper} from '../src/facade/collection';
+import {ListWrapper} from '@angular/facade/src/collection';
 
 export function main() {
   describe('reactive forms integration tests', () => {
@@ -1587,3 +1587,5 @@ function sortedClassList(el: any /** TODO #9100 */) {
   ListWrapper.sort(l);
   return l;
 }
+
+main();

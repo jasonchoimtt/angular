@@ -8,7 +8,7 @@
 
 import {NgFor, NgIf} from '@angular/common';
 import {Component, EventEmitter, Injectable, Input, Output} from '@angular/core';
-import {ListWrapper} from '@angular/core/src/facade/collection';
+import {ListWrapper} from '@angular/facade/src/collection';
 import {FORM_DIRECTIVES} from '@angular/forms';
 import {bootstrap} from '@angular/platform-browser-dynamic';
 

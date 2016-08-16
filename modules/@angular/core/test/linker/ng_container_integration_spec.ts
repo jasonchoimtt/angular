@@ -222,3 +222,5 @@ class Simple {
 class MyComp {
   ctxBoolProp: boolean = false;
 }
+
+main();

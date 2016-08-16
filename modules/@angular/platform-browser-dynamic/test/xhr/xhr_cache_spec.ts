@@ -12,7 +12,7 @@ import {TestBed, TestComponentBuilder, fakeAsync, flushMicrotasks, tick} from '@
 import {AsyncTestCompleter, beforeEach, beforeEachProviders, ddescribe, describe, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {CachedXHR} from '../../src/xhr/xhr_cache';
+import {CachedXHR} from '@angular/platform-browser-dynamic/src/xhr/xhr_cache';
 
 import {setTemplateCache} from './xhr_cache_setter';
 
@@ -81,3 +81,5 @@ class TestUrlResolver extends UrlResolver {
     return url;
   }
 }
+
+main();

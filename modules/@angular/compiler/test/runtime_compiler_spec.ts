@@ -13,7 +13,7 @@ import {ComponentFixture, TestBed, TestComponentBuilder, fakeAsync, tick} from '
 import {beforeEach, beforeEachProviders, ddescribe, describe, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {stringify} from '../src/facade/lang';
+import {stringify} from '@angular/facade/src/lang';
 
 import {SpyXHR} from './spies';
 
@@ -179,3 +179,5 @@ export function main() {
     });
   });
 }
+
+main();

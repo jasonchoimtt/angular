@@ -17,8 +17,8 @@ import {Console} from '@angular/core/src/console';
 import {TestBed} from '@angular/core/testing';
 import {afterEach, beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
 
-import {Identifiers, identifierToken} from '../../src/identifiers';
-import {DEFAULT_INTERPOLATION_CONFIG, InterpolationConfig} from '../../src/ml_parser/interpolation_config';
+import {Identifiers, identifierToken} from '@angular/compiler/src/identifiers';
+import {DEFAULT_INTERPOLATION_CONFIG, InterpolationConfig} from '@angular/compiler/src/ml_parser/interpolation_config';
 import {unparse} from '../expression_parser/unparser';
 import {TEST_COMPILER_PROVIDERS} from '../test_bindings';
 
@@ -1768,3 +1768,5 @@ class ArrayConsole implements Console {
   log(msg: string) { this.logs.push(msg); }
   warn(msg: string) { this.warnings.push(msg); }
 }
+
+main();

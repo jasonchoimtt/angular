@@ -106,3 +106,5 @@ class ViewChildrenStringSelectorComponent {
   // Allow comma separated selector (with spaces).
   @ViewChildren('child1 , child2') children: QueryList<ElementRef>;
 }
+
+main();

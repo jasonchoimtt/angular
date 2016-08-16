@@ -7,7 +7,7 @@
  */
 
 import {AsyncTestCompleter, beforeEach, ddescribe, describe, expect, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
-import {XHRImpl} from '../../src/xhr/xhr_impl';
+import {XHRImpl} from '@angular/platform-browser-dynamic/src/xhr/xhr_impl';
 
 export function main() {
   describe('XHRImpl', () => {
@@ -42,3 +42,5 @@ export function main() {
        }), 10000);
   });
 }
+
+main();

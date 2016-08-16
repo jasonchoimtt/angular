@@ -10,8 +10,8 @@ import {ANALYZE_FOR_ENTRY_COMPONENTS, Component, ComponentFactoryResolver, NoCom
 import {TestBed, TestComponentBuilder} from '@angular/core/testing';
 import {AsyncTestCompleter, beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 
-import {Console} from '../../src/console';
-import {stringify} from '../../src/facade/lang';
+import {Console} from '@angular/core/src/console';
+import {stringify} from '@angular/facade/src/lang';
 
 export function main() {
   describe('jit', () => { declareTests({useJit: true}); });
@@ -150,3 +150,5 @@ class MainComp {
 })
 class CompWithAnalyzeEntryComponentsProvider {
 }
+
+main();

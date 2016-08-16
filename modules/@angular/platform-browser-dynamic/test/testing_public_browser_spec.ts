@@ -10,7 +10,7 @@ import {XHR} from '@angular/compiler';
 import {Component, bind} from '@angular/core';
 import {TestBed, async, fakeAsync, flushMicrotasks, inject, tick} from '@angular/core/testing';
 
-import {XHRImpl} from '../src/xhr/xhr_impl';
+import {XHRImpl} from '@angular/platform-browser-dynamic/src/xhr/xhr_impl';
 
 
 
@@ -129,3 +129,5 @@ export function main() {
     });
   });
 }
+
+main();

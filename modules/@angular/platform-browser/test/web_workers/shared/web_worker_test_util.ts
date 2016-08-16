@@ -10,9 +10,9 @@ import {Type} from '@angular/core';
 import {NgZone} from '@angular/core/src/zone/ng_zone';
 import {ClientMessageBroker, ClientMessageBrokerFactory_, UiArguments} from '@angular/platform-browser/src/web_workers/shared/client_message_broker';
 import {MessageBus, MessageBusSink, MessageBusSource} from '@angular/platform-browser/src/web_workers/shared/message_bus';
-import {ListWrapper, StringMapWrapper} from '../../../src/facade/collection';
-import {BaseException} from '../../../src/facade/exceptions';
-import {isPresent} from '../../../src/facade/lang';
+import {ListWrapper, StringMapWrapper} from '@angular/facade/src/collection';
+import {BaseException} from '@angular/facade/src/exceptions';
+import {isPresent} from '@angular/facade/src/lang';
 import {SpyMessageBroker} from '../worker/spies';
 
 import {MockEventEmitter} from './mock_event_emitter';

@@ -224,3 +224,5 @@ function declareTests({useJit}: {useJit: boolean}) {
     });
   });
 }
+
+main();

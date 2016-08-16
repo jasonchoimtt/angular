@@ -436,3 +436,4 @@ function programXhrSpy(spy: SpyXHR, results: {[key: string]: string}) {
     }
   });
 }
+main();

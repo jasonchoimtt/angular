@@ -10,8 +10,8 @@ import {NgZone} from '@angular/core/src/zone/ng_zone';
 import {AsyncTestCompleter, Log, beforeEach, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 import {browserDetection} from '@angular/platform-browser/testing/browser_util';
 
-import {BaseException} from '../../src/facade/exceptions';
-import {isPresent, scheduleMicroTask} from '../../src/facade/lang';
+import {BaseException} from '@angular/facade/src/exceptions';
+import {isPresent, scheduleMicroTask} from '@angular/facade/src/lang';
 
 var needsLongerTimers = browserDetection.isSlow || browserDetection.isEdge;
 var resultTimer = 1000;
@@ -754,3 +754,5 @@ function commonTests() {
        }), testTimeout);
   });
 }
+
+main();

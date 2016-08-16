@@ -243,3 +243,5 @@ export function main() {
     });
   });
 }
+
+main();
