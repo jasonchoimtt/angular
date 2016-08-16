@@ -13,6 +13,7 @@ module.exports = function(config) {
       // Sources and specs.
       // Loaded through the System loader, in `test-main.js`.
       {pattern: 'modules/@angular/**/*.js', included: false, watched: true},
+      {pattern: 'modules/@angular/**/*.js.map', included: false, watched: true},
 
       'node_modules/es6-shim/es6-shim.js',
       // include Angular v1 for upgrade module testing

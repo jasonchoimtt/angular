@@ -187,7 +187,7 @@ def _ts_library_impl(ctx):
   ret = struct(
       files = set(gen_js + gen_js_map),
       runfiles = ctx.runfiles(
-          files = gen_js,
+          files = gen_js + gen_js_map,
           collect_default = True,
           collect_data = True,
       ),
