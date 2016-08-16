@@ -926,6 +926,7 @@ karma_test(
         ":systemjs",
         "browser-providers.conf.js",
         "tools/karma/reporter.js",
+        "tools/karma/ibazel_watcher.js",
     ],
     config = "karma-js.conf.js",
     size = "small",
@@ -950,8 +951,9 @@ karma_test(
         ":source-map",
         ":systemjs",
         "browser-providers.conf.js",
+        "tools/karma/ibazel_watcher.js",
     ],
-    config = "modules/@angular/router/karma-js.conf.js",
+    config = "modules/@angular/router/karma.conf.js",
     size = "small",
     tags = ["local"],
 )

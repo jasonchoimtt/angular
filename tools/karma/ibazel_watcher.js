@@ -1,5 +1,22 @@
 'use strict';
 
+/*
+ * This is a Karma plugin that listens to Ibazel's update messages from stdin
+ * and automatically re-runs the test when build is successful.
+ *
+ * To use this, in karma.conf.js:
+ *
+ * ```
+ * const ibazelWatcher = reuqire('./tools/karma/ibazel_watcher');
+ *
+ * ...
+ * config.set({
+ *   frameworks: [..., 'ibazel_watcher'],
+ *   plugins: [..., ibazelWatcher],
+ * });
+ * ...
+ * ```
+ */
 
 function initIBazelWatcher(fileList, emitter, executor, config, logger) {
   if (process.env['IBAZEL_NOTIFY_CHANGES'] !== 'y' || config.autoWatch === false) {

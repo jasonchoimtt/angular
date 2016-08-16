@@ -8,4 +8,4 @@ build --distinct_host_configuration=false
 build --verbose_failures --show_task_finish
 test --test_output=errors --keep_going --show_task_finish
 
-build --profile=/tmp/last-bazel-profile --explain=/tmp/last-bazel-explain --verbose_explanations
+build --strategy=TypeScriptCompile=worker
