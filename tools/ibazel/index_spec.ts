@@ -9,8 +9,12 @@ describe('IBazel', () => {
   afterEach(() => { jasmine.clock().uninstall(); });
 
   it('should watch build files', () => {
-    const env = createMockIBazelEnvironment(
-        {queryBuildFiles: () => ['//build_defs:build_defs.bzl', '//:BUILD']});
+    const env = createMockIBazelEnvironment({
+      queryFiles: () => ({
+                    buildFiles: ['//build_defs:build_defs.bzl', '//:BUILD'],
+                    sourceFiles: <string[]>[]
+                  })
+    });
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
@@ -20,8 +24,11 @@ describe('IBazel', () => {
   });
 
   it('should watch source files', () => {
-    const env = createMockIBazelEnvironment(
-        {querySourceFiles: () => ['//:index.ts', '//subdir:included.ts']});
+    const env = createMockIBazelEnvironment({
+      queryFiles:
+          () =>
+              ({buildFiles: <string[]>[], sourceFiles: ['//:index.ts', '//subdir:included.ts']})
+    });
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
@@ -31,8 +38,12 @@ describe('IBazel', () => {
   });
 
   it('should not watch external workspaces', () => {
-    const env = createMockIBazelEnvironment(
-        {queryBuildFiles: () => ['@nodejs//:node', '@bazel_tools//genrule:genrule-setup.sh']});
+    const env = createMockIBazelEnvironment({
+      queryFiles: () => ({
+                    buildFiles: ['@nodejs//:node', '@bazel_tools//genrule:genrule-setup.sh'],
+                    sourceFiles: <string[]>[]
+                  })
+    });
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
@@ -49,7 +60,8 @@ describe('IBazel', () => {
   });
 
   it('should retrigger when source files are changed', () => {
-    const env = createMockIBazelEnvironment({queryBuildFiles: () => ['//:BUILD']});
+    const env = createMockIBazelEnvironment(
+        {queryFiles: () => ({buildFiles: ['//:BUILD'], sourceFiles: <string[]>[]})});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
@@ -61,7 +73,8 @@ describe('IBazel', () => {
   });
 
   it('should debounce multiple source file changes', () => {
-    const env = createMockIBazelEnvironment({queryBuildFiles: () => ['//:BUILD']});
+    const env = createMockIBazelEnvironment(
+        {queryFiles: () => ({buildFiles: ['//:BUILD'], sourceFiles: <string[]>[]})});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
@@ -76,13 +89,14 @@ describe('IBazel', () => {
   });
 
   it('should reconfigure when build files are changed with build file list change', () => {
-    const env = createMockIBazelEnvironment({queryBuildFiles: () => ['//:BUILD']});
+    const env = createMockIBazelEnvironment(
+        {queryFiles: () => ({buildFiles: ['//:BUILD'], sourceFiles: <string[]>[]})});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
     expect(env.execute).toHaveBeenCalledTimes(1);
 
-    spyOn(env, 'queryBuildFiles').and.returnValue(['//tools:BUILD']);
+    spyOn(env, 'queryFiles').and.returnValue({buildFiles: ['//tools:BUILD'], sourceFiles: []});
     ibazel.buildWatcher.trigger();
     jasmine.clock().tick(1000);
 
@@ -94,13 +108,14 @@ describe('IBazel', () => {
   });
 
   it('should reconfigure when build files are changed with source file list change', () => {
-    const env = createMockIBazelEnvironment({querySourceFiles: () => ['//:index.ts']});
+    const env = createMockIBazelEnvironment(
+        {queryFiles: () => ({buildFiles: <string[]>[], sourceFiles: ['//:index.ts']})});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
     expect(env.execute).toHaveBeenCalledTimes(1);
 
-    spyOn(env, 'querySourceFiles').and.returnValue(['//:main.ts']);
+    spyOn(env, 'queryFiles').and.returnValue(({buildFiles: [], sourceFiles: ['//:main.ts']}));
     ibazel.buildWatcher.trigger();
     jasmine.clock().tick(1000);
 
@@ -112,13 +127,14 @@ describe('IBazel', () => {
   });
 
   it('should debounce multiple build file changes', () => {
-    const env = createMockIBazelEnvironment({queryBuildFiles: () => ['//:BUILD']});
+    const env = createMockIBazelEnvironment(
+        {queryFiles: () => ({buildFiles: ['//:BUILD'], sourceFiles: <string[]>[]})});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
     expect(env.execute).toHaveBeenCalledTimes(1);
 
-    spyOn(env, 'queryBuildFiles').and.returnValue(['//tools:BUILD']);
+    spyOn(env, 'queryFiles').and.returnValue(({buildFiles: ['//tools:BUILD'], sourceFiles: []}));
     ibazel.buildWatcher.trigger();
     jasmine.clock().tick(100);
     ibazel.buildWatcher.trigger();
@@ -132,13 +148,14 @@ describe('IBazel', () => {
   });
 
   it('should debounce source and build file changes', () => {
-    const env = createMockIBazelEnvironment({querySourceFiles: () => ['//:index.ts']});
+    const env = createMockIBazelEnvironment(
+        {queryFiles: () => ({buildFiles: <string[]>[], sourceFiles: ['//:index.ts']})});
     const ibazel: IBazelWithPrivates = <any>new IBazel(env);
     ibazel.start([]);
 
     expect(env.execute).toHaveBeenCalledTimes(1);
 
-    spyOn(env, 'querySourceFiles').and.returnValue(['//:main.ts']);
+    spyOn(env, 'queryFiles').and.returnValue(({buildFiles: [], sourceFiles: ['//:main.ts']}));
     ibazel.buildWatcher.trigger();
     jasmine.clock().tick(100);
     ibazel.sourceWatcher.trigger();
@@ -205,7 +222,7 @@ describe('IBazel', () => {
   });
 });
 
-type IBazelWithPrivates = IBazel&{
+type IBazelWithPrivates = IBazel & {
   buildWatcher: any;
   sourceWatcher: any;
   runProcess: ChildProcess;

@@ -37,13 +37,9 @@ export interface IBazelEnvironment {
    */
   info(): BazelInfo;
   /**
-   * Queries the build files (analysis stage) of the specified targets.
+   * Queries the build and source files of the specified targets.
    */
-  queryBuildFiles(targets: string[]): string[];
-  /**
-   * Queries the source files of the specified targets.
-   */
-  querySourceFiles(targets: string[]): string[];
+  queryFiles(targets: string[]): {buildFiles: string[], sourceFiles: string[]};
   /**
    * Queries the rule object of the specified targets.
    */
@@ -127,18 +123,18 @@ export class ProcessIBazelEnvironment implements IBazelEnvironment {
     return ret;
   }
 
-  queryBuildFiles(targets: string[]): string[] {
-    const result = this.execute(['query', `buildfiles(deps(set(${targets.join(' ')})))`]);
-    assert(!result.status, `${IBAZEL}: "${BAZEL} query" exited with status ${result.status}.`);
+  queryFiles(targets: string[]): {buildFiles: string[], sourceFiles: string[]} {
+    const build = this.execute(['query', `buildfiles(deps(set(${targets.join(' ')})))`]);
+    assert(!build.status, `${IBAZEL}: "${BAZEL} query" exited with status ${build.status}.`);
 
-    return result.stdout.toString().split('\n').slice(0, -1).sort();
-  }
+    const buildFiles = build.stdout.toString().split('\n').slice(0, -1).sort();
 
-  querySourceFiles(targets: string[]): string[] {
-    const result = this.execute(['query', `kind("source file", deps(set(${targets.join(' ')})))`]);
-    assert(!result.status, `${IBAZEL}: "${BAZEL} query" exited with status ${result.status}.`);
+    const source = this.execute(['query', `kind("source file", deps(set(${targets.join(' ')})))`]);
+    assert(!source.status, `${IBAZEL}: "${BAZEL} query" exited with status ${source.status}.`);
 
-    return result.stdout.toString().split('\n').slice(0, -1).sort();
+    const sourceFiles = source.stdout.toString().split('\n').slice(0, -1).sort();
+
+    return {buildFiles, sourceFiles};
   }
 
   queryRules(targets: string[]): any[] {

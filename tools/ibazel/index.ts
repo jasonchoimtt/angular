@@ -64,10 +64,7 @@ export class IBazel {
   }
 
   private reconfigure() {
-    const newDependencies = {
-      buildFiles: this.env.queryBuildFiles(this.targets),
-      sourceFiles: this.env.querySourceFiles(this.targets)
-    }
+    const newDependencies = this.env.queryFiles(this.targets);
 
     // Hopefully there will not be a race condition after query and before watch
 
