@@ -9,10 +9,9 @@ if [[ -z "${RUNFILES}" ]]; then
   esac
 
   if [[ -n "${TEST_SRCDIR}" ]]; then
-    export RUNFILES="${TEST_SRCDIR}/__main__"
+    export RUNFILES="${TEST_SRCDIR}/angular"
   elif [[ -d "${self}.runfiles" ]]; then
-    # __main__ is the name of a WORKSPACE without a name
-    export RUNFILES="${self}.runfiles/__main__"
+    export RUNFILES="${self}.runfiles/angular"
   else
     echo "Runfiles directory not found." >&2
     exit 1

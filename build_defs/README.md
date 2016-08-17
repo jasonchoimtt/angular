@@ -43,7 +43,7 @@ bazel-angular/ (execroot)
 ```
 foo_binary
 foo_binary.runfiles/
-+- __main__/ (runfiles root)
++- angular/ (runfiles root)
    +- modules/**/*.js
    +- ...
    +- (all required files)
