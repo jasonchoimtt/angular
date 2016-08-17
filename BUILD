@@ -65,6 +65,25 @@ ts_library(
     root_dir = "tools/@angular/tsc-wrapped",
 )
 
+ts_library(
+    name = "tsc-wrapped_test_module",
+    srcs = glob(["tools/@angular/tsc-wrapped/test/**/*.ts"]),
+    deps = [
+        "//:_types_jasmine",
+        "//:typescript",
+        "//:tsc-wrapped",
+    ],
+    tsconfig = "tools/@angular/tsc-wrapped/tsconfig.json",
+    root_dir = "tools/@angular/tsc-wrapped/test",
+)
+
+jasmine_node_test(
+    name = "tsc-wrapped_test",
+    srcs = [":tsc-wrapped_test_module"],
+    size = "small",
+    args = ["--node_path=modules:tools"],
+)
+
 nodejs_binary(
     name = "tsc-wrapped_bin",
     srcs = [":tsc-wrapped"],
@@ -78,6 +97,13 @@ ts_npm_package(
     module_name = "@angular/tsc-wrapped",
     strip_prefix = "/tools/@angular/tsc-wrapped",
     esm = False,
+)
+
+test_suite(
+    name = "tool_tests",
+    tests = [
+        ":tsc-wrapped_test",
+    ],
 )
 
 ###############################################################################

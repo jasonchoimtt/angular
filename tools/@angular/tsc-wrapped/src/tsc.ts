@@ -79,7 +79,7 @@ export class Tsc implements CompilerInterface {
           fileExists: existsSync,
           readDirectory: this.readDirectory
         },
-        basePath, {}, project);
+        basePath);
 
     check(this.parsed.errors);
 
