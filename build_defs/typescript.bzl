@@ -1,5 +1,5 @@
 load("//build_defs:utils.bzl", "join_paths", "normalize_path", "pseudo_json_encode",
-     "pick_file_in_dir")
+     "pick_file_in_dir", "pick_provider")
 
 
 def _ts_library_impl(ctx):
@@ -245,7 +245,8 @@ def _ts_library_impl(ctx):
           # This struct exists solely for npm_package to work simpler.
           # TypeScript-agnostic tools should use javascript_esm.
           esm = struct(
-              files = gen_js_esm + gen_js_map_esm,
+              files = gen_js_esm,
+              source_maps = gen_js_map_esm,
               declarations = gen_d_ts_esm,
               metadata = gen_meta_esm,
               module_name = module_name,
@@ -260,7 +261,7 @@ def _ts_library_impl(ctx):
           package_dir = out_dir,
       ),
       javascript_esm = struct(
-          files = gen_js_esm + gen_js_map_esm,
+          files = gen_js_esm,
           source_maps = gen_js_map_esm,
           module_name = module_name,
           package_dir = out_dir,
@@ -312,7 +313,7 @@ def _tsc_action(*, ctx, inputs, ts_files, root_dir, out_dir, prefix, gen_config,
 
   return gen_js, gen_d_ts, gen_meta, gen_js_map
 
-ts_library = rule(
+_ts_library = rule(
     _ts_library_impl,
     attrs = {
         "compiler": attr.label(
@@ -343,6 +344,10 @@ ts_library = rule(
         ),
     },
 )
+
+def ts_library(*, name, **kwargs):
+  _ts_library(name=name, **kwargs)
+  pick_provider(name=name + "_esm", srcs=[":" + name], providers=["javascript_esm.files"])
 
 def _merge_dict(a, *args):
   ret = dict(a)
