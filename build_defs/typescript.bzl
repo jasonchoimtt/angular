@@ -18,6 +18,8 @@ def _ts_library_impl(ctx):
       location of the tsconfig.json file.
     out_dir: The TypeScript outDir relative to the package. Defaults to
       root_dir.
+    source_map: Corresponds to sourceMap in TypeScript.
+    source_map: Corresponds to inlineSourceMap in TypeScript.
   """
   # Directory structure:
   # bazel-angular/ (execroot)

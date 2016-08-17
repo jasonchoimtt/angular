@@ -1,4 +1,5 @@
 load("//build_defs:typescript.bzl", "ts_library", "ts_ext_library")
+load("//build_defs:nodejs.bzl", "nodejs_test")
 
 # ts_library should reject empty srcs. (FAIL)
 ts_library(
@@ -36,11 +37,18 @@ ts_library(
     root_dir = "importing_modules",
 )
 
+ts_library(
+    name = "internal_stuff",
+    srcs = ["internal_stuff/index.ts"],
+    tsconfig = "tsconfig.json",
+    root_dir = "internal_stuff",
+)
+
 # ts_library should not use @internal declarations by default. (FAIL)
 ts_library(
     name = "use_internal_wrong_FAIL",
     srcs = ["use_internal/index.ts"],
-    deps = [":basic"],
+    deps = [":internal_stuff"],
     tsconfig = "tsconfig.json",
     root_dir = "use_internal",
     out_dir = "use_internal_wrong",
@@ -51,7 +59,7 @@ ts_library(
 ts_library(
     name = "use_internal_subset_FAIL",
     srcs = ["use_internal/index.ts"],
-    deps_use_internal = [":basic"],
+    deps_use_internal = [":internal_stuff"],
     tsconfig = "tsconfig.json",
     root_dir = "use_internal",
     out_dir = "use_internal_wrong",
@@ -62,8 +70,8 @@ ts_library(
 ts_library(
     name = "use_internal",
     srcs = ["use_internal/index.ts"],
-    deps = [":basic"],
-    deps_use_internal = [":basic"],
+    deps = [":internal_stuff"],
+    deps_use_internal = [":internal_stuff"],
     tsconfig = "tsconfig.json",
     root_dir = "use_internal",
 )
@@ -123,12 +131,38 @@ ts_library(
 # ts_library should support using only generated sources.
 genrule(
     name = "generated_source",
-    outs = ["generated.ts"],
-    cmd = "echo \"export const generated = 'generated';\" > $@",
+    outs = ["use_generated_source/index.ts"],
+    cmd = "echo \"export const useGeneratedSource = 'useGeneratedSource';\" > $@",
 )
 
 ts_library(
     name = "use_generated_source",
     srcs = [":generated_source"],
     tsconfig = "tsconfig.json",
+    root_dir = "use_generated_source",
+)
+
+# ts_library should be usable in nodejs_binary.
+ts_library(
+    name = "assert",
+    srcs = ["assert/index.ts"],
+    deps = [
+        # Do not test basic and nested since they are too troublesome to set up
+        # NODE_PATH for.
+        ":use_internal",
+        ":use_transitive",
+        ":use_ambient",
+        ":use_transitive_ambient",
+        ":use_generated_source",
+    ],
+    tsconfig = "tsconfig.json",
+    root_dir = "assert",
+)
+
+nodejs_test(
+    name = "assert_test",
+    srcs = [":assert"],
+    entry_point = "assert/index.js",
+    size = "small",
+    args = ["--node_path=build_defs/tests/typescript"],
 )

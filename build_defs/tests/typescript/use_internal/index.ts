@@ -1,6 +1,6 @@
-import {A} from 'basic';
+import {A} from 'internal_stuff';
 
 export class B extends A {
 }
 
-console.log(new A().b);
+export const useInternal = new A().b;

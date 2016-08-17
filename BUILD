@@ -102,7 +102,8 @@ ts_npm_package(
 test_suite(
     name = "tool_tests",
     tests = [
-        ":tsc-wrapped_test",
+        "//:tsc-wrapped_test",
+        "//build_defs/tests/typescript:assert_test",
     ],
 )
 
@@ -933,7 +934,7 @@ karma_test(
         ":http_test_module",
         ":platform-browser_test_module",
         ":platform-browser-dynamic_test_module",
-        # ":platform-server_test_module", # TODO: fix bug
+        ":platform-server_test_module",
         ":upgrade_test_module",
         "modules/empty.js",
         "shims_for_IE.js",
@@ -956,7 +957,7 @@ karma_test(
     ],
     config = "karma-js.conf.js",
     size = "small",
-    tags = ["local"],  # FIXME: make it run!
+    tags = ["local"],
 )
 
 karma_test(

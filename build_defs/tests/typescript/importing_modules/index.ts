@@ -7,7 +7,5 @@ import {nested} from '@nested/nested';
 // import file from module
 import {sub} from 'basic/sub';
 
-console.log(basic());
-console.log(nested());
 
-console.log(sub);
+export const importingModules = basic + nested + sub;

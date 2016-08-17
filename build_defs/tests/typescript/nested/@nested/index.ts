@@ -1,3 +1,1 @@
-export function nested() {
-  return 'nested';
-}
+export const nested = 'nested';

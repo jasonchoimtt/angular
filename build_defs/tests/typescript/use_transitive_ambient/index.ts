@@ -1,1 +1,1 @@
-console.log(process.cwd());
+export const useTransitiveAmbient = process.cwd();
