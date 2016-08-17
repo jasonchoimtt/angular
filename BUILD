@@ -16,6 +16,35 @@ node_modules_index(glob)
 ###############################################################################
 # Tools
 ###############################################################################
+ESM_PACKAGES = [
+    "core",
+    "common",
+    "compiler",
+    "forms",
+    "http",
+    "platform-browser",
+    "platform-browser-dynamic",
+    "platform-server",
+    "router",
+    "upgrade",
+]
+
+NON_ESM_PACKAGES = [
+    "compiler-cli",
+]
+
+ALL_PACKAGES = ESM_PACKAGES + NON_ESM_PACKAGES + ["tsc-wrapped"]
+
+JASMINE_TESTABLE = [
+    "core",
+    "common",
+    "compiler",
+    "compiler-cli",
+    "http",
+    "platform-server",
+    "router",
+]
+
 ts_ext_library(
     name = "es6_subset",
     declarations = ["modules/es6-subset.d.ts"],
@@ -90,15 +119,6 @@ nodejs_binary(
     entry_point = "tools/@angular/tsc-wrapped/src/worker.js",
 )
 
-ts_npm_package(
-    name = "tsc-wrapped_package",
-    srcs = [":tsc-wrapped"],
-    manifest = "tools/@angular/tsc-wrapped/package.json",
-    module_name = "@angular/tsc-wrapped",
-    strip_prefix = "/tools/@angular/tsc-wrapped",
-    esm = False,
-)
-
 test_suite(
     name = "tool_tests",
     tests = [
@@ -159,12 +179,7 @@ ts_library(
 
 ts_library(
     name = "common_test_module",
-    srcs = glob(
-        ["modules/@angular/common/test/**/*.ts"],
-        exclude = [
-            # FIXME: Not supported on cjs-jasmine
-            "modules/@angular/common/test/forms-deprecated/**/*.ts",
-        ]),
+    srcs = glob(["modules/@angular/common/test/**/*.ts"]),
     deps = [
         "//:_types_node",
         "//:_types_jasmine",
@@ -183,32 +198,6 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/common/test",
-)
-
-jasmine_node_test(
-    name = "common_test",
-    srcs = [":common_test_module"],
-    helpers = [":jasmine_helper"],
-    size = "small",
-    args = ["--node_path=modules:tools"],
-)
-
-js_bundle(
-    name = "common_bundle",
-    srcs = [":common"],
-    output = "modules/@angular/common/common.umd.js",
-    entry_point = "modules/@angular/common/esm/index.js",
-    rollup_config = "modules/@angular/common/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
-ts_npm_package(
-    name = "common_package",
-    srcs = [":common"],
-    data = [":common_bundle"],
-    manifest = "modules/@angular/common/package.json",
-    module_name = "@angular/common",
-    strip_prefix = "/modules/@angular/common",
 )
 
 ts_library(
@@ -253,23 +242,6 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/compiler-cli/test",
-)
-
-jasmine_node_test(
-    name = "compiler-cli_test",
-    srcs = [":compiler-cli_test_module"],
-    helpers = [":jasmine_helper"],
-    size = "small",
-    args = ["--node_path=modules:tools"],
-)
-
-ts_npm_package(
-    name = "compiler-cli_package",
-    srcs = [":compiler-cli"],
-    manifest = "modules/@angular/compiler-cli/package.json",
-    module_name = "@angular/compiler-cli",
-    strip_prefix = "/modules/@angular/compiler-cli",
-    esm = False,
 )
 
 ts_library(
@@ -351,32 +323,6 @@ ts_library(
     root_dir = "modules/@angular/compiler/test",
 )
 
-jasmine_node_test(
-    name = "compiler_test",
-    srcs = [":compiler_test_module", ":compiler_test_codegen_js"],
-    helpers = [":jasmine_helper"],
-    size = "small",
-    args = ["--node_path=modules:tools"],
-)
-
-js_bundle(
-    name = "compiler_bundle",
-    srcs = [":compiler"],
-    output = "modules/@angular/compiler/compiler.umd.js",
-    entry_point = "modules/@angular/compiler/esm/index.js",
-    rollup_config = "modules/@angular/compiler/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
-ts_npm_package(
-    name = "compiler_package",
-    srcs = [":compiler"],
-    data = [":compiler_bundle"],
-    manifest = "modules/@angular/compiler/package.json",
-    module_name = "@angular/compiler",
-    strip_prefix = "/modules/@angular/compiler",
-)
-
 ts_library(
     name = "core",
     srcs = glob(
@@ -431,32 +377,6 @@ ts_library(
     root_dir = "modules/@angular/core/test",
 )
 
-jasmine_node_test(
-    name = "core_test",
-    srcs = [":core_test_module"],
-    helpers = [":jasmine_helper"],
-    size = "small",
-    args = ["--node_path=modules:tools"],
-)
-
-js_bundle(
-    name = "core_bundle",
-    srcs = [":core"],
-    output = "modules/@angular/core/core.umd.js",
-    entry_point = "modules/@angular/core/esm/index.js",
-    rollup_config = "modules/@angular/core/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
-ts_npm_package(
-    name = "core_package",
-    srcs = [":core"],
-    data = [":core_bundle"],
-    manifest = "modules/@angular/core/package.json",
-    module_name = "@angular/core",
-    strip_prefix = "/modules/@angular/core",
-)
-
 ts_library(
     name = "forms",
     srcs = glob(
@@ -498,24 +418,6 @@ ts_library(
     root_dir = "modules/@angular/forms/test",
 )
 
-js_bundle(
-    name = "forms_bundle",
-    srcs = [":forms"],
-    output = "modules/@angular/forms/forms.umd.js",
-    entry_point = "modules/@angular/forms/esm/index.js",
-    rollup_config = "modules/@angular/forms/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
-ts_npm_package(
-    name = "forms_package",
-    srcs = [":forms"],
-    data = [":forms_bundle"],
-    manifest = "modules/@angular/forms/package.json",
-    module_name = "@angular/forms",
-    strip_prefix = "/modules/@angular/forms",
-)
-
 ts_library(
     name = "http",
     srcs = glob(
@@ -532,15 +434,6 @@ ts_library(
     ],
     tsconfig = "modules/@angular/http/tsconfig-es5.json",
     module_name = "@angular/http",
-)
-
-js_bundle(
-    name = "http_bundle",
-    srcs = [":http"],
-    output = "modules/@angular/http/http.umd.js",
-    entry_point = "modules/@angular/http/esm/index.js",
-    rollup_config = "modules/@angular/http/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
 )
 
 ts_library(
@@ -572,15 +465,6 @@ ts_library(
     module_name = "@angular/platform-browser",
 )
 
-js_bundle(
-    name = "platform-browser_bundle",
-    srcs = [":platform-browser"],
-    output = "modules/@angular/platform-browser/platform-browser.umd.js",
-    entry_point = "modules/@angular/platform-browser/esm/index.js",
-    rollup_config = "modules/@angular/platform-browser/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
 ts_library(
     name = "platform-browser_test_module",
     srcs = glob(
@@ -609,15 +493,6 @@ ts_library(
     root_dir = "modules/@angular/platform-browser/test",
 )
 
-ts_npm_package(
-    name = "platform-browser_package",
-    srcs = [":platform-browser"],
-    data = [":platform-browser_bundle"],
-    manifest = "modules/@angular/platform-browser/package.json",
-    module_name = "@angular/platform-browser",
-    strip_prefix = "/modules/@angular/platform-browser",
-)
-
 ts_library(
     name = "http_test_module",
     srcs = glob(
@@ -640,23 +515,6 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/http/test",
-)
-
-jasmine_node_test(
-    name = "http_test",
-    srcs = [":http_test_module"],
-    helpers = [":jasmine_helper"],
-    size = "small",
-    args = ["--node_path=modules:tools"],
-)
-
-ts_npm_package(
-    name = "http_package",
-    srcs = [":http"],
-    data = [":http_bundle"],
-    manifest = "modules/@angular/http/package.json",
-    module_name = "@angular/http",
-    strip_prefix = "/modules/@angular/http",
 )
 
 ts_library(
@@ -701,24 +559,6 @@ ts_library(
     root_dir = "modules/@angular/platform-browser-dynamic/test",
 )
 
-js_bundle(
-    name = "platform-browser-dynamic_bundle",
-    srcs = [":platform-browser-dynamic"],
-    output = "modules/@angular/platform-browser-dynamic/platform-browser-dynamic.umd.js",
-    entry_point = "modules/@angular/platform-browser-dynamic/esm/index.js",
-    rollup_config = "modules/@angular/platform-browser-dynamic/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
-ts_npm_package(
-    name = "platform-browser-dynamic_package",
-    srcs = [":platform-browser-dynamic"],
-    data = [":platform-browser-dynamic_bundle"],
-    manifest = "modules/@angular/platform-browser-dynamic/package.json",
-    module_name = "@angular/platform-browser-dynamic",
-    strip_prefix = "/modules/@angular/platform-browser-dynamic",
-)
-
 ts_library(
     name = "platform-server",
     srcs = glob(
@@ -759,32 +599,6 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/platform-server/test",
-)
-
-jasmine_node_test(
-    name = "platform-server_test",
-    srcs = [":platform-server_test_module"],
-    helpers = [":jasmine_helper"],
-    size = "small",
-    args = ["--node_path=modules:tools"],
-)
-
-js_bundle(
-    name = "platform-server_bundle",
-    srcs = [":platform-server"],
-    output = "modules/@angular/platform-server/platform-server.umd.js",
-    entry_point = "modules/@angular/platform-server/esm/index.js",
-    rollup_config = "modules/@angular/platform-server/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
-ts_npm_package(
-    name = "platform-server_package",
-    srcs = [":platform-server"],
-    data = [":platform-server_bundle"],
-    manifest = "modules/@angular/platform-server/package.json",
-    module_name = "@angular/platform-server",
-    strip_prefix = "/modules/@angular/platform-server",
 )
 
 ts_library(
@@ -828,32 +642,6 @@ ts_library(
     root_dir = "modules/@angular/router/test",
 )
 
-jasmine_node_test(
-    name = "router_test",
-    srcs = [":router_test_module"],
-    helpers = [":jasmine_helper"],
-    size = "small",
-    args = ["--node_path=modules:tools"],
-)
-
-js_bundle(
-    name = "router_bundle",
-    srcs = [":router"],
-    output = "modules/@angular/router/router.umd.js",
-    entry_point = "modules/@angular/router/esm/index.js",
-    rollup_config = "modules/@angular/router/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
-ts_npm_package(
-    name = "router_package",
-    srcs = [":router"],
-    data = [":router_bundle"],
-    manifest = "modules/@angular/router/package.json",
-    module_name = "@angular/router",
-    strip_prefix = "/modules/@angular/router",
-)
-
 ts_library(
     name = "upgrade",
     srcs = glob(
@@ -892,36 +680,33 @@ ts_library(
     root_dir = "modules/@angular/upgrade/test",
 )
 
-js_bundle(
-    name = "upgrade_bundle",
-    srcs = [":upgrade"],
-    output = "modules/@angular/upgrade/upgrade.umd.js",
-    entry_point = "modules/@angular/upgrade/esm/index.js",
-    rollup_config = "modules/@angular/upgrade/rollup.config.js",
-    banner = "modules/@angular/license-banner.txt",
-)
-
-ts_npm_package(
-    name = "upgrade_package",
-    srcs = [":upgrade"],
-    data = [":upgrade_bundle"],
-    manifest = "modules/@angular/upgrade/package.json",
-    module_name = "@angular/upgrade",
-    strip_prefix = "/modules/@angular/upgrade",
-)
+[
+    jasmine_node_test(
+        name = pkg + "_test",
+        srcs = [":{}_test_module".format(pkg)],
+        helpers = [":jasmine_helper"],
+        size = "small",
+        args = ["--node_path=modules:tools"],
+    )
+    for pkg in JASMINE_TESTABLE
+]
 
 test_suite(
     name = "jasmine_tests",
-    tests = [
-        ":core_test",
-        ":common_test",
-        ":compiler_test",
-        ":compiler-cli_test",
-        ":http_test",
-        ":platform-server_test",
-        ":router_test",
-    ],
+    tests = [":{}_test".format(p) for p in JASMINE_TESTABLE],
 )
+
+KARMA_DATA = [
+    ":es6-shim",
+    ":karma-browserstack-launcher",
+    ":karma-chrome-launcher",
+    ":karma-jasmine",
+    ":karma-sauce-launcher",
+    ":karma-sourcemap-loader",
+    ":reflect-metadata",
+    ":source-map",
+    ":systemjs",
+]
 
 karma_test(
     name = "karma_test",
@@ -940,17 +725,8 @@ karma_test(
         "shims_for_IE.js",
         "test-main.js",
     ],
-    data = [
+    data = KARMA_DATA + [
         ":angular",
-        ":es6-shim",
-        ":karma-browserstack-launcher",
-        ":karma-chrome-launcher",
-        ":karma-jasmine",
-        ":karma-sauce-launcher",
-        ":karma-sourcemap-loader",
-        ":reflect-metadata",
-        ":source-map",
-        ":systemjs",
         "browser-providers.conf.js",
         "tools/karma/reporter.js",
         "tools/karma/ibazel_watcher.js",
@@ -966,17 +742,7 @@ karma_test(
         ":router_test_module",
         "modules/@angular/router/karma-test-shim.js",
     ],
-    data = [
-        ":angular",
-        ":es6-shim",
-        ":karma-browserstack-launcher",
-        ":karma-chrome-launcher",
-        ":karma-jasmine",
-        ":karma-sauce-launcher",
-        ":karma-sourcemap-loader",
-        ":reflect-metadata",
-        ":source-map",
-        ":systemjs",
+    data = KARMA_DATA + [
         "browser-providers.conf.js",
         "tools/karma/ibazel_watcher.js",
     ],
@@ -1044,19 +810,9 @@ ts_library(
 protractor_test(
     name = "playground_test",
     srcs = [":playground_test_module"],
-    data = [
+    data = [":{}_bundle".format(p) for p in ESM_PACKAGES] + [
         ":core",  # Needed for @angular/core/src/facade
         ":facade",
-        ":core_bundle",
-        ":common_bundle",
-        ":compiler_bundle",
-        ":forms_bundle",
-        ":http_bundle",
-        ":platform-browser_bundle",
-        ":platform-browser-dynamic_bundle",
-        ":platform-server_bundle",
-        ":router_bundle",
-        ":upgrade_bundle",
         ":playground",
         ":es6-shim",
         ":zone.js",
@@ -1144,3 +900,37 @@ nodejs_test(
         ":tsc-wrapped",
     ],
 )
+
+[
+    js_bundle(
+        name = pkg + "_bundle",
+        srcs = [":" + pkg],
+        output = "modules/@angular/{}/{}.umd.js".format(pkg, pkg),
+        entry_point = "modules/@angular/{}/esm/index.js".format(pkg),
+        rollup_config = "modules/@angular/{}/rollup.config.js".format(pkg),
+        banner = "modules/@angular/license-banner.txt",
+    )
+    for pkg in ESM_PACKAGES
+]
+
+ts_npm_package(
+    name = "tsc-wrapped_package",
+    srcs = [":tsc-wrapped"],
+    manifest = "tools/@angular/tsc-wrapped/package.json",
+    module_name = "@angular/tsc-wrapped",
+    strip_prefix = "/tools/@angular/tsc-wrapped",
+    esm = False,
+)
+
+[
+    ts_npm_package(
+        name = pkg + "_package",
+        srcs = [":" + pkg],
+        manifest = "modules/@angular/{}/package.json".format(pkg),
+        module_name = "@angular/" + pkg,
+        # Prefix / avoids bug https://github.com/bazelbuild/bazel/issues/1604
+        strip_prefix = "/modules/@angular/" + pkg,
+        esm = pkg in ESM_PACKAGES,
+    )
+    for pkg in ESM_PACKAGES + NON_ESM_PACKAGES
+]

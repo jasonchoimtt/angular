@@ -2,45 +2,22 @@ package(default_visibility=["//visibility:public"])
 
 load("//build_defs:nodejs.bzl", "nodejs_module")
 
-filegroup(
-    name = "nodejs_launcher_template",
-    srcs = ["nodejs_launcher_template.sh"],
-)
+# These files are exported as filegroups with their extension stripped.
+EXPORTED_FILES = [
+    "nodejs_launcher_template.sh",
+    "jasmine_config_template.json",
+    "jasmine_launcher_template.sh",
+    "karma_launcher_template.sh",
+    "rollup_config_template.js",
+    "protractor_launcher_template.sh",
+    "ts_api_guardian_launcher_template.sh",
+    "check_cycle.js",
+]
 
-filegroup(
-    name = "jasmine_config_template",
-    srcs = ["jasmine_config_template.json"],
-)
-
-filegroup(
-    name = "jasmine_launcher_template",
-    srcs = ["jasmine_launcher_template.sh"],
-)
-
-filegroup(
-    name = "karma_launcher_template",
-    srcs = ["karma_launcher_template.sh"],
-)
-
-filegroup(
-    name = "rollup_config_template",
-    srcs = ["rollup_config_template.js"],
-)
-
-filegroup(
-    name = "protractor_launcher_template",
-    srcs = ["protractor_launcher_template.sh"],
-)
-
-filegroup(
-    name = "ts_api_guardian_launcher_template",
-    srcs = ["ts_api_guardian_launcher_template.sh"],
-)
-
-filegroup(
-    name = "check_cycle",
-    srcs = ["check_cycle.js"],
-)
+[
+    filegroup(name=f[:f.rfind(".")], srcs = [f])
+    for f in EXPORTED_FILES
+]
 
 nodejs_module(
     name = "node_modules_indexer",
