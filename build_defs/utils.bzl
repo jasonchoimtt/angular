@@ -76,6 +76,7 @@ def pick_file_in_dir(files, base_label, path, attr=None):
   return (matches[0], remainder_path)
 
 
-def json_encode(dictionary):
-  # We abuse the fact that str() of a dict is almost a valid JSON object.
+def pseudo_json_encode(dictionary):
+  # We abuse the fact that str() of a dict is almost a valid JSON object, and
+  # that we do not use characters requiring escaping.
   return str(dictionary).replace("True", "true").replace("False", "false")

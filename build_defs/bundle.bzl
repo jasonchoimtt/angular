@@ -1,4 +1,3 @@
-load("//build_defs:typescript.bzl", "ts_esm_files")
 load("//build_defs:utils.bzl", "join_paths", "pick_file")
 
 
@@ -39,7 +38,7 @@ def _js_bundle_impl(ctx):
 
   esm_inputs = []
   for src in ctx.attr.srcs:
-    esm_inputs += ts_esm_files(src)
+    esm_inputs += src.javascript_esm.files + src.javascript_esm.source_maps
 
   main_src = ctx.attr.srcs[0]
   entry_point = pick_file(esm_inputs, main_src.label, ctx.attr.entry_point)
@@ -68,7 +67,7 @@ def _js_bundle_impl(ctx):
   )
 
   tsc_cmd = [ctx.executable._tsc.path, "--noResolve", "--target", "es5", "--allowJs", "--typeRoots",
-             "[]", "--sourceMap", "--inlineSources", "--out", gen_js.path, gen_esm_js.path]
+             "[]", "--sourceMap", "--inlineSources", "--outFile", gen_js.path, gen_esm_js.path]
   ctx.action(
       progress_message = "Compiling ES6 %s" % ctx,
       inputs = [gen_esm_js, gen_esm_js_map] + list(ctx.attr._tsc.default_runfiles.files),
@@ -90,7 +89,7 @@ def _js_bundle_impl(ctx):
       ),
   )
 
-  files = [gen_esm_js, gen_esm_js_map, gen_js, gen_js_map, gen_min_js, gen_min_js_map]
+  files = [gen_js, gen_js_map, gen_min_js, gen_min_js_map]
 
   return struct(
       files = set(files),

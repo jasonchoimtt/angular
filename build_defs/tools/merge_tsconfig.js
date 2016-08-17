@@ -3,43 +3,65 @@
 const fs = require('fs');
 const ts = require('typescript');
 
-const argv = process.argv.slice(2);
+function main(argv) {
+  if (!argv.length) {
+    console.error(`Usage: ${process.argv[0]} ${process.argv[1]}
+          [--out <out file>] [<--file <file>|<json string>>...]
 
-const merged = {};
-let out = null;
+Merges multiple portions of tsconfig.json in a way that the output tsconfig.json
+is semantically valid.`);
+    process.exit(1);
+  }
 
-while (argv.length) {
-  const arg = argv.shift();
-  if (arg === '--file') {
-    const file = argv.shift();
-    merge(merged, parse(file, fs.readFileSync(file).toString()));
-  } else if (arg === '--out') {
-    out = argv.shift();
+  const tsconfig = {};
+  let out = null;
+
+  while (argv.length) {
+    const arg = argv.shift();
+    if (arg === '--file') {
+      const file = argv.shift();
+      mergeTsconfig(tsconfig, parse(file, fs.readFileSync(file).toString()));
+    } else if (arg === '--out') {
+      out = argv.shift();
+    } else {
+      mergeTsconfig(tsconfig, parse(/* fileName */ '<input argument>', arg));
+    }
+  }
+
+  normalizeTsconfig(tsconfig);
+
+  if (out) {
+    fs.writeFileSync(out, JSON.stringify(tsconfig, null, 2));
   } else {
-    merge(merged, parse(/* filename */ '<input argument>', arg));
+    console.log(JSON.stringify(tsconfig, null, 2));
   }
 }
 
-if (merged.files && merged.exclude) {
-  delete merged.exclude;
-}
-
-if (out) {
-  fs.writeFileSync(out, JSON.stringify(merged, null, 2));
-} else {
-  console.log(JSON.stringify(merged, null, 2));
-}
-
-function merge(merged, next) {
-  if (merged.files && next.files) {
+function mergeTsconfig(merged, next) {
+  // File lists are not merged but replaced.
+  if ((merged.files || merged.include || merged.exclude) &&
+      (next.files || next.include || next.exclude)) {
     delete merged.files;
+    delete merged.include;
+    delete merged.exclude;
   }
   if (merged.compilerOptions && next.compilerOptions) {
+    // Path mappings are not merged but replaced.
     if (merged.compilerOptions.paths && next.compilerOptions.paths) {
       delete merged.compilerOptions.paths;
     }
   }
   deepMerge(merged, next);
+}
+
+function normalizeTsconfig(tsconfig) {
+  const compilerOptions = tsconfig.compilerOptions;
+  if (!compilerOptions.sourceMap && !compilerOptions.inlineSourceMap) {
+    // These options require sourceMap or inlineSourceMap to be set.
+    delete compilerOptions.inlineSources;
+    delete compilerOptions.mapRoot;
+    delete compilerOptions.sourceRoot;
+  }
 }
 
 function deepMerge(x, y) {
@@ -78,3 +100,5 @@ function parse(fileName, jsonText) {
 
   return result.config;
 }
+
+main(process.argv.slice(2));

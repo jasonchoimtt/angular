@@ -1,4 +1,5 @@
-load("//build_defs:utils.bzl", "join_paths", "normalize_path", "json_encode", "pick_file_in_dir")
+load("//build_defs:utils.bzl", "join_paths", "normalize_path", "pseudo_json_encode",
+     "pick_file_in_dir")
 
 
 def _ts_library_impl(ctx):
@@ -80,7 +81,6 @@ def _ts_library_impl(ctx):
   tc_declarations_internal, tc_paths_internal = set(), {}
 
   for dep in ctx.attr.deps:
-    # TODO: do we need to deal with deps without typescript provider?
     tc_declarations += dep.typescript.tc_declarations
     tc_types += dep.typescript.tc_types
     tc_paths.update(dep.typescript.tc_paths)
@@ -108,86 +108,102 @@ def _ts_library_impl(ctx):
   out_dir = normalize_path(ctx.attr.out_dir or root_dir)
 
   # These correspond to keys in tsconfig.json.
-  base_compiler_options = {
-      "rootDir": join_paths(tsconfig_to_workspace, source_roots[0], ctx.label.package, root_dir),
-      # Tells TypeScript to assume that the .ts files are in the same directory as the .js.map files
-      "mapRoot": join_paths(tsconfig_to_workspace, source_roots[0], ctx.label.package, root_dir),
-      "paths": {module: [join_paths(tsconfig_to_workspace, path)]
-                for module, path in tc_paths_internal.items()},
-      "skipLibCheck": True,
-      "stripInternal": True,
-      "baseUrl": ".",
-
-      "declaration": True,
-
-      # All dependencies should be loaded with "deps", so we don't need the
-      # node-style resolution nor @types resolution. This also improves
-      # consistency in sandboxed and unsandboxed environments.
-      "moduleResolution": "classic",
-      "typeRoots": [],
-  }
   ts_files = [f for f in ctx.files.srcs if not f.short_path.endswith(".d.ts")]
-  common_args = dict(
+  base_tsconfig = {
+      "compilerOptions": {
+          "rootDir": join_paths(
+              tsconfig_to_workspace, source_roots[0], ctx.label.package, root_dir),
+          "paths": {module: [join_paths(tsconfig_to_workspace, path)]
+                    for module, path in tc_paths_internal.items()},
+          # Required to use paths.
+          "baseUrl": ".",
+
+          "skipLibCheck": True,
+          "stripInternal": True,
+
+          "declaration": True,
+
+          # All dependencies should be loaded with "deps", so we don't need the
+          # node-style resolution nor @types resolution. This also improves
+          # consistency in sandboxed and unsandboxed environments.
+          "moduleResolution": "classic",
+          "typeRoots": [],
+
+          # Tells TypeScript to assume that the .ts files are in the same
+          # directory as the .js.map files
+          "mapRoot": join_paths(
+              tsconfig_to_workspace, source_roots[0], ctx.label.package, root_dir),
+          "sourceMap": ctx.attr.source_map,
+          "inlineSourceMap": ctx.attr.inline_source_map,
+      },
+      "angularCompilerOptions": {},
+      "files": ([join_paths(tsconfig_to_workspace, f.path) for f in ctx.files.srcs] +
+                [join_paths(tsconfig_to_workspace, path) for path in tc_types]),
+  }
+  tsc_action_args = dict(
       ctx = ctx,
       inputs = ctx.files.srcs + list(tc_declarations_internal),
-      input_tsconfig = ctx.file.tsconfig,
-      mixin_tsconfig = {
-          "compilerOptions": base_compiler_options,
-          "angularCompilerOptions": {"writeMetadata": True},
-          "files": ([join_paths(tsconfig_to_workspace, f.path) for f in ctx.files.srcs] +
-                    [join_paths(tsconfig_to_workspace, path) for path in tc_types]),
-      },
+      ts_files = ts_files,
+      root_dir = root_dir,
+      out_dir = out_dir,
   )
 
   has_source_map = ctx.attr.source_map and not ctx.attr.inline_source_map
   is_tsc_wrapped = "bootstrap" not in ctx.executable.compiler.path
 
-  gen_js, gen_d_ts = _map_files(ctx, ts_files, root_dir, out_dir, [".js", ".d.ts"])
-  gen_js_map, = (_map_files(ctx, ts_files, root_dir, out_dir, [".js.map"])
-                 if has_source_map else [[]])
-  gen_meta, = (_map_files(ctx, ts_files, root_dir, out_dir, [".metadata.json"])
-               if is_tsc_wrapped else [[]])
-  _tsc_action(prefix="", outputs=gen_js + gen_d_ts + gen_meta + gen_js_map,
-              compiler_options={
-                  "outDir": out_dir,
-                  "sourceMap": ctx.attr.source_map,
-                  "inlineSourceMap": ctx.attr.inline_source_map,
-              }, **common_args)
+  tsconfig = _tsconfig_action(
+      ctx = ctx,
+      prefix = "",
+      input_tsconfig = ctx.file.tsconfig,
+      mixin_tsconfig = _tsconfig_with(base_tsconfig, {"outDir": out_dir}),
+  )
+  gen_js, gen_d_ts, gen_meta, gen_js_map = _tsc_action(
+      prefix = "",
+      gen_config = (True, True, is_tsc_wrapped, has_source_map),
+      tsconfig = tsconfig,
+      **tsc_action_args
+  )
 
-  gen_js_esm, gen_d_ts_esm = _map_files(
-          ctx, ts_files, root_dir, join_paths(out_dir, "esm"), [".js", ".d.ts"])
-  gen_meta_esm, = (
-      _map_files(ctx, ts_files, root_dir, join_paths(out_dir, "esm"), [".metadata.json"])
-      if is_tsc_wrapped else [[]])
-  gen_js_map_esm, = (_map_files(ctx, ts_files, root_dir, join_paths(out_dir, "esm"), [".js.map"])
-                     if has_source_map else [[]])
-  _tsc_action(prefix="esm", outputs=gen_js_esm + gen_d_ts_esm + gen_meta_esm + gen_js_map_esm,
-              compiler_options={
-                  "module": "es2015",
-                  "target": "es2015",
-                  "outDir": join_paths(out_dir, "esm"),
-                  "sourceMap": ctx.attr.source_map,
-                  "inlineSourceMap": ctx.attr.inline_source_map,
-              }, **common_args)
+  tsconfig_esm = _tsconfig_action(
+      ctx = ctx,
+      prefix = "esm",
+      input_tsconfig = ctx.file.tsconfig,
+      mixin_tsconfig = _tsconfig_with(base_tsconfig, {
+          "module": "es2015",
+          "target": "es2015",
+          "outDir": join_paths(out_dir, "esm"),
+      }),
+  )
+  gen_js_esm, gen_d_ts_esm, gen_meta_esm, gen_js_map_esm = _tsc_action(
+      prefix = "esm",
+      gen_config = (True, True, is_tsc_wrapped, has_source_map),
+      tsconfig = tsconfig_esm,
+      **tsc_action_args
+  )
 
-  gen_d_ts_internal, = _map_files(
-      ctx, ts_files, root_dir, join_paths(out_dir, "internal"), [".d.ts"])
-  gen_meta_internal, = (
-      _map_files(ctx, ts_files, root_dir, join_paths(out_dir, "internal"), [".metadata.json"])
-      if is_tsc_wrapped else [[]])
-  _tsc_action(prefix="internal", outputs=gen_d_ts_internal + gen_meta_internal,
-              compiler_options={
-                  "stripInternal": False,
-                  "outDir": join_paths(out_dir, "internal"),
-                  "sourceMap": True,
-                  "inlineSourceMap": False
-              }, **common_args)
+  tsconfig_internal = _tsconfig_action(
+      ctx = ctx,
+      prefix = "internal",
+      input_tsconfig = ctx.file.tsconfig,
+      mixin_tsconfig = _tsconfig_with(base_tsconfig, {
+          "stripInternal": False,
+          "sourceMap": False,
+          "inlineSourceMap": False,
+          "outDir": join_paths(out_dir, "internal"),
+      }),
+  )
+  _, gen_d_ts_internal, gen_meta_internal, _ = _tsc_action(
+      prefix = "internal",
+      gen_config = (False, True, is_tsc_wrapped, False),
+      tsconfig = tsconfig_internal,
+      **tsc_action_args
+  )
 
   module_name = ctx.attr.module_name or ctx.label.name
   abs_package = join_paths(ctx.label.workspace_root, ctx.configuration.bin_dir.path,
                            ctx.label.package, out_dir)
-  ret = struct(
-      files = set(gen_js + gen_js_map),
+  return struct(
+      files = set(gen_js),
       runfiles = ctx.runfiles(
           files = gen_js + gen_js_map,
           collect_default = True,
@@ -199,6 +215,7 @@ def _ts_library_impl(ctx):
           package_dir = out_dir,
           # The declarations of the current module
           declarations = gen_d_ts,
+          source_maps = gen_js_map,
           metadata = gen_meta,
           # All declaration files in the transitive closure
           tc_declarations = tc_declarations + gen_d_ts,
@@ -236,47 +253,62 @@ def _ts_library_impl(ctx):
       nodejs = struct(),
       javascript = struct(
           files = gen_js + gen_js_map,
+          source_maps = gen_js_map,
           module_name = module_name,
           package_dir = out_dir,
       ),
       javascript_esm = struct(
           files = gen_js_esm + gen_js_map_esm,
+          source_maps = gen_js_map_esm,
           module_name = module_name,
           package_dir = out_dir,
       ),
   )
 
-  return ret
-
-def _tsc_action(*, ctx, prefix, inputs, outputs, input_tsconfig, mixin_tsconfig, compiler_options,
-                angular_compiler_options=None):
-  mixin_tsconfig = _merge_dict(mixin_tsconfig, {
-      "compilerOptions": _merge_dict(mixin_tsconfig["compilerOptions"], compiler_options),
-      "angularCompilerOptions": _merge_dict(mixin_tsconfig["angularCompilerOptions"],
-                                            angular_compiler_options or {}),
+def _tsconfig_with(base, compiler_options={}, angular_compiler_options={}):
+  return _merge_dict(base, {
+      "compilerOptions": _merge_dict(base["compilerOptions"], compiler_options),
+      "angularCompilerOptions": _merge_dict(
+          base["angularCompilerOptions"], angular_compiler_options),
   })
-  target_name = "{}".format(ctx.label, " ({})".format(prefix) if prefix else "default")
 
+def _tsconfig_action(*, ctx, prefix, input_tsconfig, mixin_tsconfig):
   tsconfig = ctx.new_file(ctx.label.name + ("_" + prefix if prefix else "") + "_tsconfig.json")
+
+  target_name = "{}{}".format(ctx.label, " ({})".format(prefix) if prefix else "")
   ctx.action(
       progress_message = "Generating tsconfig.json for {}".format(target_name),
       inputs = [input_tsconfig],
       outputs = [tsconfig],
       executable = ctx.executable._merge_tsconfig,
-      arguments = ["--file", input_tsconfig.path, json_encode(mixin_tsconfig), "--out",
+      arguments = ["--file", input_tsconfig.path, pseudo_json_encode(mixin_tsconfig), "--out",
                    tsconfig.path],
   )
 
+  return tsconfig
+
+def _tsc_action(*, ctx, inputs, ts_files, root_dir, out_dir, prefix, gen_config, tsconfig):
+  real_out_dir = join_paths(out_dir, prefix)
+  has_js, has_d_ts, has_meta, has_js_map = gen_config
+
+  gen_js = _map_files(ctx, ts_files, root_dir, real_out_dir, ".js") if has_js else []
+  gen_d_ts = _map_files(ctx, ts_files, root_dir, real_out_dir, ".d.ts") if has_d_ts else []
+  gen_meta = _map_files(ctx, ts_files, root_dir, real_out_dir, ".metadata.json") if has_meta else []
+  gen_js_map = _map_files(ctx, ts_files, root_dir, real_out_dir, ".js.map") if has_js_map else []
+
   is_tsc_wrapped = "bootstrap" not in ctx.executable.compiler.path
+  target_name = "{}{}".format(ctx.label, " ({})".format(prefix) if prefix else "")
   ctx.action(
       progress_message = "Compiling TypeScript {}".format(target_name),
       mnemonic = "TypeScriptCompile",
       inputs = inputs + [tsconfig],
-      outputs = outputs,
+      outputs = gen_js + gen_d_ts + gen_meta + gen_js_map,
       executable = ctx.executable.compiler,
       arguments = ["@@" + tsconfig.path] if is_tsc_wrapped else ["--project", tsconfig.path],
       execution_requirements = {"supports-workers": "1"} if is_tsc_wrapped else {},
   )
+
+  return gen_js, gen_d_ts, gen_meta, gen_js_map
 
 ts_library = rule(
     _ts_library_impl,
@@ -326,24 +358,19 @@ def _drop_dir(path, directory):
     return path
 
 
-def _map_files(ctx, files, root_dir, out_dir, exts):
-  """Creates sets of output files given directory and extension mappings.
+def _map_files(ctx, files, root_dir, out_dir, ext):
+  """Creates a list of output files given directory and the extension.
 
   root_dir and out_dir are specified relative to the package.
   """
-  ret = [[] for _ in exts]
+  ret = []
   for f in files:
     path_in_package = _drop_dir(f.short_path, ctx.label.package)
     path_in_package_without_ext = path_in_package[:path_in_package.rfind(".")]
-    for i, ext in enumerate(exts):
-      filename = join_paths(out_dir, _drop_dir(path_in_package_without_ext, root_dir) + ext)
-      ret[i].append(ctx.new_file(filename))
+    filename = join_paths(out_dir, _drop_dir(path_in_package_without_ext, root_dir) + ext)
+    ret.append(ctx.new_file(filename))
 
   return ret
-
-
-def ts_esm_files(target):
-  return target.javascript_esm.files
 
 
 def _ts_ext_library_impl(ctx):
