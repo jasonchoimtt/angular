@@ -115,6 +115,8 @@ function main() {
 function loadWorkerPb() {
   const protobufjs = require('protobufjs');
 
+  // We have to use RUNFILES instead of __dirname because __dirname may be wrong
+  // due to Node.js's behavior of resolving symlinked modules.
   const protoPath = 'tools/@angular/tsc-wrapped/worker_protocol.proto';
   const protoNamespace = protobufjs.loadProtoFile({root: process.env['RUNFILES'], file: protoPath});
 

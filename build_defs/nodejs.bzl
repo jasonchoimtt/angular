@@ -43,8 +43,13 @@ def _nodejs_module_impl(ctx):
 
   You can use them with the "args" kwarg in any Node.js-based target. A
   convenient option is --node_options=debug, which launches the target in a
-  debugger. Note that however, you have to run the script directly instead of
-  calling `bazel run`, which does not connect stdin.
+  debugger. Note that however, you have to use `bazel-run.sh` to do that in
+  order to connect stdin.
+
+  Note that Node.js resolves symlinks when loading modules, which is wrong in
+  our bazel environment, since it resolves symlinks that may cross the runfiles
+  boundary. We may be able to use the Node.js flag "--preserve-symlinks"
+  introduced in Node.js 6.2. See https://github.com/nodejs/node/pull/6537
   """
   return struct(
       files = set(ctx.files.srcs),
