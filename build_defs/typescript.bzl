@@ -110,6 +110,8 @@ def _ts_library_impl(ctx):
   # These correspond to keys in tsconfig.json.
   base_compiler_options = {
       "rootDir": join_paths(tsconfig_to_workspace, source_roots[0], ctx.label.package, root_dir),
+      # Tells TypeScript to assume that the .ts files are in the same directory as the .js.map files
+      "mapRoot": join_paths(tsconfig_to_workspace, source_roots[0], ctx.label.package, root_dir),
       "paths": {module: [join_paths(tsconfig_to_workspace, path)]
                 for module, path in tc_paths_internal.items()},
       "skipLibCheck": True,
@@ -224,7 +226,7 @@ def _ts_library_impl(ctx):
           # This struct exists solely for npm_package to work simpler.
           # TypeScript-agnostic tools should use javascript_esm.
           esm = struct(
-              files = gen_js_esm,
+              files = gen_js_esm + gen_js_map_esm,
               declarations = gen_d_ts_esm,
               metadata = gen_meta_esm,
               module_name = module_name,

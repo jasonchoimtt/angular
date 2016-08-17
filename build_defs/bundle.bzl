@@ -51,11 +51,13 @@ def _js_bundle_impl(ctx):
           "{{base_config}}": join_paths(config_to_workspace, ctx.file.rollup_config.path),
           # Unlike tsc, rollup does not resolve paths relative to
           # rollup.config.js.
-          "{{entry}}": join_paths(entry_point.path),
+          "{{prefixes}}": "\"\", \"{}\", \"{}\"".format(
+              ctx.configuration.bin_dir.path, ctx.configuration.genfiles_dir.path),
+          "{{entry}}": "./" + entry_point.path,
           "{{dest}}": gen_esm_js.path,
           "{{banner}}": (ctx.file.banner.path if ctx.attr.banner else ""),
       },
-  )
+ )
 
   ctx.action(
       progress_message = "Tree shaking %s" % ctx,
@@ -65,14 +67,14 @@ def _js_bundle_impl(ctx):
       arguments = ["-c", config_file.path],
   )
 
-  # TODO: make TypeScript propagate source maps
+  tsc_cmd = [ctx.executable._tsc.path, "--noResolve", "--target", "es5", "--allowJs", "--typeRoots",
+             "[]", "--sourceMap", "--inlineSources", "--out", gen_js.path, gen_esm_js.path]
   ctx.action(
       progress_message = "Compiling ES6 %s" % ctx,
-      inputs = [gen_esm_js, gen_esm_js_map],
+      inputs = [gen_esm_js, gen_esm_js_map, ctx.executable._tsc],
       outputs = [gen_js, gen_js_map],
-      executable = ctx.executable._tsc,
-      arguments = ["--noResolve", "--target", "es5", "--allowJs", "--typeRoots", "[]",
-                   "--sourceMap", "--inlineSources", "--out", gen_js.path, gen_esm_js.path],
+      executable = ctx.executable._flatten_sourcemap,
+      arguments = [gen_js.path, "--"] + tsc_cmd,
   )
 
   ctx.action(
@@ -115,6 +117,8 @@ js_bundle = rule(
         "_uglifyjs": attr.label(
             default=Label("//build_defs/tools:uglifyjs_wrapped"), executable=True),
         "_tsc": attr.label(default=Label("//:tsc_bin"), executable=True),
+        "_flatten_sourcemap": attr.label(
+            default=Label("//build_defs/tools:flatten_sourcemap"), executable=True),
         "_rollup_config_template": attr.label(
             default = Label("//build_defs:rollup_config_template"),
             allow_files = True,

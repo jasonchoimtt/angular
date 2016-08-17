@@ -175,7 +175,15 @@
       "version": "2.0.3"
     },
     "ascli": {
-      "version": "1.0.0"
+      "version": "1.0.0",
+      "dependencies": {
+        "colour": {
+          "version": "0.7.1"
+        },
+        "optjs": {
+          "version": "3.2.2"
+        }
+      }
     },
     "asn1": {
       "version": "0.2.3"
@@ -1525,11 +1533,17 @@
         "broccoli-funnel": {
           "version": "0.1.7"
         },
+        "chalk": {
+          "version": "0.5.1"
+        },
         "fs-extra": {
           "version": "0.13.0"
         },
         "minimatch": {
           "version": "2.0.10"
+        },
+        "strip-ansi": {
+          "version": "0.3.0"
         }
       }
     },
@@ -1642,10 +1656,22 @@
       "version": "0.1.0"
     },
     "chalk": {
-      "version": "0.5.1",
+      "version": "1.1.3",
       "dependencies": {
+        "ansi-regex": {
+          "version": "2.0.0"
+        },
+        "ansi-styles": {
+          "version": "2.2.1"
+        },
+        "has-ansi": {
+          "version": "2.0.0"
+        },
         "strip-ansi": {
-          "version": "0.3.0"
+          "version": "3.0.1"
+        },
+        "supports-color": {
+          "version": "2.0.0"
         }
       }
     },
@@ -1707,9 +1733,6 @@
     },
     "colors": {
       "version": "1.1.2"
-    },
-    "colour": {
-      "version": "0.7.1"
     },
     "combine-source-map": {
       "version": "0.6.1",
@@ -2128,6 +2151,9 @@
     "es6-module-loader": {
       "version": "0.17.9"
     },
+    "es6-promise": {
+      "version": "3.2.1"
+    },
     "es6-shim": {
       "version": "0.35.0"
     },
@@ -2351,6 +2377,9 @@
     },
     "fs-tree-diff": {
       "version": "0.3.1"
+    },
+    "fs.realpath": {
+      "version": "1.0.0"
     },
     "fsevents": {
       "version": "1.0.6",
@@ -3011,6 +3040,9 @@
         "gulp-util": {
           "version": "2.2.20",
           "dependencies": {
+            "chalk": {
+              "version": "0.5.1"
+            },
             "through2": {
               "version": "0.5.1"
             }
@@ -3036,6 +3068,9 @@
         },
         "readable-stream": {
           "version": "1.0.33"
+        },
+        "strip-ansi": {
+          "version": "0.3.0"
         },
         "through2": {
           "version": "0.4.2",
@@ -4313,9 +4348,6 @@
     "options": {
       "version": "0.0.6"
     },
-    "optjs": {
-      "version": "3.2.2"
-    },
     "orchestrator": {
       "version": "0.3.7",
       "dependencies": {
@@ -4795,33 +4827,7 @@
       "version": "1.1.1"
     },
     "rollup": {
-      "version": "0.26.3",
-      "dependencies": {
-        "ansi-regex": {
-          "version": "2.0.0"
-        },
-        "ansi-styles": {
-          "version": "2.2.1"
-        },
-        "chalk": {
-          "version": "1.1.3"
-        },
-        "has-ansi": {
-          "version": "2.0.0"
-        },
-        "source-map": {
-          "version": "0.1.32"
-        },
-        "source-map-support": {
-          "version": "0.4.0"
-        },
-        "strip-ansi": {
-          "version": "3.0.1"
-        },
-        "supports-color": {
-          "version": "2.0.0"
-        }
-      }
+      "version": "0.34.9"
     },
     "rsvp": {
       "version": "3.1.0"
@@ -4831,6 +4837,23 @@
     },
     "rxjs": {
       "version": "5.0.0-beta.6"
+    },
+    "sander": {
+      "version": "0.5.1",
+      "dependencies": {
+        "glob": {
+          "version": "7.0.5"
+        },
+        "graceful-fs": {
+          "version": "4.1.5"
+        },
+        "minimatch": {
+          "version": "3.0.3"
+        },
+        "rimraf": {
+          "version": "2.5.4"
+        }
+      }
     },
     "sass-graph": {
       "version": "2.0.1",
@@ -4987,6 +5010,9 @@
         }
       }
     },
+    "sorcery": {
+      "version": "0.10.0"
+    },
     "sorted-object": {
       "version": "1.0.0"
     },
@@ -5014,6 +5040,9 @@
           "version": "0.1.32"
         }
       }
+    },
+    "sourcemap-codec": {
+      "version": "1.3.0"
     },
     "sparkles": {
       "version": "1.0.0"
@@ -5595,6 +5624,9 @@
           "version": "0.5.3"
         }
       }
+    },
+    "vlq": {
+      "version": "0.2.1"
     },
     "vm-browserify": {
       "version": "0.0.4"

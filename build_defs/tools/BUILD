@@ -25,3 +25,9 @@ sh_binary(
     data = ["//:uglifyjs_bin"],
 )
 
+nodejs_binary(
+    name = "flatten_sourcemap",
+    srcs = ["flatten_sourcemap.js"],
+    data = ["//:source-map"],
+    entry_point = "flatten_sourcemap.js",
+)
