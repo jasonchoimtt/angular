@@ -84,9 +84,9 @@ function main(fileName) {
     }
   });
 
-  // fs.writeFileSync(maps[maps.length - 1].fileName, generator.toString());
-  // // Match the TypeScript behavior that no EOL is emitted
-  // fs.writeFileSync(fileName, contents.join('\n'));
+  fs.writeFileSync(maps[maps.length - 1].fileName, generator.toString());
+  // Match the TypeScript behavior that no EOL is emitted
+  fs.writeFileSync(fileName, contents.join('\n'));
 }
 
 if (process.argv.length >= 3) {
@@ -95,10 +95,8 @@ if (process.argv.length >= 3) {
     if (cmdArgs[0] === '--') {
       cmdArgs.shift();
     }
-    const env = Object.assign({}, process.env);
-    delete env['RUNFILES'];
-    const result = childProcess.spawnSync(
-        process.argv[4], process.argv.slice(5), {stdio: 'inherit', env: env});
+    const result =
+        childProcess.spawnSync(process.argv[4], process.argv.slice(5), {stdio: 'inherit'});
     if (result.status !== 0) {
       process.exit(result.status);
     }

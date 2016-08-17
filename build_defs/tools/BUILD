@@ -28,6 +28,6 @@ sh_binary(
 nodejs_binary(
     name = "flatten_sourcemap",
     srcs = ["flatten_sourcemap.js"],
-    data = ["//:source-map"],
+    data = ["//:source-map", "//:tsc_bin"],
     entry_point = "flatten_sourcemap.js",
 )

@@ -71,7 +71,7 @@ def _js_bundle_impl(ctx):
              "[]", "--sourceMap", "--inlineSources", "--out", gen_js.path, gen_esm_js.path]
   ctx.action(
       progress_message = "Compiling ES6 %s" % ctx,
-      inputs = [gen_esm_js, gen_esm_js_map, ctx.executable._tsc],
+      inputs = [gen_esm_js, gen_esm_js_map] + list(ctx.attr._tsc.default_runfiles.files),
       outputs = [gen_js, gen_js_map],
       executable = ctx.executable._flatten_sourcemap,
       arguments = [gen_js.path, "--"] + tsc_cmd,
