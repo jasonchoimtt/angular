@@ -97,9 +97,9 @@ $ bazel test :karma_test                     # Run all angular tests except rout
 $ bazel test :router_karma_test              # Run angular router tests in browser
 
 
-# If you are on Linux, you will need to add `--test_arg=--env=DISPLAY=$DISPLAY` at the end of the Bazel command so that
+# If you are on Linux, you will need to add `--test_env=DISPLAY` at the end of the Bazel command so that
 # Chrome will be able to launch successfully. For example:
-$ bazel test :karma_test --test_arg=--env=DISPLAY=$DISPLAY
+$ bazel test :karma_test --test_env=DISPLAY
 
 # Alternatively, use `bazel run` instead:
 $ bazel run :karma_test

@@ -55,7 +55,7 @@ fi
 ###############################################################################
 # WARNING: By default, these environmental variables are NOT available to tests
 # that run in Bazel. You need to pass it down as arguments manually when you
-# call "bazel test", e.g. "--test_arg=--env=FOO=$FOO".
+# call "bazel test", e.g. "--test_env=DISPLAY".
 ###############################################################################
 
 export LOGS_DIR=/tmp/angular-build/logs
