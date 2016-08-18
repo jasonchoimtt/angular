@@ -25,6 +25,8 @@ if [[ ${TRAVIS} ]]; then
 fi
 bazel --bazelrc=scripts/ci-lite/bazelrc test \
     :public_api_test :check_cycle_test :playground_test \
+    # This makes sure benchpress builds
+    modules/benchpress \
     --test_env=DISPLAY \
     --test_env=CHROME_BIN \
     --test_env=TRAVIS \
