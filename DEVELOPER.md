@@ -92,14 +92,19 @@ To run tests:
 ```shell
 $ bazel test :jasmine_tests                  # Run all angular tests on node
 
-$ bazel run :karma_test                     # Run all angular tests except router in browser
-$ bazel run :router_karma_test              # Run angular router tests in browser
+$ bazel test :karma_test                     # Run all angular tests except router in browser
+$ bazel test :router_karma_test              # Run angular router tests in browser
 
-<!-- TODO: add tooling test? -->
+
+# If you are on Linux, you will need to add `--test_arg=--env=DISPLAY=$DISPLAY` at the end of the Bazel command so that
+# Chrome will be able to launch successfully. For example:
+$ bazel test :karma_test --test_arg=--env=DISPLAY=$DISPLAY
+
+# Alternatively, use `bazel run` instead:
+$ bazel run :karma_test
 ```
 
 You should execute the 2 test suites before submitting a PR to github.
-
 All the tests are executed on our Continuous Integration infrastructure and a PR could only be merged once the tests pass.
 
 - CircleCI fails if your code is not formatted properly,
