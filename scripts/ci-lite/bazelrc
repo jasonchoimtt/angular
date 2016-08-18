@@ -1,0 +1,6 @@
+build --verbose_failures --show_task_finish --show_timestamps --curses=no
+test --verbose_failures --test_output=errors --keep_going --show_task_finish --show_timestamps --curses=no
+
+# Travis container is unprivileged and does not work with sandboxing
+build --spawn_strategy=standalone --genrule_strategy=standalone
+test --spawn_strategy=standalone --genrule_strategy=standalone

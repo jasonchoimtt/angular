@@ -9,6 +9,9 @@ cd `dirname $0`
 source ./env.sh
 cd ../..
 
+# TODO: Change to automagic bazel workspace rule.
+./setup-bazel.sh
+
 ./scripts/ci-lite/test_js.sh
 ./scripts/ci-lite/test_e2e.sh
 ./scripts/ci-lite/test_saucelabs.sh

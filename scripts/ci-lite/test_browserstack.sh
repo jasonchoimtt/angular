@@ -17,6 +17,8 @@ cd ../..
 
 ./scripts/browserstack/waitfor_tunnel.sh
 export BROWSER_STACK_ACCESS_KEY=`echo $BROWSER_STACK_ACCESS_KEY | rev`
-$(npm bin)/karma start ./karma-js.conf.js --single-run --browsers=${KARMA_JS_BROWSERS}
+
+bazel --bazelrc=scripts/ci-lite/bazelrc run :karma_test -- --browsers=${KARMA_JS_BROWSERS}
+bazel --bazelrc=scripts/ci-lite/bazelrc run :router_karma_test -- --browsers=${KARMA_JS_BROWSERS}
 
 echo 'travis_fold:end:test_browserstack'
