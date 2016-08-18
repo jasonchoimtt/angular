@@ -943,3 +943,8 @@ ts_npm_package(
     )
     for pkg in ESM_PACKAGES + NON_ESM_PACKAGES
 ]
+
+filegroup(
+    name = "all_packages",
+    srcs = [":{}_package".format(p) for p in ESM_PACKAGES + NON_ESM_PACKAGES],
+)

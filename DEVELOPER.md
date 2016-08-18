@@ -75,13 +75,14 @@ Before submitting a PR, do not forget to remove them:
 
 ## Building
 
-To build Angular run: <!-- TODO -->
+To build Angular run:
 
 ```shell
 bazel build :all_packages
 ```
 
-To build individual modules, refer to the `BUILD` file for a full list of build targets.
+To build individual modules, use `:<package_name>_package`, e.g.
+`:core_package`.
 
 * The npm build artifacts are put in the bazel-bin/ folder as tarballs.
 
