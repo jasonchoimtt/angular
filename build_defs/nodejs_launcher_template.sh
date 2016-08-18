@@ -31,13 +31,6 @@ for arg in "$@"; do
     --node_path=*)
       runfiles_node_path=( $(IFS=":"; echo ${arg#--node_path=}) )
       ;;
-    --env=*)
-      # --env=FOO=bar is a workaround before Bazel implements
-      # https://www.bazel.io/docs/designs/2016/06/21/environment.html
-      # We need this to pass down environmental variables like DISPLAY in order
-      # to launch Chrome successfully on Linux.
-      export "${arg#--env=}"
-      ;;
     *)
       args+=( "${arg}" )
       ;;

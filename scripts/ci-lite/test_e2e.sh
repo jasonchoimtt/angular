@@ -7,7 +7,7 @@ if [[ ${TRAVIS} && ${CI_MODE} != "e2e" ]]; then
 fi
 
 
-echo 'travis_fold:start:test.js'
+echo 'travis_fold:start:test.e2e'
 
 # Setup environment
 cd `dirname $0`
@@ -25,7 +25,9 @@ if [[ ${TRAVIS} ]]; then
 fi
 bazel --bazelrc=scripts/ci-lite/bazelrc test \
     :public_api_test :check_cycle_test :playground_test \
-    "--test_arg=--env=DISPLAY=${DISPLAY}" "--test_arg=--env=CHROME_BIN=${CHROME_BIN}" \
+    --test_env=DISPLAY \
+    --test_env=CHROME_BIN \
+    --test_env=TRAVIS \
     || true  # FIXME
 echo 'travis_fold:end:test.e2e.bazel'
 
@@ -34,9 +36,10 @@ echo 'travis_fold:start:test.e2e.misc'
 # ./tools/typings-test/test.sh
 echo 'travis_fold:end:test.e2e.misc'
 
-echo 'travis_fold:end:test.js'
+echo 'travis_fold:end:test.e2e'
 
 # FIXME
+false
 # if [[ ${TRAVIS} ]]; then
 #   ./scripts/publish/publish-build-artifacts.sh
 # fi

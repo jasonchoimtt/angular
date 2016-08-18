@@ -21,8 +21,12 @@ if [[ ${TRAVIS} ]]; then
 fi
 bazel --bazelrc=scripts/ci-lite/bazelrc test \
     :tool_tests :jasmine_tests :karma_test :router_karma_test \
-    "--test_arg=--env=DISPLAY=${DISPLAY}" "--test_arg=--browsers=${KARMA_JS_BROWSERS}" \
-    "--test_arg=--env=CHROME_BIN=${CHROME_BIN}"
+    --test_env=DISPLAY \
+    --test_env=CHROME_BIN \
+    --test_env=TRAVIS \
+    --test_env=TRAVIS_BUILD_NUMBER \
+    --test_env=TRAVIS_BUILD_ID \
+    "--test_arg=--browsers=${KARMA_JS_BROWSERS}"
 echo 'travis_fold:start:test.unit'
 
 echo 'travis_fold:end:test.js'

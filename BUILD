@@ -744,7 +744,7 @@ karma_test(
         "tools/karma/ibazel_watcher.js",
     ],
     config = "karma-js.conf.js",
-    tags = ["local"],
+    local = True,
 )
 
 karma_test(
@@ -759,7 +759,7 @@ karma_test(
     ],
     config = "modules/@angular/router/karma.conf.js",
     size = "small",
-    tags = ["local"],
+    local = True,
 )
 
 ###############################################################################
@@ -835,7 +835,7 @@ protractor_test(
         "favicon.ico",
     ],
     config = "protractor-bazel.conf.js",
-    tags = ["local"],
+    local = True,
     args = ["--node_path=modules:tools"],
 )
 

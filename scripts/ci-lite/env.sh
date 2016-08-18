@@ -52,9 +52,12 @@ fi
 
 # GLOBALS
 
-# Append dist/all to the NODE_PATH so that cjs module resolver finds find the packages that use
-# absolute module ids (e.g. @angular/core)
-export NODE_PATH=${NODE_PATH}:$(pwd)/../../dist/all:$(pwd)/../../dist/tools
+###############################################################################
+# WARNING: By default, these environmental variables are NOT available to tests
+# that run in Bazel. You need to pass it down as arguments manually when you
+# call "bazel test", e.g. "--test_arg=--env=FOO=$FOO".
+###############################################################################
+
 export LOGS_DIR=/tmp/angular-build/logs
 
 if [[ ${TRAVIS} ]]; then
