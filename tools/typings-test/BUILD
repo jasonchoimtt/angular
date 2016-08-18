@@ -1,27 +1,9 @@
-# Description:
-# Builds a project that depends on all modules.
-
-load("//build_defs:typescript.bzl", "ts_library")
-
-ts_library(
+sh_test(
     name = "typings-test",
-    srcs = [
-        "include-all.ts",
-    ],
-    deps = [
-        "//:core",
-        "//:compiler",
-        "//:common",
-        "//:forms",
-        "//:platform-browser",
-        "//:platform-browser-dynamic",
-        "//:platform-server",
-        "//:http",
-        "//:router",
-        "//:router-deprecated",
-        "//:upgrade",
-        "//:compiler-cli",
-    ],
-    tsconfig = "tsconfig-bazel.json",
-    visibility = ["//visibility:public"],
+    srcs = ["test.sh"],
+    data = ["//:all_packages"] + glob(["**"]),
+    # This currently uses external npm, so we need an unsandboxed environment.
+    # If your npm is not in the standard PATH, you will also need to pass the
+    # flag --test_env=PATH to "bazel test".
+    local = True,
 )

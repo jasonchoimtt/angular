@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -ex -o pipefail
 
+[[ "${TEST_SRCDIR}/angular" == "$(pwd)" ]] && [[ -n "${TEST_TMPDIR}" ]] \
+    || { echo "Please run from \"bazel test\"." >&2; exit 1; }
+
+
 LOCAL_PKGS=(
-  common core compiler compiler-cli forms platform-browser platform-browser-dynamic
-  platform-server
-  tsc-wrapped
+  "$(pwd)"/{common,core,compiler,compiler-cli,forms,platform-{browser,browser-dynamic,server},tsc-wrapped}_package.tar
 )
-LOCAL_TARBALLS=($(for pkg in ${LOCAL_PKGS[@]}; do echo "$(pwd)/bazel-bin/${pkg}_package.tar"; done))
+
 PKGS=(
   reflect-metadata
   typescript@next
@@ -17,30 +19,19 @@ PKGS=(
   @angular2-material/{core,button}
 )
 
-bazel build $(for pkg in ${LOCAL_PKGS[@]}; do echo "${pkg}_package"; done)
-
-if ! [[ -d "bazel-bin" ]]; then
-  echo "Output directory not found." >&2
-  echo >&2
-  echo "Make sure you are running from the repository root." >&2
-
-  exit 1
-fi
-
-TMPDIR=${TMPDIR:-.}
-readonly TMP=$TMPDIR/e2e_test.$(date +%s)
-mkdir -p "${TMP}"
-cp -R -v modules/@angular/compiler-cli/integrationtest/* "${TMP}"
+# Need to use deference since TypeScript notoriously resolves symlinks, making
+# sources inside rootDir check fail.
+cp --dereference -R -v modules/@angular/compiler-cli/integrationtest/* "${TEST_TMPDIR}"
 # Try to use the same versions as angular, in particular, this will
 # cause us to install the same rxjs version.
-cp -v package.json "${TMP}"
+cp --dereference -v package.json "${TEST_TMPDIR}"
 
 # run in subshell to avoid polluting cwd
 (
-  cd "${TMP}"
   set -ex -o pipefail
+  cd "${TEST_TMPDIR}"
   npm install "${PKGS[@]}"
-  npm install "${LOCAL_TARBALLS[@]}"
+  npm install "${LOCAL_PKGS[@]}"
 
   ./node_modules/.bin/tsc --version
   # Compile the compiler-cli integration tests
