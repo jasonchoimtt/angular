@@ -16,8 +16,6 @@ cd ../..
 
 
 echo 'travis_fold:start:test.unit'
-which chromium-browser chromium google-chrome google-chrome-stable || true
-env
 if [[ ${TRAVIS} ]]; then
   sh -e /etc/init.d/xvfb start
 fi
