@@ -123,6 +123,7 @@ test_suite(
     name = "tool_tests",
     tests = [
         "//:tsc-wrapped_test",
+        "//tools/ibazel:ibazel_test",
         "//build_defs/tests/typescript:assert_test",
     ],
 )
