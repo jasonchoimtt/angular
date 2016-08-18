@@ -23,6 +23,7 @@ bazel --bazelrc=scripts/ci-lite/bazelrc test \
     :tool_tests :jasmine_tests :karma_test :router_karma_test \
     --test_env=DISPLAY \
     --test_env=CHROME_BIN \
+    --test_env=CI_MODE \
     --test_env=TRAVIS \
     --test_env=TRAVIS_BUILD_NUMBER \
     --test_env=TRAVIS_BUILD_ID \
