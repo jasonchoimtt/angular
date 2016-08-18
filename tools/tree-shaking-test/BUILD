@@ -19,10 +19,10 @@ genrule(
     cmd = """
 # Used by rollup.config.js to locate the esm modules.
 export BINDIR="$(BINDIR)"
-mkdir -p "$(GENDIR)/{package_name}"
+mkdir -p "$(BINDIR)/{package_name}"
 for package in {packages}; do
-  entry="$(GENDIR)/{package_name}/$$package.entry.js"
-  output="$(GENDIR)/{package_name}/$$package.bundle.js"
+  entry="$(BINDIR)/{package_name}/$$package.entry.js"
+  output="$(BINDIR)/{package_name}/$$package.bundle.js"
 
   echo "import * as x from '@angular/$$package';" > $$entry
 
@@ -30,4 +30,5 @@ for package in {packages}; do
 done
 """.format(package_name=PACKAGE_NAME, packages=" ".join(ESM_PACKAGES)),
     tools = ["//:rollup_bin"],
+    output_to_bindir = True,
 )

@@ -310,6 +310,7 @@ genrule(
         ":compiler_test_codegen_bin",
     ],
     cmd = "$(location :compiler_test_codegen_bin) --node_path=modules/ $(OUTS)",
+    output_to_bindir = True,
 )
 
 ts_library(
@@ -681,6 +682,14 @@ ts_library(
     root_dir = "modules/@angular/upgrade/test",
 )
 
+jasmine_node_test(
+    name = "compiler_test",
+    srcs = [":compiler_test_module", ":compiler_test_codegen_js"],
+    helpers = [":jasmine_helper"],
+    size = "small",
+    args = ["--node_path=modules:tools"],
+)
+
 [
     jasmine_node_test(
         name = pkg + "_test",
@@ -690,6 +699,7 @@ ts_library(
         args = ["--node_path=modules:tools"],
     )
     for pkg in JASMINE_TESTABLE
+    if pkg != "compiler"
 ]
 
 test_suite(
