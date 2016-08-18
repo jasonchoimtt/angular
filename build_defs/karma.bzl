@@ -67,7 +67,9 @@ _karma_test_local = rule(
     attrs = _KARMA_TEST_ATTRS,
 )
 
-def karma_test(*, name, timeout=None, size=None, tags=None, **kwargs):
+def karma_test(*, name, timeout=None, size=None, flaky=None, shard_count=None, local=None,
+               tags=None, **kwargs):
   tags = tags or []
-  _karma_test(name=name, timeout=timeout, size=size, tags=tags, **kwargs)
+  _karma_test(name=name, timeout=timeout, size=size, flaky=flaky, shard_count=shard_count,
+              local=local, tags=tags, **kwargs)
   _karma_test_local(name=name + "_local", tags=tags + ["ibazel_notify_changes"], **kwargs)

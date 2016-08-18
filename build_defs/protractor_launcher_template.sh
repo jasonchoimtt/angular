@@ -22,7 +22,7 @@ fi
 SERVER_PID="$!"
 
 # Kill the server if we get interrupted.
-trap "kill ${SERVER_PID}" SIGINT
+trap "kill ${SERVER_PID}" SIGINT SIGTERM
 
 for ARG in "$@"; do
   case "${ARG}" in

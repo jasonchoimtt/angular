@@ -743,7 +743,6 @@ karma_test(
         "tools/karma/ibazel_watcher.js",
     ],
     config = "karma-js.conf.js",
-    size = "small",
     tags = ["local"],
 )
 
@@ -835,7 +834,6 @@ protractor_test(
         "favicon.ico",
     ],
     config = "protractor-bazel.conf.js",
-    # size = "medium",
     tags = ["local"],
     args = ["--node_path=modules:tools"],
 )
