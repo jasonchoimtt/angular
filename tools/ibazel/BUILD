@@ -16,6 +16,8 @@ ts_library(
     ],
     data = [
         "//:chalk",
+        "//:chokidar",
+        "//:protobufjs",
         "build.proto",
     ],
     tsconfig = "tsconfig.json",
@@ -39,6 +41,9 @@ ts_library(
     deps = [
         "//:_types_jasmine",
         ":ibazel",
+    ],
+    data = [
+        "//:source-map-support",
     ],
     tsconfig = "tsconfig.json",
 )
