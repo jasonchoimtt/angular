@@ -65,6 +65,12 @@ interface DecoratorInvocation {
 
 const IGNORED_FILES = /\.ngfactory\.js$|\.css\.js$|\.css\.shim\.js$/;
 
+const emptyMetadata = JSON.stringify({
+  __symbolic: 'module',
+  version: 1,
+  metadata: {}
+});
+
 export class MetadataWriterHost extends DelegatingHost {
   private metadataCollector = new MetadataCollector();
   constructor(delegate: ts.CompilerHost, private program: ts.Program) { super(delegate); }
@@ -75,10 +81,8 @@ export class MetadataWriterHost extends DelegatingHost {
     if (/*DTS*/ /\.js$/.test(emitFilePath)) {
       const path = emitFilePath.replace(/*DTS*/ /\.js$/, '.metadata.json');
       const metadata = this.metadataCollector.getMetadata(sourceFile);
-      if (metadata && metadata.metadata) {
-        const metadataText = JSON.stringify(metadata);
-        writeFileSync(path, metadataText, {encoding: 'utf-8'});
-      }
+      const metadataText = metadata && metadata.metadata ? JSON.stringify(metadata) : emptyMetadata;
+      writeFileSync(path, metadataText, {encoding: 'utf-8'});
     }
   }
 
