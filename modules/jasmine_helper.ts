@@ -1,6 +1,8 @@
 require('source-map-support').install();
 require('zone.js/dist/zone-node.js');
 require('zone.js/dist/long-stack-trace-zone.js');
+require('zone.js/dist/proxy-zone.js');
+require('zone.js/dist/sync-test.js');
 require('zone.js/dist/async-test.js');
 require('zone.js/dist/fake-async-test.js');
 require('zone.js/dist/jasmine-patch');
