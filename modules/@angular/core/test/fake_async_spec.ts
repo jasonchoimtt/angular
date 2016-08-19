@@ -11,7 +11,7 @@ import {discardPeriodicTasks, fakeAsync, flushMicrotasks, tick} from '@angular/c
 import {Log, beforeEach, ddescribe, describe, iit, inject, it, xit} from '@angular/core/testing/testing_internal';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {Parser} from '../../compiler/src/expression_parser/parser';
+import {Parser} from '@angular/compiler/src/expression_parser/parser';
 
 const resolvedPromise = Promise.resolve(null);
 const ProxyZoneSpec: {assertPresent: () => void} = (Zone as any)['ProxyZoneSpec'];
@@ -319,3 +319,5 @@ export function main() {
     });
   });
 }
+
+main();

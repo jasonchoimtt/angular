@@ -710,3 +710,5 @@ class CmpA1 {
 })
 class CmpA2 {
 }
+
+main();

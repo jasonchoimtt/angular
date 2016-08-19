@@ -165,3 +165,5 @@ class TestComponent {
   currentTplRef: TemplateRef<any>;
   context: any = {foo: 'bar'};
 }
+
+main();

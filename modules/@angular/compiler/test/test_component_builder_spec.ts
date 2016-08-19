@@ -13,7 +13,7 @@ import {AsyncTestCompleter, TestComponentBuilder, beforeEach, beforeEachProvider
 import {dispatchEvent} from '@angular/platform-browser/testing/browser_util';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {ViewMetadata} from '../core_private';
+import {ViewMetadata} from '@angular/compiler/core_private';
 
 @Component(
     {selector: 'child-comp', template: `<span>Original {{childBinding}}</span>`, directives: []})
@@ -612,3 +612,5 @@ export function main() {
     });
   });
 }
+
+main();

@@ -214,3 +214,5 @@ class RightComp {
 })
 export class FakeRecursiveComp {
 }
+
+main();

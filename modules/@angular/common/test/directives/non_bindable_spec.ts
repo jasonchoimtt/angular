@@ -63,3 +63,5 @@ class TestComponent {
   text: string;
   constructor() { this.text = 'foo'; }
 }
+
+main();

@@ -19,10 +19,10 @@ import {By} from '@angular/platform-browser/src/dom/debug/by';
 import {getDOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {DomRootRenderer} from '@angular/platform-browser/src/dom/dom_renderer';
 
-import {EventEmitter} from '../../src/facade/async';
-import {StringMapWrapper} from '../../src/facade/collection';
-import {BaseException} from '../../src/facade/exceptions';
-import {NumberWrapper, isBlank} from '../../src/facade/lang';
+import {EventEmitter} from '@angular/facade/src/async';
+import {StringMapWrapper} from '@angular/facade/src/collection';
+import {BaseException} from '@angular/facade/src/exceptions';
+import {NumberWrapper, isBlank} from '@angular/facade/src/lang';
 
 export function main() {
   let elSchema: MockSchemaRegistry;
@@ -1526,3 +1526,5 @@ class PersonHolder extends Holder<Person> {
 @Component({selector: 'root', template: 'empty'})
 class PersonHolderHolder extends Holder<Holder<Person>> {
 }
+
+main();

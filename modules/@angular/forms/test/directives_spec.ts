@@ -561,3 +561,5 @@ export function main() {
     });
   });
 }
+
+main();
