@@ -104,6 +104,7 @@ ts_library(
     ],
     tsconfig = "tools/@angular/tsc-wrapped/tsconfig.json",
     root_dir = "tools/@angular/tsc-wrapped/test",
+    is_leaf = True,
 )
 
 jasmine_node_test(
@@ -200,6 +201,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/common/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -244,6 +246,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/compiler-cli/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -378,6 +381,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/core/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -419,6 +423,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/forms/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -494,6 +499,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/platform-browser/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -518,6 +524,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/http/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -560,6 +567,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/platform-browser-dynamic/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -602,6 +610,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/platform-server/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -643,6 +652,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/router/test",
+    is_leaf = True,
 )
 
 ts_library(
@@ -681,6 +691,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     root_dir = "modules/@angular/upgrade/test",
+    is_leaf = True,
 )
 
 jasmine_node_test(
@@ -816,6 +827,7 @@ ts_library(
         "//:e2e_util",
     ],
     tsconfig = "modules/tsconfig.json",
+    is_leaf = True,
 )
 
 protractor_test(

@@ -19,7 +19,9 @@ def _ts_library_impl(ctx):
     out_dir: The TypeScript outDir relative to the package. Defaults to
       root_dir.
     source_map: Corresponds to sourceMap in TypeScript.
-    source_map: Corresponds to inlineSourceMap in TypeScript.
+    inline_source_map: Corresponds to inlineSourceMap in TypeScript.
+    is_leaf: Declares that this ts_library will not be depended on by other
+      TypeScript libraries. This disables declaration and metadata generation.
   """
   # Directory structure:
   # bazel-angular/ (execroot)
@@ -48,6 +50,10 @@ def _ts_library_impl(ctx):
       # Sources can be in sub-folders, but not in sub-packages.
       fail("Sources must be in the same package as the ts_library rule, " +
            "but {} is not in {}".format(src.label, ctx.label.package), "srcs")
+
+  for dep in ctx.attr.deps:
+    if dep.typescript.is_leaf:
+      fail("{} is a leaf library and cannot be depended on".format(dep.label), "deps")
 
   for dep in ctx.attr.deps_use_internal:
     if dep not in ctx.attr.deps:
@@ -123,7 +129,7 @@ def _ts_library_impl(ctx):
           "skipLibCheck": True,
           "stripInternal": True,
 
-          "declaration": True,
+          "declaration": not ctx.attr.is_leaf,
 
           # All dependencies should be loaded with "deps", so we don't need the
           # node-style resolution nor @types resolution. This also improves
@@ -138,7 +144,9 @@ def _ts_library_impl(ctx):
           "sourceMap": ctx.attr.source_map,
           "inlineSourceMap": ctx.attr.inline_source_map,
       },
-      "angularCompilerOptions": {},
+      "angularCompilerOptions": {
+          "skipMetadataEmit": ctx.attr.is_leaf,
+      },
       "files": ([join_paths(tsconfig_to_workspace, f.path) for f in ctx.files.srcs] +
                 [join_paths(tsconfig_to_workspace, path) for path in tc_types]),
   }
@@ -152,6 +160,7 @@ def _ts_library_impl(ctx):
 
   has_source_map = ctx.attr.source_map and not ctx.attr.inline_source_map
   is_tsc_wrapped = "bootstrap" not in ctx.executable.compiler.path
+  is_leaf = ctx.attr.is_leaf
 
   tsconfig = _tsconfig_action(
       ctx = ctx,
@@ -161,7 +170,7 @@ def _ts_library_impl(ctx):
   )
   gen_js, gen_d_ts, gen_meta, gen_js_map = _tsc_action(
       prefix = "",
-      gen_config = (True, True, is_tsc_wrapped, has_source_map),
+      gen_config = (True, not is_leaf, not is_leaf and is_tsc_wrapped, has_source_map),
       tsconfig = tsconfig,
       **tsc_action_args
   )
@@ -178,7 +187,7 @@ def _ts_library_impl(ctx):
   )
   gen_js_esm, gen_d_ts_esm, gen_meta_esm, gen_js_map_esm = _tsc_action(
       prefix = "esm",
-      gen_config = (True, True, is_tsc_wrapped, has_source_map),
+      gen_config = (True, not is_leaf, not is_leaf and is_tsc_wrapped, has_source_map),
       tsconfig = tsconfig_esm,
       **tsc_action_args
   )
@@ -194,12 +203,16 @@ def _ts_library_impl(ctx):
           "outDir": join_paths(out_dir, "internal"),
       }),
   )
-  _, gen_d_ts_internal, gen_meta_internal, _ = _tsc_action(
-      prefix = "internal",
-      gen_config = (False, True, is_tsc_wrapped, False),
-      tsconfig = tsconfig_internal,
-      **tsc_action_args
-  )
+
+  if not is_leaf:
+    _, gen_d_ts_internal, gen_meta_internal, _ = _tsc_action(
+        prefix = "internal",
+        gen_config = (False, True, is_tsc_wrapped, False),
+        tsconfig = tsconfig_internal,
+        **tsc_action_args
+    )
+  else:
+    gen_d_ts_internal, gen_meta_internal = [], []
 
   module_name = ctx.attr.module_name or ctx.label.name
   abs_package = join_paths(ctx.label.workspace_root, ctx.configuration.bin_dir.path,
@@ -252,6 +265,7 @@ def _ts_library_impl(ctx):
               module_name = module_name,
               package_dir = out_dir,
           ),
+          is_leaf = is_leaf,
       ),
       nodejs = struct(),
       javascript = struct(
@@ -337,6 +351,7 @@ _ts_library = rule(
         "out_dir": attr.string(default=""),
         "source_map": attr.bool(default=True),
         "inline_source_map": attr.bool(default=False),
+        "is_leaf": attr.bool(default=False),
 
         "_merge_tsconfig": attr.label(
             default = Label("//build_defs/tools:merge_tsconfig"),
@@ -424,6 +439,7 @@ def _ts_ext_library_impl(ctx):
               module_name: join_paths(entry_point_file.path, entry_point_relative_path),
               module_name + "/*": join_paths(abs_package, "*"),
           } if not ctx.attr.ambient else {}),
+          is_leaf = False,
       ),
       nodejs = struct(),
       javascript = struct(
