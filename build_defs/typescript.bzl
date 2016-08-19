@@ -137,10 +137,7 @@ def _ts_library_impl(ctx):
           "moduleResolution": "classic",
           "typeRoots": [],
 
-          # Tells TypeScript to assume that the .ts files are in the same
-          # directory as the .js.map files
-          "mapRoot": join_paths(
-              tsconfig_to_workspace, source_roots[0], ctx.label.package, root_dir),
+          # TODO: fix the path encoded in .js.map
           "sourceMap": ctx.attr.source_map,
           "inlineSourceMap": ctx.attr.inline_source_map,
       },
