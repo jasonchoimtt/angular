@@ -6,4 +6,5 @@ sh_test(
     # If your npm is not in the standard PATH, you will also need to pass the
     # flag --test_env=PATH to "bazel test".
     local = True,
+    size = "small",
 )

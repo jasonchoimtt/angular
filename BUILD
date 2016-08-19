@@ -884,6 +884,7 @@ public_api_test(
     name = "public_api_test",
     srcs = glob(["tools/public_api_guard/**/*"]),
     public_api = ":public_api",
+    size = "small",
 )
 
 nodejs_test(
