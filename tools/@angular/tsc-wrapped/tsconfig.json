@@ -9,11 +9,14 @@
     "noImplicitAny": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@angular/tsc-wrapped": ["."],
+      "@angular/tsc-wrapped/*": ["./*"]
     },
     "rootDir": ".",
     "sourceMap": true,
     "inlineSources": true,
     "lib": ["es6", "dom"],
-    "target": "es5"
+    "target": "es5",
+    "types": ["jasmine"]
   }
 }
