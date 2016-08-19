@@ -755,6 +755,7 @@ karma_test(
         "tools/karma/ibazel_watcher.js",
     ],
     config = "karma-js.conf.js",
+    size = "small",
     local = True,
 )
 

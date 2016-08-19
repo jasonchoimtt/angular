@@ -86,9 +86,6 @@ System.import('@angular/core/testing')
     // .map(window.file2moduleName)        // Normalize paths to module names.
     .map(function(path) {
       return System.import(path).then(function(module) {
-        if (module.hasOwnProperty('main')) {
-          module.main();
-        }
       });
     }));
 })
