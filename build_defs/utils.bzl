@@ -20,6 +20,33 @@ def normalize_path(path):
   return "/".join(segments)
 
 
+def drop_dir(path, directory):
+  if not path.startswith(directory):
+    fail("Path \"%s\" does not reside in directory \"%s\"" % (path, directory))
+  if directory:
+    return path[len(directory) + 1:]
+  else:
+    return path
+
+
+def map_files(ctx, files, root_dir, out_dir, ext=None):
+  """Creates a list of output files given directory and the extension.
+
+  root_dir and out_dir are specified relative to the package.
+  """
+  ret = []
+  for f in files:
+    path_in_package = drop_dir(f.short_path, ctx.label.package)
+    if ext != None:
+      path_in_package_without_ext = path_in_package[:path_in_package.rfind(".")]
+      filename = join_paths(out_dir, drop_dir(path_in_package_without_ext, root_dir) + ext)
+    else:
+      filename = join_paths(out_dir, drop_dir(path_in_package, root_dir))
+    ret.append(ctx.new_file(filename))
+
+  return ret
+
+
 def pick_file(files, base_label, path, attr=None):
   """Returns the file within the target which matches the specified package-
   relative path.

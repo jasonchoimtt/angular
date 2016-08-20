@@ -3,7 +3,6 @@ import * as path from 'path';
 import * as ts from 'typescript';
 
 import {DelegatingHost, MetadataWriterHost, TsickleHost} from './compiler_host';
-import {DeclarationDownlevelingHost} from './dts_downleveler';
 import {CompilerInterface, Tsc, check} from './tsc';
 
 const minimist = require('minimist');
@@ -436,17 +435,15 @@ function compile(project: string, astStore?: AstStore, projectCache?: ProjectCac
     // decorators which we want to read or document.
     // Do this emit second since TypeScript will create missing directories for us
     // in the standard emit.
-    profile('Emitting downleveled .d.ts and .metadata.json');
+    profile('Emitting .d.ts and .metadata.json');
     if (projectCache) {
-      cachedEmit(tsc, host, host => {
-        const declDownlevelingHost = new DeclarationDownlevelingHost(host, parsed.options);
-        return new MetadataWriterHost(declDownlevelingHost, program);
-      }, program, projectCache.dtsOutput);
+      cachedEmit(
+          tsc, host, host => new MetadataWriterHost(host, program), program,
+          projectCache.dtsOutput);
       profile();
       debug(`  DTS output    Hit: ${hit}  Miss: ${miss}`);
     } else {
-      const declDownlevelingHost = new DeclarationDownlevelingHost(host, parsed.options);
-      const metadataWriter = new MetadataWriterHost(declDownlevelingHost, program);
+      const metadataWriter = new MetadataWriterHost(host, program);
       tsc.emit(<any>metadataWriter, program);
       profile();
     }

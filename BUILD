@@ -2,6 +2,7 @@ package(default_visibility=["//visibility:public"])
 
 load("//build_defs:nodejs.bzl", "nodejs_binary", "nodejs_test")
 load("//build_defs:typescript.bzl", "ts_library", "ts_ext_library")
+load("//build_defs:ts_compat.bzl", "ts_compat")
 load("//build_defs:jasmine.bzl", "jasmine_node_test")
 load("//build_defs:karma.bzl", "karma_test")
 load("//build_defs:bundle.bzl", "js_bundle")
@@ -855,32 +856,32 @@ protractor_test(
 public_api(
     name = "public_api",
     srcs = [
-        ":core",
-        ":common",
-        ":platform-browser",
-        ":platform-browser-dynamic",
-        ":platform-server",
-        ":http",
-        ":forms",
-        ":router",
-        ":upgrade",
+        ":core_compat",
+        ":common_compat",
+        ":platform-browser_compat",
+        ":platform-browser-dynamic_compat",
+        ":platform-server_compat",
+        ":http_compat",
+        ":forms_compat",
+        ":router_compat",
+        ":upgrade_compat",
     ],
     entry_points = [
-        "modules/@angular/core/index.d.ts",
-        "modules/@angular/core/testing.d.ts",
-        "modules/@angular/common/index.d.ts",
-        "modules/@angular/common/testing.d.ts",
-        "modules/@angular/upgrade/index.d.ts",
-        "modules/@angular/platform-browser/index.d.ts",
-        "modules/@angular/platform-browser/testing.d.ts",
-        "modules/@angular/platform-browser-dynamic/index.d.ts",
-        "modules/@angular/platform-browser-dynamic/testing.d.ts",
-        "modules/@angular/platform-server/index.d.ts",
-        "modules/@angular/platform-server/testing.d.ts",
-        "modules/@angular/http/index.d.ts",
-        "modules/@angular/http/testing.d.ts",
-        "modules/@angular/forms/index.d.ts",
-        "modules/@angular/router/index.d.ts",
+        "modules/@angular/core/compat/index.d.ts",
+        "modules/@angular/core/compat/testing.d.ts",
+        "modules/@angular/common/compat/index.d.ts",
+        "modules/@angular/common/compat/testing.d.ts",
+        "modules/@angular/upgrade/compat/index.d.ts",
+        "modules/@angular/platform-browser/compat/index.d.ts",
+        "modules/@angular/platform-browser/compat/testing.d.ts",
+        "modules/@angular/platform-browser-dynamic/compat/index.d.ts",
+        "modules/@angular/platform-browser-dynamic/compat/testing.d.ts",
+        "modules/@angular/platform-server/compat/index.d.ts",
+        "modules/@angular/platform-server/compat/testing.d.ts",
+        "modules/@angular/http/compat/index.d.ts",
+        "modules/@angular/http/compat/testing.d.ts",
+        "modules/@angular/forms/compat/index.d.ts",
+        "modules/@angular/router/compat/index.d.ts",
     ],
     root_dir = "modules/@angular",
     out_dir = "tools/public_api_guard",
@@ -960,14 +961,20 @@ ts_npm_package(
 )
 
 [
-    ts_npm_package(
-        name = pkg + "_package",
-        srcs = [":" + pkg],
-        manifest = "modules/@angular/{}/package.json".format(pkg),
-        module_name = "@angular/" + pkg,
-        # Prefix / avoids bug https://github.com/bazelbuild/bazel/issues/1604
-        strip_prefix = "/modules/@angular/" + pkg,
-        esm = pkg in ESM_PACKAGES,
+    (
+        ts_compat(
+            name = pkg + "_compat",
+            srcs = [":" + pkg],
+        ),
+        ts_npm_package(
+            name = pkg + "_package",
+            srcs = [":{}_compat".format(pkg)],
+            manifest = "modules/@angular/{}/package.json".format(pkg),
+            module_name = "@angular/" + pkg,
+            # Prefix / avoids bug https://github.com/bazelbuild/bazel/issues/1604
+            strip_prefix = "/modules/@angular/" + pkg,
+            esm = pkg in ESM_PACKAGES,
+        ),
     )
     for pkg in ESM_PACKAGES + NON_ESM_PACKAGES
 ]

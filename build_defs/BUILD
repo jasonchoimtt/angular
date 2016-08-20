@@ -1,6 +1,6 @@
 package(default_visibility=["//visibility:public"])
 
-load("//build_defs:nodejs.bzl", "nodejs_module")
+load("//build_defs:nodejs.bzl", "nodejs_module", "nodejs_binary")
 
 # These files are exported as filegroups with their extension stripped.
 EXPORTED_FILES = [

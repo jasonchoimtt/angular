@@ -1,5 +1,5 @@
-load("//build_defs:utils.bzl", "join_paths", "normalize_path", "pseudo_json_encode",
-     "pick_file_in_dir", "pick_provider")
+load("//build_defs:utils.bzl", "join_paths", "normalize_path", "map_files", "drop_dir",
+     "pseudo_json_encode", "pick_file_in_dir", "pick_provider")
 
 
 def _ts_library_impl(ctx):
@@ -112,7 +112,7 @@ def _ts_library_impl(ctx):
   # normalize_path handles the case where root_dir/out_dir is set to ".".
   # TypeScript notoriously doesn't work with paths with /./ in the middle.
   root_dir = normalize_path(
-      ctx.attr.root_dir or _drop_dir(ctx.file.tsconfig.dirname, ctx.label.package))
+      ctx.attr.root_dir or drop_dir(ctx.file.tsconfig.dirname, ctx.label.package))
   out_dir = normalize_path(ctx.attr.out_dir or root_dir)
 
   # These correspond to keys in tsconfig.json.
@@ -212,7 +212,7 @@ def _ts_library_impl(ctx):
     gen_d_ts_internal, gen_meta_internal = [], []
 
   module_name = ctx.attr.module_name or ctx.label.name
-  abs_package = join_paths(ctx.label.workspace_root, ctx.configuration.bin_dir.path,
+  abs_package = join_paths(ctx.configuration.bin_dir.path, ctx.label.workspace_root,
                            ctx.label.package, out_dir)
   return struct(
       files = set(gen_js),
@@ -305,10 +305,10 @@ def _tsc_action(*, ctx, inputs, ts_files, root_dir, out_dir, prefix, gen_config,
   real_out_dir = join_paths(out_dir, prefix)
   has_js, has_d_ts, has_meta, has_js_map = gen_config
 
-  gen_js = _map_files(ctx, ts_files, root_dir, real_out_dir, ".js") if has_js else []
-  gen_d_ts = _map_files(ctx, ts_files, root_dir, real_out_dir, ".d.ts") if has_d_ts else []
-  gen_meta = _map_files(ctx, ts_files, root_dir, real_out_dir, ".metadata.json") if has_meta else []
-  gen_js_map = _map_files(ctx, ts_files, root_dir, real_out_dir, ".js.map") if has_js_map else []
+  gen_js = map_files(ctx, ts_files, root_dir, real_out_dir, ".js") if has_js else []
+  gen_d_ts = map_files(ctx, ts_files, root_dir, real_out_dir, ".d.ts") if has_d_ts else []
+  gen_meta = map_files(ctx, ts_files, root_dir, real_out_dir, ".metadata.json") if has_meta else []
+  gen_js_map = map_files(ctx, ts_files, root_dir, real_out_dir, ".js.map") if has_js_map else []
 
   is_tsc_wrapped = "bootstrap" not in ctx.executable.compiler.path
   target_name = "{}{}".format(ctx.label, " ({})".format(prefix) if prefix else "")
@@ -365,30 +365,6 @@ def _merge_dict(a, *args):
   ret = dict(a)
   for d in args:
     ret.update(d)
-  return ret
-
-
-def _drop_dir(path, directory):
-  if not path.startswith(directory):
-    fail("Path \"%s\" does not reside in directory \"%s\"" % (path, directory))
-  if directory:
-    return path[len(directory) + 1:]
-  else:
-    return path
-
-
-def _map_files(ctx, files, root_dir, out_dir, ext):
-  """Creates a list of output files given directory and the extension.
-
-  root_dir and out_dir are specified relative to the package.
-  """
-  ret = []
-  for f in files:
-    path_in_package = _drop_dir(f.short_path, ctx.label.package)
-    path_in_package_without_ext = path_in_package[:path_in_package.rfind(".")]
-    filename = join_paths(out_dir, _drop_dir(path_in_package_without_ext, root_dir) + ext)
-    ret.append(ctx.new_file(filename))
-
   return ret
 
 
