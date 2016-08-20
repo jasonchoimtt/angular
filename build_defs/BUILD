@@ -4,4 +4,5 @@ exports_files([
     "jasmine_config_template.json",
     "karma_launcher_template.sh",
     "rollup_config_template.js",
+    "protractor_launcher_template.sh",
 ])
