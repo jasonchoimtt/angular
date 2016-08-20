@@ -36,16 +36,6 @@ NON_ESM_PACKAGES = [
 
 ALL_PACKAGES = ESM_PACKAGES + NON_ESM_PACKAGES + ["tsc-wrapped"]
 
-JASMINE_TESTABLE = [
-    "core",
-    "common",
-    "compiler",
-    "compiler-cli",
-    "http",
-    "platform-server",
-    "router",
-]
-
 ts_ext_library(
     name = "es6-subset",
     declarations = ["modules/es6-subset.d.ts"],
@@ -168,10 +158,7 @@ ts_library(
     name = "common",
     srcs = glob(
         ["modules/@angular/common/**/*.ts"],
-        exclude = [
-            "modules/@angular/common/test/**/*.ts",
-            # "modules/@angular/common/testing/mock_location_strategy.ts",
-        ]),
+        exclude = ["modules/@angular/common/test/**/*.ts"]),
     deps = [
         "//:zone.js",
         "//:core",
@@ -254,15 +241,7 @@ ts_library(
     name = "compiler",
     srcs = glob(
         ["modules/@angular/compiler/**/*.ts"],
-        exclude = [
-            # "modules/@angular/compiler/src/css_lexer.ts",
-            # "modules/@angular/compiler/src/css_parser.ts",
-            # "modules/@angular/compiler/src/css_ast.ts",
-            # "modules/@angular/compiler/src/output/dart_imports.ts",
-            # "modules/@angular/compiler/src/output/js_emitter.ts",
-            # "modules/@angular/compiler/testing/xhr_mock.ts",
-            "modules/@angular/compiler/test/**/*.ts",
-        ]),
+        exclude = ["modules/@angular/compiler/test/**/*.ts"]),
     deps = [
         "//:zone.js",
         "//:core",
@@ -334,17 +313,7 @@ ts_library(
     name = "core",
     srcs = glob(
         ["modules/@angular/core/**/*.ts"],
-        exclude = [
-            # Used in testing_internal
-            # "modules/@angular/core/testing/animation/mock_animation_player.ts",
-            "modules/@angular/core/testing/lang_utils.ts",
-            # Used in testing_internal
-            # "modules/@angular/core/testing/logger.ts",
-            # "modules/@angular/core/testing/mock_application_ref.ts",
-            # "modules/@angular/core/testing/ng_zone_mock.ts",
-            # "modules/@angular/core/testing/testing_internal.ts",
-            "modules/@angular/core/test/**/*.ts",
-        ]),
+        exclude = ["modules/@angular/core/test/**/*.ts"]),
     deps = [
         "//:_types_node",
         "//:_types_jasmine",
@@ -389,9 +358,7 @@ ts_library(
     name = "forms",
     srcs = glob(
         ["modules/@angular/forms/**/*.ts"],
-        exclude = [
-            "modules/@angular/forms/test/**/*.ts",
-        ]),
+        exclude = ["modules/@angular/forms/test/**/*.ts"]),
     deps = [
         "//:zone.js",
         "//:core",
@@ -405,9 +372,7 @@ ts_library(
 ts_library(
     name = "forms_test_module",
     srcs = glob(
-        ["modules/@angular/forms/test/**/*.ts"],
-        exclude = [
-        ]),
+        ["modules/@angular/forms/test/**/*.ts"]),
     deps = [
         "//:_types_node",
         "//:_types_jasmine",
@@ -431,10 +396,7 @@ ts_library(
     name = "http",
     srcs = glob(
         ["modules/@angular/http/**/*.ts"],
-        exclude = [
-            "modules/@angular/http/src/index.ts", # TODO: remove the unused file
-            "modules/@angular/http/test/**/*.ts",
-        ]),
+        exclude = ["modules/@angular/http/test/**/*.ts"]),
     deps = [
         "//:zone.js",
         "//:core",
@@ -448,18 +410,8 @@ ts_library(
 ts_library(
     name = "platform-browser",
     srcs = glob(
-        [
-            "modules/@angular/platform-browser/**/*.ts",
-        ],
-        exclude = [
-            "modules/@angular/platform-browser/dynamic.ts", # TODO: remove this unused file
-            "modules/@angular/platform-browser/testing/benchmark_util.ts",
-            # "modules/@angular/platform-browser/testing/matchers.ts",
-            # "modules/@angular/platform-browser/testing/mock_animation_driver.ts",
-            # "modules/@angular/platform-browser/testing/mock_dom_animate_player.ts",
-            "modules/@angular/platform-browser/testing/perf_util.ts",
-            "modules/@angular/platform-browser/test/**/*.ts",
-        ]),
+        ["modules/@angular/platform-browser/**/*.ts"],
+        exclude = ["modules/@angular/platform-browser/test/**/*.ts"]),
     deps = [
         "//:_types_hammerjs",
         "//:_types_jasmine",
@@ -476,10 +428,7 @@ ts_library(
 
 ts_library(
     name = "platform-browser_test_module",
-    srcs = glob(
-        ["modules/@angular/platform-browser/test/**/*.ts"],
-        exclude = [
-        ]),
+    srcs = glob(["modules/@angular/platform-browser/test/**/*.ts"]),
     data = glob(
         [
             "modules/@angular/platform-browser/test/static_assets/**",
@@ -505,10 +454,7 @@ ts_library(
 
 ts_library(
     name = "http_test_module",
-    srcs = glob(
-        ["modules/@angular/http/test/**/*.ts"],
-        exclude = [
-        ]),
+    srcs = glob(["modules/@angular/http/test/**/*.ts"]),
     deps = [
         "//:_types_node",
         "//:_types_jasmine",
@@ -532,9 +478,7 @@ ts_library(
     name = "platform-browser-dynamic",
     srcs = glob(
         ["modules/@angular/platform-browser-dynamic/**/*.ts"],
-        exclude = [
-            "modules/@angular/platform-browser-dynamic/test/**/*.ts",
-        ]),
+        exclude = ["modules/@angular/platform-browser-dynamic/test/**/*.ts"]),
     deps = [
         "//:_types_jasmine",
         "//:zone.js",
@@ -549,10 +493,7 @@ ts_library(
 
 ts_library(
     name = "platform-browser-dynamic_test_module",
-    srcs = glob(
-        ["modules/@angular/platform-browser-dynamic/test/**/*.ts"],
-        exclude = [
-        ]),
+    srcs = glob(["modules/@angular/platform-browser-dynamic/test/**/*.ts"]),
     deps = [
         "//:_types_node",
         "//:_types_jasmine",
@@ -618,9 +559,7 @@ ts_library(
     name = "router",
     srcs = glob(
         ["modules/@angular/router/**/*.ts"],
-        exclude = [
-            "modules/@angular/router/test/**/*.ts",
-        ]),
+        exclude = ["modules/@angular/router/test/**/*.ts"]),
     deps = [
         "//:_types_node",
         "//:_types_jasmine",
@@ -660,9 +599,7 @@ ts_library(
     name = "upgrade",
     srcs = glob(
         ["modules/@angular/upgrade/**/*.ts"],
-        exclude = [
-            "modules/@angular/upgrade/test/**/*.ts",
-        ]),
+        exclude = ["modules/@angular/upgrade/test/**/*.ts"]),
     deps = [
         "//:zone.js",
         "//:core",
@@ -702,6 +639,16 @@ jasmine_node_test(
     size = "small",
     args = ["--node_path=modules:tools"],
 )
+
+JASMINE_TESTABLE = [
+    "core",
+    "common",
+    "compiler",
+    "compiler-cli",
+    "http",
+    "platform-server",
+    "router",
+]
 
 [
     jasmine_node_test(
@@ -743,7 +690,7 @@ karma_test(
         ":http_test_module",
         ":platform-browser_test_module",
         ":platform-browser-dynamic_test_module",
-        # ":platform-server_test_module",
+        # ":platform-server_test_module",  FIXME
         ":upgrade_test_module",
         "modules/empty.js",
         "shims_for_IE.js",
@@ -780,10 +727,7 @@ karma_test(
 ###############################################################################
 ts_library(
     name = "playground",
-    srcs = glob(
-        ["modules/playground/src/**/*.ts"],
-        exclude = [
-        ]),
+    srcs = glob(["modules/playground/src/**/*.ts"]),
     deps = [
         "//:core",
         "//:common",
@@ -797,18 +741,14 @@ ts_library(
     ],
     data = glob(
         ["modules/playground/src/**/*"],
-        exclude = [
-            "modules/playground/src/**/*.ts",
-        ],
+        exclude = ["modules/playground/src/**/*.ts"],
     ),
     tsconfig = "modules/tsconfig.json",
 )
 
 ts_library(
     name = "e2e_util",
-    srcs = glob(
-        ["modules/e2e_util/**/*.ts"],
-    ),
+    srcs = glob(["modules/e2e_util/**/*.ts"]),
     deps = [
         "//:_types_node",
         "//:_types_protractor",
@@ -821,9 +761,7 @@ ts_library(
 
 ts_library(
     name = "playground_test_module",
-    srcs = glob(
-        ["modules/playground/e2e_test/**/*.ts"],
-    ),
+    srcs = glob(["modules/playground/e2e_test/**/*.ts"]),
     deps = [
         "//:_types_jasmine",
         "//:e2e_util",
@@ -981,5 +919,5 @@ ts_npm_package(
 
 filegroup(
     name = "all_packages",
-    srcs = [":{}_package".format(p) for p in ESM_PACKAGES + NON_ESM_PACKAGES + ["tsc-wrapped"]],
+    srcs = [":{}_package".format(p) for p in ALL_PACKAGES],
 )
