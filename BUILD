@@ -327,13 +327,7 @@ ts_library(
 
 ts_library(
     name = "core_test_module",
-    srcs = glob(
-        ["modules/@angular/core/test/**/*.ts"],
-        exclude = [
-            # Not supported on cjs-jasmine
-            "modules/@angular/core/test/zone/**",
-            "modules/@angular/core/test/fake_async_spec.*",
-        ]),
+    srcs = glob(["modules/@angular/core/test/**/*.ts"]),
     deps = [
         "//:_types_node",
         "//:_types_jasmine",
@@ -657,6 +651,7 @@ JASMINE_TESTABLE = [
         helpers = [":jasmine_helper"],
         size = "small",
         args = ["--node_path=modules:tools"],
+        flaky = pkg == "platform-server",
     )
     for pkg in JASMINE_TESTABLE
     if pkg != "compiler"
