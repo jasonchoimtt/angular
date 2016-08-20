@@ -662,6 +662,12 @@ test_suite(
     tests = [":{}_test".format(p) for p in JASMINE_TESTABLE],
 )
 
+ts_library(
+    name = "empty_module",
+    srcs = ["modules/empty.ts"],
+    tsconfig = "modules/tsconfig.json",
+)
+
 KARMA_DATA = [
     ":es6-shim",
     ":karma-browserstack-launcher",
@@ -685,9 +691,9 @@ karma_test(
         ":http_test_module",
         ":platform-browser_test_module",
         ":platform-browser-dynamic_test_module",
-        # ":platform-server_test_module",  FIXME
+        ":platform-server_test_module",
         ":upgrade_test_module",
-        "modules/empty.js",
+        ":empty_module",
         "shims_for_IE.js",
         "test-main.js",
     ],
@@ -698,7 +704,6 @@ karma_test(
         "tools/karma/ibazel_watcher.js",
     ],
     config = "karma-js.conf.js",
-    size = "small",
     local = True,
 )
 
