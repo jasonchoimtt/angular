@@ -18,7 +18,7 @@ cd ../..
 ./scripts/sauce/sauce_connect_block.sh
 SAUCE_ACCESS_KEY=`echo $SAUCE_ACCESS_KEY | rev`
 
-for target in :karma_test :router_karma_test; do
+for target in :karma_test; do
   bazel --bazelrc=scripts/ci-lite/bazelrc run \
       $target -- "--browsers=${KARMA_JS_BROWSERS}"
 done

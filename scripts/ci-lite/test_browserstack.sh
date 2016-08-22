@@ -18,7 +18,7 @@ cd ../..
 ./scripts/browserstack/waitfor_tunnel.sh
 export BROWSER_STACK_ACCESS_KEY=`echo $BROWSER_STACK_ACCESS_KEY | rev`
 
-for target in :karma_test :router_karma_test; do
+for target in :karma_test; do
   bazel --bazelrc=scripts/ci-lite/bazelrc run \
       $target -- "--browsers=${KARMA_JS_BROWSERS}"
 done
