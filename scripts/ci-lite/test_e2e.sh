@@ -31,14 +31,8 @@ bazel --bazelrc=scripts/ci-lite/bazelrc test \
     --test_env=DISPLAY \
     --test_env=CHROME_BIN \
     --test_env=TRAVIS \
-    --test_env=PATH \
-    || true  # FIXME
+    --test_env=PATH
 echo 'travis_fold:end:test.e2e.bazel'
-
-echo 'travis_fold:start:test.e2e.misc'
-# ./scripts/ci-lite/offline_compiler_test.sh
-# ./tools/typings-test/test.sh
-echo 'travis_fold:end:test.e2e.misc'
 
 echo 'travis_fold:end:test.e2e'
 
