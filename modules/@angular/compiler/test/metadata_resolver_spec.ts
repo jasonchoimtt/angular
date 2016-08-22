@@ -13,9 +13,9 @@ import {LIFECYCLE_HOOKS_VALUES} from '@angular/core/src/metadata/lifecycle_hooks
 import {TestBed} from '@angular/core/testing';
 import {afterEach, beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 
-import {CompileNgModuleMetadata} from '../src/compile_metadata';
-import {stringify} from '../src/facade/lang';
-import {CompileMetadataResolver} from '../src/metadata_resolver';
+import {CompileNgModuleMetadata} from '@angular/compiler/src/compile_metadata';
+import {stringify} from '@angular/facade/src/lang';
+import {CompileMetadataResolver} from '@angular/compiler/src/metadata_resolver';
 
 import {MalformedStylesComponent} from './metadata_resolver_fixture';
 

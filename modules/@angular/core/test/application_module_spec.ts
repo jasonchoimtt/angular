@@ -7,7 +7,7 @@
  */
 
 import {LOCALE_ID} from '@angular/core';
-import {beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '../testing/testing_internal';
+import {beforeEach, beforeEachProviders, ddescribe, describe, expect, iit, inject, it, xdescribe, xit} from '@angular/core/testing/testing_internal';
 
 export function main() {
   describe('Application module', () => {

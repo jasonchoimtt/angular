@@ -15,9 +15,9 @@ import {getDOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {DOCUMENT} from '@angular/platform-browser/src/dom/dom_tokens';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {ExceptionHandler} from '../src/facade/exception_handler';
-import {BaseException} from '../src/facade/exceptions';
-import {TestBed, async, inject, withModule} from '../testing';
+import {ExceptionHandler} from '@angular/facade/src/exception_handler';
+import {BaseException} from '@angular/facade/src/exceptions';
+import {TestBed, async, inject, withModule} from '@angular/core/testing';
 
 import {SpyChangeDetectorRef} from './spies';
 

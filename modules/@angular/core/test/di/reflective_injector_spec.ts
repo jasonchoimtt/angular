@@ -12,8 +12,8 @@ import {ReflectiveInjectorDynamicStrategy, ReflectiveInjectorInlineStrategy, Ref
 import {ResolvedReflectiveProvider_} from '@angular/core/src/di/reflective_provider';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {BaseException} from '../../src/facade/exceptions';
-import {isBlank, isPresent, stringify} from '../../src/facade/lang';
+import {BaseException} from '@angular/facade/src/exceptions';
+import {isBlank, isPresent, stringify} from '@angular/facade/src/lang';
 
 class CustomDependencyMetadata extends DependencyMetadata {}
 

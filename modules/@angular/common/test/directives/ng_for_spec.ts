@@ -13,7 +13,7 @@ import {ddescribe, describe, iit, inject, it, xit} from '@angular/core/testing/t
 import {By} from '@angular/platform-browser/src/dom/debug/by';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {ListWrapper} from '../../src/facade/collection';
+import {ListWrapper} from '@angular/facade/src/collection';
 
 let thisArg: any;
 

@@ -8,8 +8,8 @@
 
 import {ANALYZE_FOR_ENTRY_COMPONENTS, Component, ComponentFactoryResolver, NoComponentFactoryError, forwardRef} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {Console} from '../../src/console';
-import {stringify} from '../../src/facade/lang';
+import {Console} from '@angular/core/src/console';
+import {stringify} from '@angular/facade/src/lang';
 
 export function main() {
   describe('jit', () => { declareTests({useJit: true}); });

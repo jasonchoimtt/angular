@@ -14,7 +14,7 @@ import {beforeEach, beforeEachProviders, ddescribe, describe, iit, inject, it, x
 import {getDOM} from '@angular/platform-browser/src/dom/dom_adapter';
 import {expect} from '@angular/platform-browser/testing/matchers';
 
-import {isBlank} from '../../src/facade/lang';
+import {isBlank} from '@angular/facade/src/lang';
 
 @Directive({selector: '[simpleDirective]'})
 class SimpleDirective {

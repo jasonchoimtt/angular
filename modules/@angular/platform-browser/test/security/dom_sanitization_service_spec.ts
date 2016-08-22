@@ -9,7 +9,7 @@
 import {SecurityContext} from '@angular/core';
 import * as t from '@angular/core/testing/testing_internal';
 
-import {DomSanitizationServiceImpl} from '../../src/security/dom_sanitization_service';
+import {DomSanitizationServiceImpl} from '@angular/platform-browser/src/security/dom_sanitization_service';
 
 export function main() {
   t.describe('DOM Sanitization Service', () => {

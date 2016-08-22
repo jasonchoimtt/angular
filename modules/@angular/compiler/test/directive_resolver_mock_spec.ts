@@ -9,9 +9,9 @@
 import {Component, ComponentMetadata, Injector} from '@angular/core';
 import {beforeEach, ddescribe, describe, expect, iit, inject, it} from '@angular/core/testing/testing_internal';
 
-import {ViewMetadata} from '../core_private';
-import {isBlank, stringify} from '../src/facade/lang';
-import {MockDirectiveResolver} from '../testing';
+import {ViewMetadata} from '@angular/compiler/core_private';
+import {isBlank, stringify} from '@angular/facade/src/lang';
+import {MockDirectiveResolver} from '@angular/compiler/testing';
 
 export function main() {
   describe('MockDirectiveResolver', () => {
