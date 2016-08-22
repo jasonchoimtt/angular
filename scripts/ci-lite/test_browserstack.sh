@@ -19,15 +19,8 @@ cd ../..
 export BROWSER_STACK_ACCESS_KEY=`echo $BROWSER_STACK_ACCESS_KEY | rev`
 
 for target in :karma_test :router_karma_test; do
-  bazel --bazelrc=scripts/ci-lite/bazelrc test \
-      $target \
-      --test_env=BROWSER_STACK_USERNAME \
-      --test_env=BROWSER_STACK_ACCESS_KEY \
-      --test_env=CI_MODE \
-      --test_env=TRAVIS \
-      --test_env=TRAVIS_BUILD_NUMBER \
-      --test_env=TRAVIS_BUILD_ID \
-      "--test_arg=--browsers=${KARMA_JS_BROWSERS}"
+  bazel --bazelrc=scripts/ci-lite/bazelrc run \
+      $target -- "--test_arg=--browsers=${KARMA_JS_BROWSERS}"
 done
 
 
