@@ -2,7 +2,7 @@ import {downlevelDeclaration} from '@angular/tsc-wrapped/src/dts_downleveler';
 import * as ts from 'typescript';
 
 
-fdescribe('downlevelDeclaration', () => {
+describe('downlevelDeclaration', () => {
   it('should remove "readonly" from classes', () => {
     expect(downlevel(`
 export declare class Foo {
