@@ -60,6 +60,9 @@ ts_library(
         "//:typescript",
         "//:tsc-wrapped",
     ],
+    deps_use_internal = [
+        "//:tsc-wrapped",
+    ],
     tsconfig = "tools/@angular/tsc-wrapped/tsconfig.json",
     root_dir = "tools/@angular/tsc-wrapped/test",
     is_leaf = True,

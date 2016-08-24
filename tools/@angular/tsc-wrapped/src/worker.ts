@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as ts from 'typescript';
 
 import {DelegatingHost, MetadataWriterHost, TsickleHost} from './compiler_host';
+import {SymbolGraph, diffSymbolGraphs} from './symbol_graph';
 import {CompilerInterface, Tsc, check} from './tsc';
 
 const minimist = require('minimist');
@@ -70,6 +71,7 @@ function main() {
           buf = null;
         }
 
+        consoleOutput = '';
 
         const args = req.arguments;
         const changedFiles: string[] = [];
@@ -79,7 +81,6 @@ function main() {
           }
         }
         let exitCode = 0;
-        consoleOutput = '';
         try {
           let project = args.find(arg => arg.substr(0, '@@'.length) === '@@');
           if (!project) {
@@ -89,15 +90,11 @@ function main() {
 
           let projectCache = projectCacheMap.get(project);
           if (!projectCache) {
-            projectCache = new ProjectCache();
+            projectCache = new ProjectCache(hashedAstStore);
             projectCacheMap.set(project, projectCache);
-          } else {
-            for (const file of changedFiles) {
-              projectCache.invalidateFile(path.resolve(file));
-            }
           }
 
-          compile(project, hashedAstStore, projectCache);
+          compile(project, changedFiles, projectCache);
 
         } catch (err) {
           exitCode = 1;
@@ -244,22 +241,26 @@ class HashedAstStore extends AstStore {
   }
 }
 
-interface ProjectCacheEntry {
-  outFiles: Map<string, string>;
-  diagnostics: ts.Diagnostic[];
-}
+type ProjectCacheEntry = Map<string, string>;
 
 class ProjectCache {
+  tsickleInput = new AstStore();
+  jsOutput: Map<string, ProjectCacheEntry> = new Map<string, ProjectCacheEntry>();
   dtsOutput: Map<string, ProjectCacheEntry> = new Map<string, ProjectCacheEntry>();
   compilerOptions: any;
   angularCompilerOptions: any;
+  graph: SymbolGraph = null;
+  program: ts.Program = null;
+
+  constructor(public astInput: AstStore) {}
 
   validateOptions(compilerOptions: any, angularCompilerOptions: any) {
     if (!deepEqual(this.compilerOptions, compilerOptions) ||
         !deepEqual(this.angularCompilerOptions, angularCompilerOptions)) {
-      if (this.dtsOutput.size) {
+      if (this.dtsOutput.size || this.jsOutput.size) {
         debug('Project changed... purging ProjectCache');
         this.dtsOutput.clear();
+        this.jsOutput.clear();
       }
     }
 
@@ -267,7 +268,21 @@ class ProjectCache {
     this.angularCompilerOptions = angularCompilerOptions;
   }
 
-  invalidateFile(fileName: string) {
+  invalidateTsickleInput(fileName: string) {
+    const fileKey = path.relative(cwd, fileName);
+    if (this.tsickleInput.delete(fileName)) {
+      debug('Invalidate Tsickle input ' + fileKey);
+    }
+  }
+
+  invalidateJsOutput(fileName: string) {
+    const fileKey = path.relative(cwd, fileName);
+    if (this.jsOutput.delete(fileName)) {
+      debug('Invalidate JS output     ' + fileKey);
+    }
+  }
+
+  invalidateDtsOutput(fileName: string) {
     const fileKey = path.relative(cwd, fileName);
     if (this.dtsOutput.delete(fileName)) {
       debug('Invalidate DTS output    ' + fileKey);
@@ -373,7 +388,7 @@ function profile(task?: string) {
   currentTask = task;
 }
 
-function compile(project: string, astStore?: AstStore, projectCache?: ProjectCache) {
+function compile(project: string, changedFiles?: string[], projectCache?: ProjectCache) {
   const tsc = new Tsc();
 
   let projectDir = project;
@@ -393,23 +408,49 @@ function compile(project: string, astStore?: AstStore, projectCache?: ProjectCac
   let realHost = ts.createCompilerHost(parsed.options, true);
   // Disable symlink resolution to make bazel happy
   realHost.realpath = path => path;
-  let host = astStore ? new AstCachingHost(realHost, astStore) : realHost;
+  let host = projectCache ? new AstCachingHost(realHost, projectCache.astInput) : realHost;
 
   if (projectCache) {
     projectCache.validateOptions(parsed.options, ngOptions);
   }
 
   profile('Creating program');
-  if (astStore) {
-    astStore.resetStats();
+  if (projectCache) {
+    projectCache.astInput.resetStats();
   }
-  const program = ts.createProgram(parsed.fileNames, parsed.options, host);
+  const program = ts.createProgram(
+      parsed.fileNames, parsed.options, host, projectCache && projectCache.program);
+  if (projectCache) {
+    projectCache.program = program;
+    profile();
+    debug(`  Global AST    Hit: ${projectCache.astInput.hit}  Miss: ${projectCache.astInput.miss}`);
+    projectCache.astInput.resetStats();
+  }
+
   const errors = program.getOptionsDiagnostics();
   check(errors);
-  if (astStore) {
-    profile();
-    debug(`  Global AST    Hit: ${astStore.hit}  Miss: ${astStore.miss}`);
-    astStore.resetStats();
+
+  if (projectCache) {
+    const oldGraph = projectCache.graph;
+    projectCache.graph = new SymbolGraph(program, host, projectCache.graph);
+
+    let invalidated: Set<string>;
+    let changed: Set<string>;
+    if (oldGraph) {
+      changed = new Set(changedFiles.map(x => program.getSourceFile(x).fileName));
+      invalidated = diffSymbolGraphs(oldGraph, projectCache.graph, changed);
+    } else {
+      changed = invalidated = new Set(program.getSourceFiles().map(x => x.fileName));
+    }
+    // Invalidate deps too for js, since tsickle downleveling and enum emission
+    // depend on external symbols.
+    invalidated.forEach(fileName => {
+      projectCache.invalidateTsickleInput(fileName);
+      projectCache.invalidateJsOutput(fileName);
+    });
+    // Invalidate file only for dts, since metadata collector does not use
+    // the type checker.
+    changed.forEach(fileName => { projectCache.invalidateDtsOutput(fileName); })
   }
 
   profile('Type checking');
@@ -423,11 +464,25 @@ function compile(project: string, astStore?: AstStore, projectCache?: ProjectCac
   }
 
   // Emit *.js with Decorators lowered to Annotations, and also *.js.map
-  const tsicklePreProcessor = new TsickleHost(host, program);
-  tsc.emit(tsicklePreProcessor, program);
-  profile();
+  if (projectCache) {
+    // Since type checking fails fast, we don't need to do additional work to
+    // avoid caching files with errors.
+    projectCache.tsickleInput.resetStats();
+    cachedEmit(
+        tsc, host,
+        host => new AstCachingHost(new TsickleHost(host, program), projectCache.tsickleInput),
+        program, projectCache.jsOutput);
+    profile();
+    debug(
+        `  Tsickle AST   Hit: ${projectCache.tsickleInput.hit}  Miss: ${projectCache.tsickleInput.miss}`);
+    debug(`  JS output     Hit: ${hit}  Miss: ${miss}`);
+  } else {
+    const tsicklePreProcessor = new TsickleHost(host, program);
+    tsc.emit(tsicklePreProcessor, program);
+    profile();
+  }
 
-  (<Tsc>tsc).parsed.options.declaration = origDeclaration;
+  tsc.parsed.options.declaration = origDeclaration;
 
   if (!ngOptions.skipMetadataEmit) {
     // Emit *.metadata.json and *.d.ts
@@ -465,8 +520,7 @@ function cachedEmit(
     const fileName = sourceFile.fileName;
     const c = cache.get(fileName);
     if (c) {
-      c.outFiles.forEach((data, outFileName) => { fs.writeFileSync(outFileName, data); });
-      diagnostics.push(...c.diagnostics);
+      c.forEach((data, outFileName) => { fs.writeFileSync(outFileName, data); });
       hit += 1;
       done[fileName] = true;
     } else if (!fileName.match(/\.d\.ts$/)) {
@@ -477,8 +531,11 @@ function cachedEmit(
   if (needEmit) {
     const outputSavingHost = new OutputSavingHost(host);
     const middlewareHost = middleware(outputSavingHost);
+
+    const requiredFiles = tsc.parsed.fileNames.filter(fileName => !done[fileName]);
+
     // Create a new program since the host may be different from the old program.
-    const program = ts.createProgram(tsc.parsed.fileNames, tsc.parsed.options, middlewareHost);
+    const program = ts.createProgram(requiredFiles, tsc.parsed.options, middlewareHost);
 
     for (const sourceFile of program.getSourceFiles()) {
       const fileName = sourceFile.fileName;
@@ -491,8 +548,8 @@ function cachedEmit(
       const result = program.emit(sourceFile);
 
       const outFiles = outputSavingHost.getOutFiles();
-      if (outFiles.size) {
-        cache.set(fileName, {outFiles, diagnostics: result.diagnostics});
+      if (outFiles.size && !result.diagnostics.length) {
+        cache.set(fileName, outFiles);
         miss += 1;
       }
 
