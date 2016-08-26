@@ -1,0 +1,61 @@
+angular/
+  BUILD
+  build_defs/
+    *.bzl
+    *_template.*
+  modules/
+    @angular/*/
+    BUILD
+  tools/
+    @angular/tsc-wrapped/
+    typings-test/
+    tree-shaking-test/
+    BUILD
+    serve_runfiles.js
+    public_api_test.js
+    ibazel/
+  scripts/
+    ci-lite/
+    ci/
+    publish/
+
+angular/
+  BUILD
+  build_defs/
+    karma.bzl
+    karma_*_template.*
+    jasmine.bzl
+    jasmine_*_template.*
+    *_template.*
+    serve_runfiles.js
+    uglifyjs_wrapped.sh
+    BUILD
+  modules/
+    @angular/*/
+    @angular/tsc-wrapped/
+    @angular/internal-testing/
+    @angular/internal-testing-e2e/   // was: e2e_util/
+    benchpress/
+      BUILD
+    tslint/
+    ibazel/
+      BUILD
+    BUILD
+
+  tests/
+    playground/
+    typings-test/
+      test.sh
+      BUILD
+    tree-shaking-test/BUILD
+    public_api_guard/
+      */*.d.ts
+    public_api_test.js
+
+  scripts/
+    ci-lite/
+    offline_compiler_test.sh
+    ci/
+    publish/
+    npm/
+  gulpfile.js

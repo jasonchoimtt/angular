@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "lib": ["es6", "dom"],
+        "paths": {
+          "lodash": ["../node_modules/@types/lodash/index.d.ts"]
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

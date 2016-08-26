@@ -1,0 +1,40 @@
+--- common
++./testing/mock_location_strategy.ts
+--- compiler
++./src/css_ast.ts
++./src/css_lexer.ts
++./src/css_parser.ts
++./src/i18n/expander.ts
++./src/output/dart_imports.ts
++./src/output/js_emitter.ts
++./testing/test_bindings.ts
++./testing/xhr_mock.ts
+--- compiler-cli
+--- core
++./testing/lang_utils.ts
++./testing/logger.ts
++./testing/matchers.ts
++./testing/mock_animation_player.ts
++./testing/mock_application_ref.ts
++./testing/ng_zone_mock.ts
++./testing/testing_internal.ts
+--- forms
+--- http
++./src/index.ts
+--- platform-browser
++./dynamic.ts
++./testing/benchmark_util.ts
++./testing/e2e_util.ts
++./testing/matchers.ts
++./testing/mock_animation_driver.ts
++./testing/mock_dom_animate_player.ts
++./testing/perf_util.ts
++./testing_e2e.ts
+--- platform-browser-dynamic
+--- platform-server
++./platform_browser_dynamic_testing_private.ts
+--- router
++./testing/router_test_module.ts
++./testing.ts
+--- router-deprecated
+--- upgrade
