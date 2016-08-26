@@ -21,10 +21,10 @@ def _ts_npm_package_impl(ctx):
 
   # Copy manifest if it is not in the right location
   manifest_path = join_paths(src.label.workspace_root, src.label.package,
-                             src.typescript.package_dir, "package.json")
+                             src.typescript.module_root, "package.json")
   input_manifest = ctx.file.manifest
   if input_manifest.short_path != manifest_path:
-    output_manifest = ctx.new_file(join_paths(src.typescript.package_dir, "package.json"))
+    output_manifest = ctx.new_file(join_paths(src.typescript.module_root, "package.json"))
     ctx.action(inputs=[input_manifest], outputs=[output_manifest],
                command=["cp", input_manifest.path, output_manifest.path])
   else:
@@ -50,7 +50,7 @@ _ts_npm_package = rule(
     },
 )
 
-def ts_npm_package(*, name, strip_prefix, extension=None, package_dir=None, files=[],
+def ts_npm_package(*, name, strip_prefix, extension=None, module_root=None, files=[],
                    mode=None, modes=None, symlinks=None, **kwargs):
   """
   Rule to create an npm package from a ts_library target.
@@ -61,7 +61,7 @@ def ts_npm_package(*, name, strip_prefix, extension=None, package_dir=None, file
     manifest: The package.json to be packaged.
     module_name: The ES module name of the module.
     strip_prefix: Required. The directory which files in the tarball should be relative to.
-    extension, package_dir, files, mode, modes, symlinks:
+    extension, module_root, files, mode, modes, symlinks:
       The corresponding argument in pkg_tar.
   """
   _ts_npm_package(
@@ -72,7 +72,7 @@ def ts_npm_package(*, name, strip_prefix, extension=None, package_dir=None, file
       name = name,
       extension = extension,
       strip_prefix = strip_prefix,
-      package_dir = package_dir,
+      module_root = module_root,
       mode = mode,
       modes = modes,
       symlinks = symlinks,

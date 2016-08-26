@@ -39,4 +39,4 @@ done
 
 export NODE_PATH="$(for P in "${runfiles_node_path[@]}"; do echo -n "${RUNFILES}/${P}:"; done)${NODE_PATH}"
 
-"${RUNFILES}/{{nodejs}}" "${node_options[@]}" "${RUNFILES}/{{entry_point}}" "${args[@]}"
+"${RUNFILES}/{{nodejs}}" "${node_options[@]}" "${RUNFILES}/{{loader}}" "${args[@]}"

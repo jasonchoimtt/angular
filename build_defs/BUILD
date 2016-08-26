@@ -1,5 +1,6 @@
 exports_files([
     "nodejs_launcher_template.sh",
+    "nodejs_loader_template.js",
     "jasmine_launcher_template.sh",
     "jasmine_config_template.json",
     "karma_launcher_template.sh",

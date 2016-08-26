@@ -49,7 +49,7 @@ ts_library(
     tsconfig = "tools/@angular/tsc-wrapped/tsconfig.json",
     compiler = "//:tsc-wrapped_bootstrap",
     module_name = "@angular/tsc-wrapped",
-    root_dir = "tools/@angular/tsc-wrapped",
+    module_root = "tools/@angular/tsc-wrapped",
 )
 
 ts_library(
@@ -61,7 +61,7 @@ ts_library(
         "//:tsc-wrapped",
     ],
     tsconfig = "tools/@angular/tsc-wrapped/tsconfig.json",
-    root_dir = "tools/@angular/tsc-wrapped/test",
+    module_root = "tools/@angular/tsc-wrapped/test",
     is_leaf = True,
 )
 
@@ -75,7 +75,7 @@ jasmine_node_test(
 nodejs_binary(
     name = "tsc-wrapped_bin",
     srcs = [":tsc-wrapped"],
-    entry_point = "tools/@angular/tsc-wrapped/src/worker.js",
+    entry_point = "tools/@angular/tsc-wrapped/cjs/src/worker.js",
 )
 
 test_suite(
@@ -113,14 +113,14 @@ ts_ext_library(
     name = "es6-subset",
     declarations = ["modules/es6-subset.d.ts"],
     ambient = True,
-    entry_point = "modules/es6-subset.d.ts",
+    typings = "modules/es6-subset.d.ts",
 )
 
 ts_ext_library(
     name = "dummy_system",
     declarations = ["modules/system.d.ts"],
     ambient = True,
-    entry_point = "modules/system.d.ts",
+    typings = "modules/system.d.ts",
 )
 
 ts_library(
@@ -133,7 +133,7 @@ ts_library(
     ],
     tsconfig = "modules/tsconfig.json",
     module_name = "@angular/facade",
-    root_dir = "modules/@angular/facade",
+    module_root = "modules/@angular/facade",
 )
 
 ts_library(
@@ -170,7 +170,7 @@ ts_library(
         "//:common",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/common/test",
+    module_root = "modules/@angular/common/test",
     is_leaf = True,
 )
 
@@ -215,7 +215,7 @@ ts_library(
         "//:compiler-cli",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/compiler-cli/test",
+    module_root = "modules/@angular/compiler-cli/test",
     is_leaf = True,
 )
 
@@ -251,7 +251,7 @@ ts_library(
         "//:compiler",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/compiler/test",
+    module_root = "modules/@angular/compiler/test",
     # Required for compiling codegen.
     module_name = "@angular/compiler/test",
 )
@@ -288,7 +288,7 @@ ts_library(
         ":compiler_test_module",
     ],
     tsconfig = "tools/cjs-jasmine/tsconfig-output_emitter_codegen.json",
-    root_dir = "modules/@angular/compiler/test",
+    module_root = "modules/@angular/compiler/test",
 )
 
 ts_library(
@@ -326,7 +326,7 @@ ts_library(
         "//:core",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/core/test",
+    module_root = "modules/@angular/core/test",
     is_leaf = True,
 )
 
@@ -364,7 +364,7 @@ ts_library(
         "//:forms",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/forms/test",
+    module_root = "modules/@angular/forms/test",
     is_leaf = True,
 )
 
@@ -424,7 +424,7 @@ ts_library(
         "//:platform-browser",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/platform-browser/test",
+    module_root = "modules/@angular/platform-browser/test",
     is_leaf = True,
 )
 
@@ -446,7 +446,7 @@ ts_library(
         "//:http",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/http/test",
+    module_root = "modules/@angular/http/test",
     is_leaf = True,
 )
 
@@ -484,7 +484,7 @@ ts_library(
         "//:platform-browser-dynamic",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/platform-browser-dynamic/test",
+    module_root = "modules/@angular/platform-browser-dynamic/test",
     is_leaf = True,
 )
 
@@ -527,7 +527,7 @@ ts_library(
         "//:platform-server",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/platform-server/test",
+    module_root = "modules/@angular/platform-server/test",
     is_leaf = True,
 )
 
@@ -567,7 +567,7 @@ ts_library(
         "//:router",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/router/test",
+    module_root = "modules/@angular/router/test",
     is_leaf = True,
 )
 
@@ -604,7 +604,7 @@ ts_library(
         "//:upgrade",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/@angular/upgrade/test",
+    module_root = "modules/@angular/upgrade/test",
     is_leaf = True,
 )
 
@@ -801,7 +801,7 @@ ts_library(
         "//:_types_selenium-webdriver",
     ],
     tsconfig = "modules/tsconfig.json",
-    root_dir = "modules/e2e_util",
+    module_root = "modules/e2e_util",
     module_name = "e2e_util",
 )
 

@@ -1,3 +1,6 @@
+load("//build_defs:utils.bzl", "sum")
+
+
 def _jasmine_node_test_impl(ctx):
   """
   Rule for running Jasmine tests on NodeJS.
@@ -13,26 +16,29 @@ def _jasmine_node_test_impl(ctx):
   # the said config file.
   config_file = ctx.new_file("%s_jasmine.json" % ctx.label.name)
 
+  # We want to obtain the commonjs source code.
+  files = sum([list(getattr(src, "nodejs", src).files) for src in ctx.attr.srcs], empty=[])
+
+  helpers = sum(
+      [list(getattr(helper, "nodejs", helper).files) for helper in ctx.attr.helpers], empty=[])
+
   ctx.template_action(
       template = ctx.file._config_template,
       output = config_file,
       substitutions = {
-          "{{srcs}}": ", ".join(["\"%s\"" % f.short_path for f in ctx.files.srcs
-                                 if f.short_path.endswith(".js")]),
-          "{{helpers}}": ", ".join(["\"%s\"" % helper.short_path for helper in ctx.files.helpers
-                                    if helper.short_path.endswith(".js")]),
+          "{{srcs}}": ", ".join(["\"%s\"" % f.short_path for f in files]),
+          "{{helpers}}": ", ".join(["\"%s\"" % f.short_path for f in helpers]),
       },
   )
 
-  ctx.template_action(
-      template = ctx.file._launcher_template,
-      output = ctx.outputs.executable,
-      substitutions = {
-          "{{jasmine}}": ctx.executable._jasmine.short_path,
-          "{{config}}": config_file.short_path,
-      },
-      executable = True,
-  )
+  module_mappings = collect_module_mappings(
+      *[d.nodejs.module_mappings
+        for d in ctx.attr.deps + ctx.attr.helpers + ctx.attr.data if hasattr(d, "nodejs")],
+      self_mapping, strict=True)
+
+  launcher_files = _create_nodejs_launcher(
+      ctx, ctx.outputs.executable, ctx.attr._jasmine.nodejs.entry_point_file, "", module_mappings,
+      'cd ${RUNFILES} && {{}} JASMINE_CONFIG_PATH="${RUNFILES}/{}" "$@"'.format(config_file))
 
   transitive_files = set(ctx.attr._jasmine.default_runfiles.files)
   for helper in ctx.attr.helpers:
@@ -41,7 +47,7 @@ def _jasmine_node_test_impl(ctx):
   return struct(
       files = set([ctx.outputs.executable]),
       runfiles = ctx.runfiles(
-          files = ctx.files.srcs + ctx.files._jasmine + [config_file] + ctx.files.helpers,
+          files = files + helpers + ctx.attr._jasmine.nodejs.files + launcher_files + [config_file],
           transitive_files = transitive_files,
           collect_data = True,
           collect_default = True,

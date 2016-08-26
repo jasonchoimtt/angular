@@ -6,6 +6,18 @@ def join_paths(*paths):
   return "/".join([seg for seg in segments if seg])
 
 
+def runfiles_path(label, *paths):
+  return join_paths(label.workspace_root, label.package, *paths)
+
+
+def source_dir_path(label, *paths):
+  return join_paths(label.workspace_root, label.package, *paths)
+
+
+def bin_dir_path(ctx, label, *paths):
+  return join_paths(ctx.configuration.bin_dir.path, label.workspace_root, label.package, *paths)
+
+
 def normalize_path(path):
   segments = []
   for seg in path.split("/"):
@@ -47,7 +59,7 @@ def map_files(ctx, files, root_dir, out_dir, ext=None):
   return ret
 
 
-def pick_file(files, base_label, path, attr=None):
+def pick_file(files, base_label, path, attr=None, fail=fail):
   """Returns the file within the target which matches the specified package-
   relative path.
 
@@ -60,13 +72,16 @@ def pick_file(files, base_label, path, attr=None):
   match, remainder_path = pick_file_in_dir(files, base_label, path, attr)
 
   if remainder_path:
-    fail("Cannot find '{}' in package '{}'. Available files are: \n{}".format(
-        path, base_label.package, "\n".join([f.path for f in files])), attr)
+    if fail:
+      fail("Cannot find '{}' in package '{}'. Available files are: \n{}".format(
+          path, base_label.package, "\n".join([f.path for f in files])), attr)
+    else:
+      return None
 
   return match
 
 
-def pick_file_in_dir(files, base_label, path, attr=None):
+def pick_file_in_dir(files, base_label, path, attr=None, fail=fail):
   """Finds the file or directory containing the file specified by
   `base_label` and `path` inside the list `files`.
   Returns a tuple (file, path) where file is the found file or directory
@@ -82,7 +97,7 @@ def pick_file_in_dir(files, base_label, path, attr=None):
     path: The path of the needed file relative to `base_label`.
   """
 
-  short_path = join_paths(base_label.package, path)
+  short_path = join_paths(base_label.workspace_root, base_label.package, path)
 
   # We assume that a parent directory of an input file is not also an input
   # file.
@@ -90,13 +105,19 @@ def pick_file_in_dir(files, base_label, path, attr=None):
              if short_path == f.short_path or short_path.startswith(f.short_path + "/")]
 
   if not matches:
-    fail("Cannot find '{}' in package '{}'. Available files are: \n{}".format(
-        path, base_label.package, "\n".join([f.path for f in files])), attr)
+    if fail:
+      fail("Cannot find '{}' in package '{}'. Available files are: \n{}".format(
+          path, base_label.package, "\n".join([f.path for f in files])), attr)
+    else:
+      return None, None
 
   if len(matches) > 1:
     # We neglect cases whether two files in a target come from different
     # workspaces.
-    fail("Multiple matches of '{}' found in package '{}'!".format(path, base_label.package), attr)
+    if fail:
+      fail("Multiple matches of '{}' found in package '{}'!".format(path, base_label.package), attr)
+    else:
+      return None, None
 
   remainder_path = short_path[len(matches[0].short_path) + 1:]
 
@@ -149,3 +170,26 @@ pick_provider = rule(
         "providers": attr.string_list(mandatory=True),
     },
 )
+
+def collect_module_mappings(*mappings, strict=False):
+  ret = {}
+  for mapping in mappings:
+    for k, v in mapping.items():
+      if strict and k in ret and ret[k] != v:
+        fail("Conflicting module mappings:\n" +
+             "  {} -> {}\n".format(k, ret[k]) +
+             "  {} -> {}".format(k, v))
+      ret[k] = v
+  return ret
+
+
+def sum(args, *, empty):
+  if not args:
+    return empty
+
+  ret = empty
+  for arg in args:
+    ret += arg
+
+  return ret
+

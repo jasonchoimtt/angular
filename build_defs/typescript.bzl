@@ -1,5 +1,7 @@
 load("//build_defs:utils.bzl", "join_paths", "normalize_path", "map_files", "drop_dir",
-     "pseudo_json_encode", "pick_file_in_dir", "pick_provider")
+     "pseudo_json_encode", "pick_file_in_dir", "pick_provider", "bin_dir_path", "source_dir_path",
+     "sum")
+load("//build_defs:nodejs.bzl", "create_nodejs_provider")
 
 
 def _ts_library_impl(ctx):
@@ -13,11 +15,12 @@ def _ts_library_impl(ctx):
       should be used. Must be a subset of deps. Note that if this target is used
       downstream, you should ensure that the resultant declarations will be
       compatible with upstream declarations when all @internal's are stripped.
+    data: Files and Node.js dependencies to include.
     module_name: The module name of the package. Defaults to the target name.
-    root_dir: The TypeScript rootDir relative to the package. Defaults to the
+    module_root: The TypeScript rootDir relative to the package. Defaults to the
       location of the tsconfig.json file.
     out_dir: The TypeScript outDir relative to the package. Defaults to
-      root_dir.
+      module_root.
     source_map: Corresponds to sourceMap in TypeScript.
     inline_source_map: Corresponds to inlineSourceMap in TypeScript.
     is_leaf: Declares that this ts_library will not be depended on by other
@@ -29,7 +32,7 @@ def _ts_library_impl(ctx):
   #     path-to-package/
   #       out/dir/
   #         *.js, *.d.ts, *.metadata.json
-  #         esm/*.js
+  #         cjs/*.js
   #         internal/*.d.ts
   #       target-label_flavor_tsconfig.json
   #   path-to-package/
@@ -42,7 +45,7 @@ def _ts_library_impl(ctx):
   #   *.ts
   #   out/dir/ (if any)
   #     *.js, *.d.ts, *.metadata.json
-  #     esm/*.js, *.d.ts, *.metadata.json
+  #     cjs/*.js, *.d.ts, *.metadata.json
   #     internal/*.d.ts, *.metadata.json
 
   for src in ctx.attr.srcs:
@@ -85,37 +88,33 @@ def _ts_library_impl(ctx):
 
   # These values are propagated transitively to downstream packages.
   # tc: transitive closure
-  tc_declarations, tc_types, tc_paths = set(), set(), {}
-  tc_declarations_internal, tc_paths_internal = set(), {}
+  tc_declarations = sum([d.typescript.tc_declarations for d in ctx.attr.deps], empty=set())
+  tc_types = sum([d.typescript.tc_types for d in ctx.attr.deps], empty=set())
+  tc_paths = sum([d.typescript.tc_paths for d in ctx.attr.deps], empty={})
 
-  for dep in ctx.attr.deps:
-    tc_declarations += dep.typescript.tc_declarations
-    tc_types += dep.typescript.tc_types
-    tc_paths.update(dep.typescript.tc_paths)
-
-    if dep not in ctx.attr.deps_use_internal:
-      tc_declarations_internal += dep.typescript.tc_declarations
-      tc_paths_internal.update(dep.typescript.tc_paths)
-
-  for dep in ctx.attr.deps:
-    # Do this after the normal stuff so that the @internal transitive closure
-    # will take precedence in the tc_paths_internal dict.
-    if dep in ctx.attr.deps_use_internal:
-      tc_declarations_internal += dep.typescript.internal.tc_declarations
-      tc_paths_internal.update(dep.typescript.internal.tc_paths)
+  tc_declarations_internal = sum(
+      [d.typescript.tc_declarations
+       if d not in ctx.attr.deps_use_internal else d.typescript.tc_declarations_internal
+       for d in ctx.attr.deps if d not in ctx.attr.deps_use_internal] +
+      [d.typescript.internal.tc_declarations
+       for d in ctx.attr.deps if d in ctx.attr.deps_use_internal], empty=set())
+  tc_paths_internal = sum(
+      [d.typescript.tc_paths for d in ctx.attr.deps if d not in ctx.attr.deps_use_internal] +
+      # Do this after the normal stuff so that the @internal transitive closure
+      # will take precedence.
+      [d.typescript.internal.tc_paths
+       for d in ctx.attr.deps if d in ctx.attr.deps_use_internal], empty={})
 
   # Notice that the paths in the tsconfig.json should be relative to the file.
-  tsconfig_to_workspace = "/".join(
-        [".." for x in join_paths(ctx.configuration.bin_dir.path, ctx.label.package).split("/")])
+  tsconfig_to_workspace = "/".join([".." for x in bin_dir_path(ctx, ctx.label).split("/")])
 
   # These two are package-relative.
   # normalize_path handles the case where root_dir/out_dir is set to ".".
   # TypeScript notoriously doesn't work with paths with /./ in the middle.
   root_dir = normalize_path(
-      ctx.attr.root_dir or drop_dir(ctx.file.tsconfig.dirname, ctx.label.package))
+      ctx.attr.module_root or drop_dir(ctx.file.tsconfig.dirname, ctx.label.package))
   out_dir = normalize_path(ctx.attr.out_dir or root_dir)
 
-  # These correspond to keys in tsconfig.json.
   ts_files = [f for f in ctx.files.srcs if not f.short_path.endswith(".d.ts")]
   base_tsconfig = {
       "compilerOptions": {
@@ -163,7 +162,7 @@ def _ts_library_impl(ctx):
       ctx = ctx,
       prefix = "",
       input_tsconfig = ctx.file.tsconfig,
-      mixin_tsconfig = _tsconfig_with(base_tsconfig, {"outDir": out_dir}),
+      mixin_tsconfig = _tsconfig_with(base_tsconfig, {"module": "es2015", "outDir": out_dir}),
   )
   gen_js, gen_d_ts, gen_meta, gen_js_map = _tsc_action(
       prefix = "",
@@ -172,20 +171,19 @@ def _ts_library_impl(ctx):
       **tsc_action_args
   )
 
-  tsconfig_esm = _tsconfig_action(
+  tsconfig_cjs = _tsconfig_action(
       ctx = ctx,
-      prefix = "esm",
+      prefix = "cjs",
       input_tsconfig = ctx.file.tsconfig,
       mixin_tsconfig = _tsconfig_with(base_tsconfig, {
-          "module": "es2015",
-          "target": "es2015",
-          "outDir": join_paths(out_dir, "esm"),
+          "module": "commonjs",
+          "outDir": join_paths(out_dir, "cjs"),
       }),
   )
-  gen_js_esm, gen_d_ts_esm, gen_meta_esm, gen_js_map_esm = _tsc_action(
-      prefix = "esm",
+  gen_js_cjs, gen_d_ts_cjs, gen_meta_cjs, gen_js_map_cjs = _tsc_action(
+      prefix = "cjs",
       gen_config = (True, not is_leaf, not is_leaf and is_tsc_wrapped, has_source_map),
-      tsconfig = tsconfig_esm,
+      tsconfig = tsconfig_cjs,
       **tsc_action_args
   )
 
@@ -212,8 +210,7 @@ def _ts_library_impl(ctx):
     gen_d_ts_internal, gen_meta_internal = [], []
 
   module_name = ctx.attr.module_name or ctx.label.name
-  abs_package = join_paths(ctx.configuration.bin_dir.path, ctx.label.workspace_root,
-                           ctx.label.package, out_dir)
+  abs_package = bin_dir_path(ctx, ctx.label, out_dir)
   return struct(
       files = set(gen_js),
       runfiles = ctx.runfiles(
@@ -224,7 +221,7 @@ def _ts_library_impl(ctx):
       typescript = struct(
           module_name = module_name,
           # The rootDir relative to the current package.
-          package_dir = out_dir,
+          module_root = out_dir,
           # The declarations of the current module
           declarations = gen_d_ts,
           source_maps = gen_js_map,
@@ -236,55 +233,55 @@ def _ts_library_impl(ctx):
           tc_types = tc_types,
           # Mapping to declaration files to be loaded implicitly with "paths",
           # relative to workspace.
-          tc_paths = _merge_dict(tc_paths, {
+          tc_paths = tc_paths + {
               # We simply assume an index.d.ts exists. TypeScript will give the
               # same "Cannot find module" if it isn't true.
               module_name: join_paths(abs_package, "index"),
               module_name + "/*": join_paths(abs_package, "*"),
-          }),
+          },
           # The @internal variant of the declaration files. Optional.
           internal = struct(
-              package_dir = join_paths(out_dir, "internal"),
+              module_root = join_paths(out_dir, "internal"),
               declarations = gen_d_ts_internal,
               tc_declarations = tc_declarations_internal + gen_d_ts_internal,
-              tc_paths = _merge_dict(tc_paths_internal, {
+              tc_paths = tc_paths_internal + {
                   module_name: join_paths(abs_package, "internal/index"),
                   module_name + "/*": join_paths(abs_package, "internal/*"),
-              }),
+              },
           ),
-          # This struct exists solely for npm_package to work simpler.
-          # TypeScript-agnostic tools should use javascript_esm.
-          esm = struct(
-              files = gen_js_esm,
-              source_maps = gen_js_map_esm,
-              declarations = gen_d_ts_esm,
-              metadata = gen_meta_esm,
-              module_name = module_name,
-              package_dir = out_dir,
-          ),
+          # cjs = struct(
+          #     files = gen_js_cjs,
+          #     source_maps = gen_js_map_cjs,
+          #     declarations = gen_d_ts_cjs,
+          #     metadata = gen_meta_cjs,
+          #     module_name = module_name,
+          #     module_root = join_paths(out_dir, "cjs"),
+          # ),
           is_leaf = is_leaf,
       ),
-      nodejs = struct(),
+      nodejs = create_nodejs_provider(
+          ctx=ctx, files=gen_js_cjs, module_name=module_name,
+          module_root=join_paths(out_dir, "cjs"),
+          collect_mapping_from=ctx.attr.deps + ctx.attr.data),
       javascript = struct(
           files = gen_js + gen_js_map,
           source_maps = gen_js_map,
           module_name = module_name,
-          package_dir = out_dir,
+          module_root = out_dir,
       ),
-      javascript_esm = struct(
-          files = gen_js_esm,
-          source_maps = gen_js_map_esm,
+      javascript_cjs = struct(
+          files = gen_js_cjs,
+          source_maps = gen_js_map_cjs,
           module_name = module_name,
-          package_dir = out_dir,
+          module_root = join_paths(out_dir, "cjs"),
       ),
   )
 
 def _tsconfig_with(base, compiler_options={}, angular_compiler_options={}):
-  return _merge_dict(base, {
-      "compilerOptions": _merge_dict(base["compilerOptions"], compiler_options),
-      "angularCompilerOptions": _merge_dict(
-          base["angularCompilerOptions"], angular_compiler_options),
-  })
+  return base + {
+      "compilerOptions": base["compilerOptions"] + compiler_options,
+      "angularCompilerOptions": base["angularCompilerOptions"] + angular_compiler_options,
+  }
 
 def _tsconfig_action(*, ctx, prefix, input_tsconfig, mixin_tsconfig):
   tsconfig = ctx.new_file(ctx.label.name + ("_" + prefix if prefix else "") + "_tsconfig.json")
@@ -344,7 +341,7 @@ _ts_library = rule(
         "deps_use_internal": attr.label_list(providers=["typescript"]),
         "data": attr.label_list(allow_files=True, cfg=DATA_CFG),
         "module_name": attr.string(),
-        "root_dir": attr.string(default=""),
+        "module_root": attr.string(default=""),
         "out_dir": attr.string(default=""),
         "source_map": attr.bool(default=True),
         "inline_source_map": attr.bool(default=False),
@@ -359,13 +356,7 @@ _ts_library = rule(
 
 def ts_library(*, name, **kwargs):
   _ts_library(name=name, **kwargs)
-  pick_provider(name=name + "_esm", srcs=[":" + name], providers=["javascript_esm.files"])
-
-def _merge_dict(a, *args):
-  ret = dict(a)
-  for d in args:
-    ret.update(d)
-  return ret
+  # pick_provider(name=name + "_cjs", srcs=[":" + name], providers=["javascript_cjs.files"])
 
 
 def _ts_ext_library_impl(ctx):
@@ -375,16 +366,18 @@ def _ts_ext_library_impl(ctx):
   """
 
   module_name = ctx.attr.module_name or ctx.label.name
+  module_root = ctx.attr.module_root
   # The d.ts files of a ts_ext_library rule lives in the source directory
   # instead of the bin directory
-  abs_package = join_paths(ctx.label.workspace_root, ctx.label.package, ctx.attr.root_dir)
+  abs_package = source_dir_path(ctx.label, ctx.attr.module_root)
 
-  if (not ctx.attr.entry_point and len(ctx.files.declarations) == 1 and
+  if (not ctx.attr.typings and len(ctx.files.declarations) == 1 and
       ctx.files.declarations[0].path.endswith(".d.ts")):
-    entry_point_file, entry_point_relative_path = ctx.files.declarations, ""
+    typings_file, typings_relative_path = ctx.files.declarations, ""
   else:
-    entry_point_file, entry_point_relative_path = pick_file_in_dir(
-        ctx.files.declarations, ctx.label, ctx.attr.entry_point or "index.d.ts")
+    typings_file, typings_relative_path = pick_file_in_dir(
+        ctx.files.declarations, ctx.label,
+        join_paths(module_root, ctx.attr.typings or "index.d.ts"))
 
   tc_declarations, tc_types, tc_paths = set(), set(), {}
   tc_declarations_internal, tc_paths_internal = set(), {}
@@ -403,22 +396,25 @@ def _ts_ext_library_impl(ctx):
       ),
       typescript = struct(
           module_name = module_name,
-          package_dir = ctx.attr.root_dir,
+          module_root = ctx.attr.module_root,
           declarations = ctx.files.declarations,
           tc_declarations = tc_declarations + ctx.files.declarations,
           tc_types =
-              tc_types + set([join_paths(entry_point_file.path, entry_point_relative_path)]),
-          tc_paths = _merge_dict(tc_paths, {
-              module_name: join_paths(entry_point_file.path, entry_point_relative_path),
+              tc_types + set([join_paths(typings_file.path, typings_relative_path)]),
+          tc_paths = tc_paths + ({
+              module_name: join_paths(typings_file.path, typings_relative_path),
               module_name + "/*": join_paths(abs_package, "*"),
           } if not ctx.attr.ambient else {}),
           is_leaf = False,
       ),
-      nodejs = struct(),
+      nodejs = create_nodejs_provider(
+          ctx=ctx, files=ctx.files.srcs, module_name=module_name,
+          module_root=module_root, entry_point=ctx.attr.entry_point,
+          collect_mapping_from=ctx.attr.srcs + ctx.attr.deps + ctx.attr.data),
       javascript = struct(
           files = ctx.files.srcs,
           module_name = module_name,
-          package_dir = ctx.attr.root_dir,
+          module_root = ctx.attr.module_root,
       ),
   )
 
@@ -429,11 +425,13 @@ ts_ext_library = rule(
         "srcs": attr.label_list(allow_files=True),
         "deps": attr.label_list(providers=["typescript"], cfg=DATA_CFG),
         "data": attr.label_list(allow_files=True, cfg=DATA_CFG),
+        "entry_point": attr.string(),  # For Node.js
+        "module_name": attr.string(),
+        "module_root": attr.string(default=""),
+
         "declarations": attr.label_list(allow_files=FileType([".d.ts"]), mandatory=True),
         "ambient": attr.bool(mandatory=True),
-        "module_name": attr.string(),
-        "root_dir": attr.string(default=""),
-        "entry_point": attr.string(),
+        "typings": attr.string(),
     }
 )
 

@@ -18,8 +18,8 @@ def _ts_compat_impl(ctx):
   src = ctx.attr.srcs[0]
   ts = src.typescript
 
-  root_dir = ts.package_dir
-  out_dir = join_paths(ts.package_dir, ctx.attr.prefix)
+  root_dir = ts.module_root
+  out_dir = join_paths(ts.module_root, ctx.attr.prefix)
 
   gen_js = map_files(ctx, src.files, root_dir, out_dir)
   gen_d_ts = map_files(ctx, ts.declarations, root_dir, out_dir)
@@ -32,7 +32,7 @@ def _ts_compat_impl(ctx):
   gen_js_map_esm = map_files(ctx, ts.esm.source_maps, root_dir, out_dir)
 
   abs_root_dir = join_paths(ctx.configuration.bin_dir.path, ctx.label.workspace_root,
-                            ctx.label.package, ts.package_dir)
+                            ctx.label.package, ts.module_root)
   abs_out_dir = join_paths(abs_root_dir, ctx.attr.prefix)
 
   copy_configs = [
@@ -73,7 +73,7 @@ def _ts_compat_impl(ctx):
       typescript = struct(
           module_name = ts.module_name,
           # The rootDir relative to the current package.
-          package_dir = out_dir,
+          module_root = out_dir,
           # The declarations of the current module
           declarations = gen_d_ts,
           source_maps = gen_js_map,
@@ -84,7 +84,7 @@ def _ts_compat_impl(ctx):
               declarations = gen_d_ts_esm,
               metadata = gen_meta_esm,
               module_name = ts.module_name,
-              package_dir = out_dir,
+              module_root = out_dir,
           ),
           is_leaf = True,
       ),
@@ -93,13 +93,13 @@ def _ts_compat_impl(ctx):
           files = gen_js + gen_js_map,
           source_maps = gen_js_map,
           module_name = ts.module_name,
-          package_dir = out_dir,
+          module_root = out_dir,
       ),
       javascript_esm = struct(
           files = gen_js_esm,
           source_maps = gen_js_map_esm,
           module_name = ts.module_name,
-          package_dir = out_dir,
+          module_root = out_dir,
       ),
   )
 
